@@ -76,41 +76,41 @@ features = features.dropna()
 # Train/Test Split
 X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=0.2, random_state=100)
 
-# Train Models
-rf_model = RandomForestRegressor(n_estimators=100, random_state=100)
-rf_model.fit(X_train, y_train)
-y_pred_rf = rf_model.predict(X_test)
-mse_rf = mean_squared_error(y_test, y_pred_rf)
-r2_rf = r2_score(y_test, y_pred_rf)
+# Sidebar model selection
+model_choice = st.sidebar.selectbox("Select Model", ["Linear Regression", "Random Forest"])
 
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred_lr = model.predict(X_test)
-mse_lr = mean_squared_error(y_test, y_pred_lr)
-r2_lr = r2_score(y_test, y_pred_lr)
+if model_choice == "Random Forest":
+    model = RandomForestRegressor(n_estimators=100, random_state=100)
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    feature_importance = model.feature_importances_
+elif model_choice == "Linear Regression":
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    feature_importance = np.abs(model.coef_)
 
-# Display Results
+# Model Evaluation
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
 st.subheader("Model Evaluation")
-st.write(f"Random Forest - MSE: {mse_rf}, R2: {r2_rf}")
-st.write(f"Linear Regression - MSE: {mse_lr}, R2: {r2_lr}")
+st.write(f"{model_choice} - MSE: {mse}, R2: {r2}")
 
 # Feature Importance
 feature_names = X_test.columns.tolist()
-feature_weights_rf = rf_model.feature_importances_
-
-sorted_features_rf = sorted(zip(feature_names, feature_weights_rf), key=lambda x: x[1], reverse=True)
-top_features_rf = sorted_features_rf[:20]
-top_feature_names_rf, top_percentages_rf = zip(*top_features_rf)
+sorted_features = sorted(zip(feature_names, feature_importance), key=lambda x: x[1], reverse=True)
+top_features = sorted_features[:20]
+top_feature_names, top_percentages = zip(*top_features)
 
 fig, ax = plt.subplots()
-ax.barh(top_feature_names_rf, top_percentages_rf, color='skyblue')
+ax.barh(top_feature_names, top_percentages, color='skyblue')
 ax.set_xlabel("Contribution (%)")
-ax.set_title("Top 20 Feature Contributions - Random Forest")
+ax.set_title(f"Top 20 Feature Contributions - {model_choice}")
 ax.invert_yaxis()
 st.pyplot(fig)
 
 # Single Data Point Prediction
 single_data_point = X_test.iloc[[0]]
-prediction = rf_model.predict(single_data_point)
+prediction = model.predict(single_data_point)
 st.subheader("Single Data Point Prediction")
 st.write(f"Predicted Price: {prediction[0]}")
