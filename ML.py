@@ -258,12 +258,20 @@ sorted_features = sorted(zip(feature_names, feature_importance), key=lambda x: x
 top_features = sorted_features[:20]
 top_feature_names, top_percentages = zip(*top_features)
 
-fig, ax = plt.subplots()
-ax.barh(top_feature_names, top_percentages, color='skyblue')
-ax.set_xlabel("Contribution (%)")
-ax.set_title(f"Top 20 Feature Contributions - {model_choice}")
-ax.invert_yaxis()
-st.pyplot(fig)
+# fig, ax = plt.subplots()
+# ax.barh(top_feature_names, top_percentages, color='skyblue')
+# ax.set_xlabel("Contribution (%)")
+# ax.set_title(f"Top 20 Feature Contributions - {model_choice}")
+# ax.invert_yaxis()
+# st.pyplot(fig)
+
+# Streamlit bar chart
+
+# Create a DataFrame for Streamlit's st.barchart
+df = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
+
+# Plot using Streamlit's native bar chart
+st.barchart(df.set_index("Feature"))
 
 # Single Data Point Prediction
 single_data_point = X_test.iloc[[0]]
