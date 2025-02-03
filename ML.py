@@ -278,4 +278,6 @@ st.bar_chart(df, y="Feature", x="Contribution (%)")
 single_data_point = X_test.iloc[[0]]
 prediction = model.predict(single_data_point)
 st.subheader("Single Data Point Prediction")
+
+st.image("https://cache09.housesigma.com/file/pix-itso/155816789/488b2_1.jpg?a64b0417")
 st.write(f"Predicted Price: $ {prediction[0]}")
