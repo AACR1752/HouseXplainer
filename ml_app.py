@@ -64,14 +64,11 @@ ml_houses['listing'] = houses['listing']
 ml_houses['price'] = ml_houses['price'].astype(str).str.replace(r'[$,]', '', regex=True)
 ml_houses['price'] = pd.to_numeric(ml_houses['price'], errors='coerce')
 
-# Drop rows with NaN in price
-ml_houses = ml_houses.dropna(subset=['price'])
+# Drop rows with NaN in any column to keep features and price aligned
+ml_houses = ml_houses.dropna()
 
 features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
 price = ml_houses['price']
-
-# Drop rows with NaNs in features
-features = features.dropna()
 
 # Train/Test Split
 X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=0.2, random_state=100)
