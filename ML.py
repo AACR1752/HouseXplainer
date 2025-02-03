@@ -271,7 +271,7 @@ top_feature_names, top_percentages = zip(*top_features)
 df = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
 
 # Plot using Streamlit's native bar chart
-st.barchart(df.set_index("Feature"))
+st.bar_chart(df.set_index("Feature"))
 
 # Single Data Point Prediction
 single_data_point = X_test.iloc[[0]]
