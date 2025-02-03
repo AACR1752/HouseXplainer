@@ -188,10 +188,14 @@ split_exceptions = ['bathrooms_detail',]
 # %%
 from sklearn.preprocessing import MultiLabelBinarizer
 def one_hot_encode_column(column):
+    if column not in houses.columns:
+        st.warning(f"Column '{column}' not found in the dataset.")
+        return pd.DataFrame()  # Return an empty DataFrame if the column is missing
+
     if column not in split_exceptions:
-      houses[f'{column}_arr'] = houses[column].apply(lambda x: x.split(',') if isinstance(x, str) else [])
+        houses[f'{column}_arr'] = houses[column].apply(lambda x: x.split(',') if isinstance(x, str) else [])
     else:
-      houses[f'{column}_arr'] = houses[column].apply(lambda x: [x] if isinstance(x, str) else [])
+        houses[f'{column}_arr'] = houses[column].apply(lambda x: [x] if isinstance(x, str) else [])
 
     mlb = MultiLabelBinarizer()
     encoded_data = mlb.fit_transform(houses[f'{column}_arr'])
@@ -201,6 +205,7 @@ def one_hot_encode_column(column):
     encoded_df = encoded_df.add_suffix(f'_{column}')
 
     return encoded_df
+
 
 # %%
 # TODO: Appliances Excluded has to be penalizing in giving value to the prices
