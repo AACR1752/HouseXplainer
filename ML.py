@@ -1,4 +1,5 @@
 import streamlit as st
+import altair as alt
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -270,9 +271,24 @@ top_feature_names, top_percentages = zip(*top_features)
 # Create a DataFrame for Streamlit's st.barchart
 df = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
 
-# Plot using Streamlit's native bar chart
-#st.bar_chart(df.set_index("Feature"))
-st.bar_chart(df, y="Feature", x="Contribution (%)")
+# Plot using Streamlit's altair_chart
+
+source = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
+
+# Create the Altair bar chart
+bars = (
+    alt.Chart(source)
+    .mark_bar()
+    .encode(
+        x=alt.X("Contribution (%):Q", title="Contribution (%)"),
+        y=alt.Y("Feature:N", title="Feature", sort="-x"),  # Sorting by Contribution
+        color=alt.Color("Feature:N", legend=None),  # Optional: Color coding
+    )
+    .properties(width=700, height=500, title="Feature Importance")
+)
+
+# Display in Streamlit
+st.altair_chart(bars, use_container_width=True)
 
 # Single Data Point Prediction
 single_data_point = X_test.iloc[[0]]
