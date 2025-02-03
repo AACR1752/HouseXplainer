@@ -25,7 +25,11 @@ else:
 
 
 
-#######
+##########
+
+### Imported from Notebook
+
+##########
 
 
 # prompt: print all the column names one by one
@@ -296,32 +300,34 @@ features.info()
 ########    
 
 
-
+#########
+# Following commented out for now
+##############
 
 # Data Cleaning and Preprocessing
-houses.dropna(axis=1, how='all', inplace=True)
-houses.dropna(subset=['listed'], inplace=True)
-value_counts = houses.count()
-columns_to_drop = value_counts[value_counts < 10].index
-houses.drop(columns=columns_to_drop, inplace=True)
-numeric_cols = houses.select_dtypes(include=np.number).columns
-object_cols = houses.select_dtypes(include=object).columns
+# houses.dropna(axis=1, how='all', inplace=True)
+# houses.dropna(subset=['listed'], inplace=True)
+# value_counts = houses.count()
+# columns_to_drop = value_counts[value_counts < 10].index
+# houses.drop(columns=columns_to_drop, inplace=True)
+# numeric_cols = houses.select_dtypes(include=np.number).columns
+# object_cols = houses.select_dtypes(include=object).columns
 
-# Convert numeric features
-def calculate_house_age(year_string):
-    if '-' in str(year_string):
-        try:
-            start, end = map(int, year_string.split('-'))
-            return (start + end) / 2
-        except ValueError:
-            return None
-    elif str(year_string).isdigit() and len(str(year_string)) == 4:
-        return 2025 - int(year_string)
-    else:
-        return None
+# # Convert numeric features
+# def calculate_house_age(year_string):
+#     if '-' in str(year_string):
+#         try:
+#             start, end = map(int, year_string.split('-'))
+#             return (start + end) / 2
+#         except ValueError:
+#             return None
+#     elif str(year_string).isdigit() and len(str(year_string)) == 4:
+#         return 2025 - int(year_string)
+#     else:
+#         return None
 
-houses['house_year'] = houses['year_built'].fillna(houses['building_age'])
-houses['house_age'] = houses['house_year'].apply(calculate_house_age)
+# houses['house_year'] = houses['year_built'].fillna(houses['building_age'])
+# houses['house_age'] = houses['house_year'].apply(calculate_house_age)
 
 # Show histogram of house ages
 fig, ax = plt.subplots(figsize=(10, 6))
