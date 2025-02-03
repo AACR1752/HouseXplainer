@@ -70,6 +70,9 @@ ml_houses = ml_houses.dropna(subset=['price'])
 features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
 price = ml_houses['price']
 
+# Drop rows with NaNs in features
+features = features.dropna()
+
 # Train/Test Split
 X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=0.2, random_state=100)
 
