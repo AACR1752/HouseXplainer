@@ -5,8 +5,10 @@ import pandas as pd
 import seaborn as sns
 import plotly.express as px
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import MultiLabelBinarizer
 import re
@@ -32,16 +34,11 @@ else:
 ##########
 
 
-# prompt: print all the column names one by one
+# prompt: st.write all the column names one by one
 houses.dropna(axis=1, how='all', inplace=True)
 
 #drop rows where listed is missing
 houses.dropna(subset=['listed'], inplace=True)
-
-for col in houses.columns:
-    print(col)
-print(len(houses))
-print(len(houses.columns))
 
  
 # Count non-NaN values in each column
@@ -54,7 +51,7 @@ columns_to_drop = value_counts[value_counts < 10].index
 houses.drop(columns=columns_to_drop, inplace=True)
 
 # Display info to confirm changes
-houses.info()
+# houses.info()
 
  
 # prompt: separate out the columns which are numbers and the ones which are object (string)
@@ -72,7 +69,6 @@ numeric_features = ['rooms', 'bedrooms', 'bedrooms_above_ground',
 for col in numeric_features:
     houses[col] = pd.to_numeric(houses[col], errors='coerce')
     houses[col] = houses[col].astype(float)
-
  
 def calculate_house_age(year_string):
     if '-' in str(year_string):
@@ -92,25 +88,6 @@ def calculate_house_age(year_string):
  
 houses['house_year'] = houses['year_built'].fillna(houses['building_age'])
 houses['house_age'] = houses['house_year'].apply(calculate_house_age)
-
- 
-# prompt: generate a histogram with house_age and plot it show. do a count for the ones with none
-
-import matplotlib.pyplot as plt
-
-# Calculate the count of None values in 'house_age'
-none_count = houses['house_age'].isnull().sum()
-print(f"Number of None values in 'house_age': {none_count}")
-
-# Create the histogram
-plt.figure(figsize=(10, 6))
-plt.hist(houses['house_age'].dropna(), bins=30, edgecolor='black')  # Drop NaN values for plotting
-plt.xlabel('House Age')
-plt.ylabel('Frequency')
-plt.title('Distribution of House Ages')
-plt.show()
-
-
  
 # Calculate the average house age, excluding NaN values
 average_house_age = houses['house_age'].mean()
@@ -118,13 +95,9 @@ average_house_age = houses['house_age'].mean()
 # Fill NaN values in 'house_age' with the average house age
 houses['house_age'].fillna(average_house_age, inplace=True)
 
-# Verify the changes (optional)
-print(houses['house_age'].isnull().sum()) # Should print 0
-
 
 # ## Create ML Dataframes
 
- 
 # Create a separate DataFrame with numeric columns and 'listing_id'
 ml_houses = houses.select_dtypes(include=np.number)
 ml_houses['listing_id'] = houses['listing_id']
@@ -146,32 +119,9 @@ cols.insert(0, cols.pop(cols.index('listing_id')))
 
 # Reorder the DataFrame
 ml_houses = ml_houses.reindex(columns=cols)
-
  
 # Reset the index of the DataFrame
 ml_houses = ml_houses.reset_index(drop=True)
-ml_houses.head(5)
-
- 
-print(object_cols)
-
- 
-# prompt: show all the unique values in houses['lot_features']
-
-# print(houses['appliances_included'].unique())
-
- 
-# quick plot and visualize a column that you would like to encode for its feasibility
-
-column_name = 'topography'
-
-plt.figure(figsize=(12, 6))
-sns.countplot(data=houses, x=column_name)
-plt.xticks(rotation=45, ha='right')
-plt.title(f'Distribution of {column_name}')
-plt.xlabel(column_name)
-plt.ylabel('Count')
-plt.show()
 
  
 columns_to_encode = ['architecture_style','property_type',
@@ -184,7 +134,6 @@ columns_to_encode = ['architecture_style','property_type',
 split_exceptions = ['bathrooms_detail',]
 
  
-from sklearn.preprocessing import MultiLabelBinarizer
 def one_hot_encode_column(column):
     if column not in split_exceptions:
       houses[f'{column}_arr'] = houses[column].apply(lambda x: x.split(',') if isinstance(x, str) else [])
@@ -208,26 +157,17 @@ for column in columns_to_encode:
     encoded_df = one_hot_encode_column(column)
     ml_houses = pd.concat([ml_houses, encoded_df], axis=1)
 
- 
-print(len(ml_houses))
-
-
- 
-import re
 # Drop columns containing "none" case-insensitive
 ml_houses = ml_houses.drop(columns=[col for col in ml_houses.columns if re.search(r"none", col, re.IGNORECASE)])
 
 # Drop columns with '*' in their names
 ml_houses = ml_houses.drop(columns=[col for col in ml_houses.columns if '*' in col])
 ml_houses = ml_houses.fillna(0)
-print(len(ml_houses.columns))
 
- 
+# This is the final dataframe that will be used for ML
+# features == X and price == y
 features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
 price = ml_houses['price']
-print(len(price))
-print(len(features))
-
  
 # prompt: get a table of where correlating columns are put side by side along with their scores. And sort them in descending order.
 
@@ -272,15 +212,9 @@ col1_names = filtered_correlation['Column1'].unique()
 
 try:
     features = features.drop(columns=col1_names)
-    print("Columns dropped successfully.")
+    st.write("Columns dropped successfully.")
 except KeyError as e:
-    print(f"Error: Column(s) {e} not found in the features DataFrame.")
-
-# Print the resulting features DataFrame (Optional)
-# print(features.head())
-
-
-# prompt: 'kitchens', 'rooms', 'bathrooms' drop these three columns from features dataframe
+    st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
 
 # Drop 'kitchens', 'rooms', and 'bathrooms' columns if they exist
 columns_to_drop = ['kitchens', 'rooms', 'bathrooms', 'bedrooms']
@@ -288,68 +222,11 @@ for col in columns_to_drop:
     if col in features.columns:
         features = features.drop(columns=[col])
     else:
-        print(f"Warning: Column '{col}' not found in features DataFrame.")
-
- 
-features.info()
+        st.write(f"Warning: Column '{col}' not found in features DataFrame.")
 
 
-
-
-
-########    
-
-
-#########
-# Following commented out for now
-##############
 
 # Data Cleaning and Preprocessing
-# houses.dropna(axis=1, how='all', inplace=True)
-# houses.dropna(subset=['listed'], inplace=True)
-# value_counts = houses.count()
-# columns_to_drop = value_counts[value_counts < 10].index
-# houses.drop(columns=columns_to_drop, inplace=True)
-# numeric_cols = houses.select_dtypes(include=np.number).columns
-# object_cols = houses.select_dtypes(include=object).columns
-
-# # Convert numeric features
-# def calculate_house_age(year_string):
-#     if '-' in str(year_string):
-#         try:
-#             start, end = map(int, year_string.split('-'))
-#             return (start + end) / 2
-#         except ValueError:
-#             return None
-#     elif str(year_string).isdigit() and len(str(year_string)) == 4:
-#         return 2025 - int(year_string)
-#     else:
-#         return None
-
-# houses['house_year'] = houses['year_built'].fillna(houses['building_age'])
-# houses['house_age'] = houses['house_year'].apply(calculate_house_age)
-
-# Show histogram of house ages
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.hist(houses['house_age'].dropna(), bins=30, edgecolor='black')
-ax.set_xlabel('House Age')
-ax.set_ylabel('Frequency')
-ax.set_title('Distribution of House Ages')
-st.pyplot(fig)
-
-# ML Preparation
-ml_houses = houses.select_dtypes(include=np.number)
-ml_houses['listing_id'] = houses['listing_id']
-ml_houses['price'] = houses['listed']
-ml_houses['listing'] = houses['listing']
-ml_houses['price'] = ml_houses['price'].astype(str).str.replace(r'[$,]', '', regex=True)
-ml_houses['price'] = pd.to_numeric(ml_houses['price'], errors='coerce')
-
-# Drop rows with NaN in any column to keep features and price aligned
-ml_houses = ml_houses.dropna()
-
-features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
-price = ml_houses['price']
 
 # Train/Test Split
 X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=0.2, random_state=100)
@@ -363,13 +240,14 @@ if model_choice == "Random Forest":
     y_pred = model.predict(X_test)
     feature_importance = model.feature_importances_
 elif model_choice == "Linear Regression":
-    model = LinearRegression()
+    model = Ridge() 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     feature_importance = np.abs(model.coef_)
 
 # Model Evaluation
 mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
 r2 = r2_score(y_test, y_pred)
 st.subheader("Model Evaluation")
 st.write(f"{model_choice} - MSE: {mse}, R2: {r2}")
