@@ -63,6 +63,10 @@ ml_houses['price'] = houses['listed']
 ml_houses['listing'] = houses['listing']
 ml_houses['price'] = ml_houses['price'].astype(str).str.replace(r'[$,]', '', regex=True)
 ml_houses['price'] = pd.to_numeric(ml_houses['price'], errors='coerce')
+
+# Drop rows with NaN in price
+ml_houses = ml_houses.dropna(subset=['price'])
+
 features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
 price = ml_houses['price']
 
