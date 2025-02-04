@@ -176,6 +176,8 @@ st.subheader("Single Data Point Prediction")
 
 st.image(joined_df.loc[index[0], 'image-src'])
 
+st.write(f"image url {joined_df.loc[index[0], 'image-src']}")
+
 final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
 
 single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
