@@ -3,6 +3,21 @@ import pandas as pd
 import numpy as np
 import re
 
+def calculate_house_age(year_string):
+    if '-' in str(year_string):
+        try:
+            start, end = map(int, year_string.split('-'))
+            return (start + end) / 2
+        except ValueError:
+            return None  # Handle cases where splitting fails
+    elif str(year_string).isdigit() and len(str(year_string)) == 4:
+        try:
+            return 2025 - int(year_string)
+        except ValueError:
+            return None
+    else:
+        return None
+
 def feature_refining(houses):
     # prompt: st.write all the column names one by one
     houses.dropna(axis=1, how='all', inplace=True)
@@ -34,21 +49,6 @@ def feature_refining(houses):
         houses[col] = pd.to_numeric(houses[col], errors='coerce')
         houses[col] = houses[col].astype(float)
     
-    def calculate_house_age(year_string):
-        if '-' in str(year_string):
-            try:
-                start, end = map(int, year_string.split('-'))
-                return (start + end) / 2
-            except ValueError:
-                return None  # Handle cases where splitting fails
-        elif str(year_string).isdigit() and len(str(year_string)) == 4:
-            try:
-                return 2025 - int(year_string)
-            except ValueError:
-                return None
-        else:
-            return None
-
     
     houses['house_year'] = houses['year_built'].fillna(houses['building_age'])
     houses['house_age'] = houses['house_year'].apply(calculate_house_age)

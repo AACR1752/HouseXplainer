@@ -158,50 +158,57 @@ st.altair_chart(bars, use_container_width=True)
 joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
 joined_df = joined_df.merge(houses[['listing_id', 'image-src']], on='listing_id', how='inner')
 
-datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
-index = joined_df[joined_df['listing'] == datapoint].index.tolist()
+# Store the trained model and other variables in session state
+st.session_state["trained_model"] = model
+st.session_state["joined_df"] = joined_df.to_dict(orient="index")  # Stores index properly
+st.session_state["X_test"] = X_test.to_dict(orient="index")  # Stores index properly
+st.session_state["y_test"] = y_test.to_dict(orient="index")  # Stores index properly
+st.session_state["model_choice"] = model_choice
 
-single_data_point = X_test.iloc[[index[0]]]
+st.success("Model trained successfully! Go to 'Use Model' page to test it.")
 
-# single_data_point = X_test.iloc[[0]]
-prediction = model.predict(single_data_point)
-st.subheader("Single Data Point Prediction")
+# datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
+# index = joined_df[joined_df['listing'] == datapoint].index.tolist()
 
-st.image(joined_df.loc[index[0], 'image-src'])
+# single_data_point = X_test.iloc[[index[0]]]
 
-# st.write(f"image url {joined_df.loc[index[0], 'image-src']}")
+# prediction = model.predict(single_data_point)
+# st.subheader("Single Data Point Prediction")
 
-final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
+# st.image(joined_df.loc[index[0], 'image-src'])
 
-single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
+# # st.write(f"image url {joined_df.loc[index[0], 'image-src']}")
 
-st.dataframe(single_point_df)
+# final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
+# single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
 
-if model_choice == "Linear Regression":
-    # Convert the single data point to an ndarray
-    single_data_point_array = single_data_point.values
+# st.dataframe(single_point_df)
 
-    # Maintain the order of columns
-    column_order = X_test.columns.tolist()
+# if model_choice == "Linear Regression":
+#     # Convert the single data point to an ndarray
+#     single_data_point_array = single_data_point.values
 
-    output = np.multiply(model.coef_ , single_data_point_array) # this is for linear regression
+#     # Maintain the order of columns
+#     column_order = X_test.columns.tolist()
 
-    absolute_coefficients_y = np.abs(output[0])
-    percentages_y = (absolute_coefficients_y / np.sum(absolute_coefficients_y)) * 100
+#     output = np.multiply(model.coef_ , single_data_point_array) # this is for linear regression
 
-    # Combine feature names and percentages, then sort by percentages in descending order
-    sorted_features_y = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
+#     absolute_coefficients_y = np.abs(output[0])
+#     percentages_y = (absolute_coefficients_y / np.sum(absolute_coefficients_y)) * 100
 
-    # Select the top 20 features
-    top_features_y = sorted_features_y[:20]
-    top_feature_names_y, top_percentages_y = zip(*top_features_y)
+#     # Combine feature names and percentages, then sort by percentages in descending order
+#     sorted_features_y = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
 
-    # Create the plot
-    fig, ax = plt.subplots()
-    ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
-    ax.set_xlabel("Contribution (%)")
-    ax.set_title("Top 20 Feature Contributions in Percentages")
-    ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
+#     # Select the top 20 features
+#     top_features_y = sorted_features_y[:20]
+#     top_feature_names_y, top_percentages_y = zip(*top_features_y)
 
-    # Display in Streamlit
-    st.pyplot(fig)
+#     # Create the plot
+#     fig, ax = plt.subplots()
+#     ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
+#     ax.set_xlabel("Contribution (%)")
+#     ax.set_title("Top 20 Feature Contributions in Percentages")
+#     ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
+
+#     # Display in Streamlit
+#     st.pyplot(fig)
