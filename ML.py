@@ -119,7 +119,9 @@ mse = mean_squared_error(y_test, y_pred)
 rmse = np.sqrt(mse)
 r2 = r2_score(y_test, y_pred)
 st.subheader("Model Evaluation")
-st.write(f"{model_choice} - MSE: {mse}, R2: {r2}")
+
+results = [mse, rmse, r2]
+st.write(pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared']))
 
 # Feature Importance
 feature_names = X_test.columns.tolist()
@@ -159,10 +161,20 @@ bars = (
 st.altair_chart(bars, use_container_width=True)
 
 # Single Data Point Prediction
-single_data_point = X_test.iloc[[0]]
+joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
+joined_df = joined_df.merge(houses[['image-src']], on='listing_id', how='inner')
+
+datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
+
+single_data_point = X_test[joined_df['listing'] == datapoint]
+
+# single_data_point = X_test.iloc[[0]]
 prediction = model.predict(single_data_point)
 st.subheader("Single Data Point Prediction")
 
-st.image("https://cache09.housesigma.com/file/pix-itso/155816789/488b2_1.jpg?a64b0417")
-st.write(f"Predicted Price: $ {round(prediction[0])}")
 
+st.image(joined_df[joined_df['listing'] == datapoint]['image-src'].values[0], width=300)
+
+final_output = [round(prediction[0]), round(y_test.iloc[0])]
+
+st.write(pd.DataFrame(final_output, columns=['Predicted Price','Actual Price']))
