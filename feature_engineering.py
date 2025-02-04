@@ -64,7 +64,7 @@ def feature_refining(houses):
     # Create a separate DataFrame with numeric columns and 'listing_id'
     ml_houses = houses.select_dtypes(include=np.number)
     ml_houses['listing_id'] = houses['listing_id']
-    ml_houses['price'] = houses['listed']
+    ml_houses['price'] = houses['sold']
     ml_houses['listing'] = houses['listing']
 
     # Convert 'price' column to numeric, handling '$' and ','
