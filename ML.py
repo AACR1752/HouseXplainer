@@ -130,13 +130,6 @@ sorted_features = sorted(zip(feature_names, feature_importance), key=lambda x: x
 top_features = sorted_features[:20]
 top_feature_names, top_percentages = zip(*top_features)
 
-# fig, ax = plt.subplots()
-# ax.barh(top_feature_names, top_percentages, color='skyblue')
-# ax.set_xlabel("Contribution (%)")
-# ax.set_title(f"Top 20 Feature Contributions - {model_choice}")
-# ax.invert_yaxis()
-# st.pyplot(fig)
-
 # Streamlit bar chart
 
 # Create a DataFrame for Streamlit's st.barchart
@@ -203,9 +196,12 @@ if model_choice == "Linear Regression":
     top_features_y = sorted_features_y[:20]
     top_feature_names_y, top_percentages_y = zip(*top_features_y)
 
-    # Visualize as a bar chart
-    plt.barh(top_feature_names_y, top_percentages_y, color='skyblue')
-    plt.xlabel("Contribution (%)")
-    plt.title("Top 20 Feature Contributions in Percentages")
-    plt.gca().invert_yaxis()  # Invert y-axis to show the highest contribution at the top
-    plt.show()
+    # Create the plot
+    fig, ax = plt.subplots()
+    ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
+    ax.set_xlabel("Contribution (%)")
+    ax.set_title("Top 20 Feature Contributions in Percentages")
+    ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
+
+    # Display in Streamlit
+    st.pyplot(fig)
