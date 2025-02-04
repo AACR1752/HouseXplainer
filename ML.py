@@ -25,7 +25,7 @@ if uploaded_file is not None:
     st.write("Dataset Loaded Successfully!")
 else:
     st.warning("Please upload a dataset to continue.")
-    # st.stop()
+    st.stop()
 
 # Feature Engineering
 
