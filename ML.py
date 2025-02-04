@@ -162,7 +162,7 @@ joined_df = joined_df.merge(houses[['listing_id', 'image-src']], on='listing_id'
 st.session_state["trained_model"] = model
 st.session_state["joined_df"] = joined_df.to_dict(orient="index")  # Stores index properly
 st.session_state["X_test"] = X_test.to_dict(orient="index")  # Stores index properly
-st.session_state["y_test"] = y_test.to_dict(orient="index")  # Stores index properly
+st.session_state["y_test"] = y_test.to_dict()
 st.session_state["model_choice"] = model_choice
 
 st.success("Model trained successfully! Go to 'Use Model' page to test it.")
