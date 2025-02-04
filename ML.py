@@ -18,27 +18,14 @@ import feature_engineering as fe
 # Load data
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
+uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
-# Check if the file is already in session_state
-if "uploaded_file" not in st.session_state:
-    uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
-
-    if uploaded_file is not None:
-        # Save the uploaded file in session_state
-        st.session_state["uploaded_file"] = uploaded_file
-        st.write("Dataset Loaded Successfully!")
-    else:
-        st.warning("Please upload a dataset to continue.")
-        st.stop()
-else:
-    # Use the uploaded file from session_state
-    uploaded_file = st.session_state["uploaded_file"]
-    st.write("Dataset already loaded successfully.")
-
-# Use the uploaded file (e.g., clean the data)
 if uploaded_file is not None:
-    houses = btc.clean_data(uploaded_file)  # Assuming this cleans the data and returns a DataFrame
-
+    houses = btc.clean_data(uploaded_file)
+    st.write("Dataset Loaded Successfully!")
+else:
+    st.warning("Please upload a dataset to continue.")
+    st.stop()
 
 # Feature Engineering
 
