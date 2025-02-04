@@ -160,10 +160,18 @@ joined_df = joined_df.merge(houses[['listing_id', 'image-src']], on='listing_id'
 
 # Store the trained model and other variables in session state
 st.session_state["trained_model"] = model
-st.session_state["joined_df"] = joined_df.to_dict(orient="index")  # Stores index properly
-st.session_state["X_test"] = X_test.to_dict(orient="index")  # Stores index properly
-st.session_state["y_test"] = y_test.to_dict()
 st.session_state["model_choice"] = model_choice
+st.session_state["y_test"] = y_test.to_dict()
+
+# Store the DataFrame values, columns, and index in session state
+st.session_state["joined_df_values"] = joined_df.values
+st.session_state["joined_df_columns"] = joined_df.columns.tolist()
+st.session_state["joined_df_index"] = joined_df.index.tolist()
+
+# Store X_test values, columns, and index in session state
+st.session_state["X_test_values"] = X_test.values  # Store only values
+st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
+st.session_state["X_test_index"] = X_test.index.tolist()  # Store index
 
 st.success("Model trained successfully! Go to 'Use Model' page to test it.")
 
