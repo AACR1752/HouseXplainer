@@ -166,14 +166,15 @@ joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
 joined_df = joined_df.merge(houses[['listing_id', 'image-src']], on='listing_id', how='inner')
 
 datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
+index = joined_df[joined_df['listing'] == datapoint].index.tolist()
 
-single_data_point = X_test[joined_df['listing'] == datapoint]
+single_data_point = X_test.iloc[[index[0]]]
 
 # single_data_point = X_test.iloc[[0]]
 prediction = model.predict(single_data_point)
 st.subheader("Single Data Point Prediction")
 
-st.image(joined_df[joined_df['listing'] == datapoint]['image-src'].values[0], width=300)
+st.image(joined_df.loc[index[0], 'image-src'], width=300)
 
 final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
 
