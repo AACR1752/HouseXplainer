@@ -171,7 +171,7 @@ st.session_state["X_test_values"] = X_test.values  # Store only values
 st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
 st.session_state["X_test_index"] = X_test.index.tolist()  # Store index
 
-st.success("Model trained successfully! Go to 'Use Model' page to test it.")
+# st.success("Model trained successfully! Go to 'Use Model' page to test it.")
 
 # The following code should be placed in a separate Python file named 'Use Model.py' and removed from the current file.
 # Dropdown to select a value from X_test
