@@ -13,6 +13,8 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import MultiLabelBinarizer
 import re
+import bronze_to_silver_cleaning as btc
+
 
 # Load data
 st.title("House Price Prediction App")
@@ -20,7 +22,7 @@ st.sidebar.header("Upload Data")
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
 if uploaded_file is not None:
-    houses = pd.read_csv(uploaded_file)
+    houses = btc.clean_data(uploaded_file)
     st.write("Dataset Loaded Successfully!")
 else:
     st.warning("Please upload a dataset to continue.")
