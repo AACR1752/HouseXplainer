@@ -173,7 +173,6 @@ single_data_point = X_test[joined_df['listing'] == datapoint]
 prediction = model.predict(single_data_point)
 st.subheader("Single Data Point Prediction")
 
-
 st.image(joined_df[joined_df['listing'] == datapoint]['image-src'].values[0], width=300)
 
 final_output = [round(prediction[0]), round(y_test.iloc[0])]
