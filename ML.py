@@ -13,7 +13,6 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, r2_score
 import bronze_to_silver_cleaning as btc
 import feature_engineering as fe
-import io
 
 # Load data
 st.title("House Price Prediction App")
