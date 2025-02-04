@@ -13,7 +13,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, r2_score
 import bronze_to_silver_cleaning as btc
 import feature_engineering as fe
-
+import io
 
 # Load data
 st.title("House Price Prediction App")
@@ -27,27 +27,30 @@ st.sidebar.header("Upload Data")
 #     st.warning("Please upload a dataset to continue.")
 #     st.stop()
 
-# Check if the file is already in session_state
+# Step 1: Upload File and Store Contents in `st.session_state`
 if "uploaded_file" not in st.session_state:
-    uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+    st.session_state["uploaded_file"] = None
+    st.session_state["houses"] = None  # To store the cleaned DataFrame
 
-    if uploaded_file is not None:
-        # Save the uploaded file in session_state
-        st.session_state["uploaded_file"] = uploaded_file
-        st.write("Dataset Loaded Successfully!")
-    else:
-        st.warning("Please upload a dataset to continue.")
-        st.stop()
-else:
-    # Use the uploaded file from session_state
-    uploaded_file = st.session_state["uploaded_file"]
-    st.write("Dataset already loaded successfully.")
+uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
-# Feature Engineering
-# Use the uploaded file (e.g., clean the data)
 if uploaded_file is not None:
-    houses = btc.clean_data(uploaded_file)
-else: 
+    # Store the uploaded file as bytes (to prevent loss on rerun)
+    st.session_state["uploaded_file"] = uploaded_file.getvalue()
+    st.write("Dataset Uploaded Successfully!")
+
+# Step 2: Read File from `st.session_state`
+if st.session_state["uploaded_file"] is not None:
+    # Convert stored bytes back into a DataFrame
+    file_bytes = io.BytesIO(st.session_state["uploaded_file"])
+    raw_data = pd.read_csv(file_bytes)  # Read CSV
+
+    # Step 3: Perform Cleaning & Store Cleaned Data
+    houses = btc.clean_data(raw_data)
+    st.session_state["houses"] = houses.getvalue()
+
+# Step 4: Handle Missing File
+if uploaded_file is None and st.session_state["houses"] is None:
     st.warning("Please upload a dataset to continue.")
     st.stop()
 
