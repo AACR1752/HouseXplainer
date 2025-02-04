@@ -122,7 +122,7 @@ st.subheader("Model Evaluation")
 
 results = [mse, rmse, r2]
 results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared'])
-st.write("Model results",results_df)
+st.dataframe(results_df)
 
 # Feature Importance
 feature_names = X_test.columns.tolist()
@@ -179,4 +179,4 @@ final_output = [round(prediction[0]), round(y_test.iloc[0])]
 
 single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
 
-st.write("Predicted and Actual Price", single_point_df)
+st.dataframe(single_point_df)
