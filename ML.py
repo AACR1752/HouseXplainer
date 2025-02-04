@@ -20,7 +20,7 @@ st.sidebar.header("Upload Data")
 uploaded_file = None
 st.session_state["houses"] = None
 
-if st.session_state["houses"] is None and uploaded_file is None:
+if st.session_state["houses"] is None:
     uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
     if uploaded_file is not None:
         houses = btc.clean_data(uploaded_file)
