@@ -163,7 +163,7 @@ st.altair_chart(bars, use_container_width=True)
 
 # Single Data Point Prediction
 joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
-joined_df = joined_df.merge(houses[['image-src']], on='listing_id', how='inner')
+joined_df = joined_df.merge(houses[['listing_id', 'image-src']], on='listing_id', how='inner')
 
 datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
 
