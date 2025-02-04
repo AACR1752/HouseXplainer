@@ -17,11 +17,10 @@ import feature_engineering as fe
 # Load data
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
-uploaded_file = None
+uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 st.session_state["houses"] = None
 
 if st.session_state["houses"] is None:
-    uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
     if uploaded_file is not None:
         houses = btc.clean_data(uploaded_file)
         st.session_state['houses'] = houses.values
