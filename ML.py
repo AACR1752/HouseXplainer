@@ -129,12 +129,16 @@ ml_houses = ml_houses.reset_index(drop=True)
  
 columns_to_encode = ['architecture_style','property_type',
                      'driveway_parking', 'frontage_type',
-                     'sewer', 'bathrooms_detail', 'lot_features',
-                     'topography', 'exterior_feature', 'basement_type',
+                     'sewer', 
+                    #  'bathrooms_detail', 'basement_type',
+                     'lot_features',
+                     'topography', 'exterior_feature', 
                      'roof', 'waterfront_features', 'appliances_included',
                      'laundry_features', 'topography',
                      ]
-split_exceptions = ['bathrooms_detail',]
+split_exceptions = [
+    # 'bathrooms_detail',
+    ]
 
  
 def one_hot_encode_column(column):
