@@ -121,7 +121,8 @@ r2 = r2_score(y_test, y_pred)
 st.subheader("Model Evaluation")
 
 results = [mse, rmse, r2]
-st.write(pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared']))
+results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared'])
+st.write("Model results",results_df)
 
 # Feature Importance
 feature_names = X_test.columns.tolist()
@@ -177,4 +178,6 @@ st.image(joined_df[joined_df['listing'] == datapoint]['image-src'].values[0], wi
 
 final_output = [round(prediction[0]), round(y_test.iloc[0])]
 
-st.write(pd.DataFrame(final_output, columns=['Predicted Price','Actual Price']))
+single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
+
+st.write("Predicted and Actual Price", single_point_df)
