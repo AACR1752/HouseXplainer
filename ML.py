@@ -18,39 +18,19 @@ import io
 # Load data
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
-# uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
-
-# if uploaded_file is not None:
-#     houses = btc.clean_data(uploaded_file)
-#     st.write("Dataset Loaded Successfully!")
-# else:
-#     st.warning("Please upload a dataset to continue.")
-#     st.stop()
-
-# Step 1: Upload File and Store Contents in `st.session_state`
-if "uploaded_file" not in st.session_state:
-    st.session_state["uploaded_file"] = None
-    st.session_state["houses"] = None  # To store the cleaned DataFrame
-
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
-if uploaded_file is not None:
-    # Store the uploaded file as bytes (to prevent loss on rerun)
-    st.session_state["uploaded_file"] = uploaded_file.getvalue()
-    st.write("Dataset Uploaded Successfully!")
-
-# Step 2: Read File from `st.session_state`
-if st.session_state["uploaded_file"] is not None:
-    # Convert stored bytes back into a DataFrame
-    file_bytes = io.BytesIO(st.session_state["uploaded_file"])
-    raw_data = pd.read_csv(file_bytes)  # Read CSV
-
-    # Step 3: Perform Cleaning & Store Cleaned Data
-    houses = btc.clean_data(raw_data)
-    st.session_state["houses"] = houses.getvalue()
-
-# Step 4: Handle Missing File
-if uploaded_file is None and st.session_state["houses"] is None:
+if uploaded_file is not None and st.session_state["houses"] is None:
+    houses = btc.clean_data(uploaded_file)
+    st.session_state['houses'] = houses.values
+    st.session_state["houses_raw_columns"] = houses.columns.tolist()
+    st.session_state["houses_raw_index"] = houses.index.tolist()
+    st.write("Dataset Loaded Successfully!")
+elif st.session_state["houses"] is not None:
+    houses = pd.DataFrame(st.session_state['houses'], 
+                          columns=st.session_state["houses_raw_columns"], 
+                          index=st.session_state["houses_raw_index"])
+else:
     st.warning("Please upload a dataset to continue.")
     st.stop()
 
@@ -197,51 +177,3 @@ st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
 st.session_state["X_test_index"] = X_test.index.tolist()  # Store index
 
 st.success("Model trained successfully! Go to 'Use Model' page to test it.")
-
-# The following code should be placed in a separate Python file named 'Use Model.py' and removed from the current file.
-# Dropdown to select a value from X_test
-# datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
-
-# index = joined_df[joined_df['listing'] == datapoint].index.tolist()
-# single_data_point = X_test.iloc[[index[0]]]
-
-# prediction = model.predict(single_data_point)
-# st.subheader("Single Data Point Prediction")
-
-# st.image(joined_df.loc[index[0], 'image-src'])
-
-# # st.write(f"image url {joined_df.loc[index[0], 'image-src']}")
-
-# final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
-# single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
-
-# st.dataframe(single_point_df)
-
-# if model_choice == "Linear Regression":
-    # Convert the single data point to an ndarray
-    # single_data_point_array = single_data_point.values
-
-    # # Maintain the order of columns
-    # column_order = X_test.columns.tolist()
-
-    # output = np.multiply(model.coef_ , single_data_point_array) # this is for linear regression
-
-    # absolute_coefficients_y = np.abs(output[0])
-    # percentages_y = (absolute_coefficients_y / np.sum(absolute_coefficients_y)) * 100
-
-    # # Combine feature names and percentages, then sort by percentages in descending order
-    # sorted_features_y = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
-
-    # # Select the top 20 features
-    # top_features_y = sorted_features_y[:20]
-    # top_feature_names_y, top_percentages_y = zip(*top_features_y)
-
-    # # Create the plot
-    # fig, ax = plt.subplots()
-    # ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
-    # ax.set_xlabel("Contribution (%)")
-    # ax.set_title("Top 20 Feature Contributions in Percentages")
-    # ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
-
-    # # Display in Streamlit
-    # st.pyplot(fig)
