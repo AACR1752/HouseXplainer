@@ -66,7 +66,7 @@ object_cols = houses.select_dtypes(include=object).columns
 numeric_features = ['rooms', 'bedrooms', 'bedrooms_above_ground',
                 'bedrooms_below_ground', 'bathrooms', '2_piece_bathrooms',
                 '3_piece_bathrooms', '4_piece_bathrooms', 'garage',
-                'frontage_length', 'depth', 'fireplace_total']
+                'frontage_length', 'depth']
 
  
 for col in numeric_features:
