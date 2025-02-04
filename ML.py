@@ -174,7 +174,7 @@ single_data_point = X_test.iloc[[index[0]]]
 prediction = model.predict(single_data_point)
 st.subheader("Single Data Point Prediction")
 
-st.image(joined_df.loc[index[0], 'image-src'], width=300)
+st.image(joined_df.loc[index[0], 'image-src'])
 
 final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
 
