@@ -11,7 +11,7 @@ if "trained_model" in st.session_state and "X_test" in st.session_state:
     # Convert back to DataFrame
     X_test = pd.DataFrame.from_dict(st.session_state["X_test"], orient="index")  # Restores index
     joined_df = pd.DataFrame.from_dict(st.session_state["joined_df"], orient="index")  # Restores index
-    y_test = pd.DataFrame.from_dict(st.session_state["y_test"], orient="index")  # Restores index
+    y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
     model_choice = st.session_state["model_choice"]
 
     # Dropdown to select a value from X_test
