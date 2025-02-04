@@ -9,8 +9,14 @@ if "trained_model" in st.session_state and "X_test" in st.session_state:
     model = st.session_state["trained_model"]
 
     # Convert back to DataFrame
-    X_test = pd.DataFrame.from_dict(st.session_state["X_test"], orient="index")  # Restores index
-    joined_df = pd.DataFrame.from_dict(st.session_state["joined_df"], orient="index")  # Restores index
+    X_test = pd.DataFrame(st.session_state["X_test_values"], 
+                          columns=st.session_state["X_test_columns"], 
+                          index=st.session_state["X_test_index"])
+    
+    joined_df = pd.DataFrame(st.session_state["joined_df_values"], 
+                             columns=st.session_state["joined_df_columns"], 
+                             index=st.session_state["joined_df_index"])
+    
     y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
     model_choice = st.session_state["model_choice"]
 
