@@ -120,7 +120,7 @@ rmse = np.sqrt(mse)
 r2 = r2_score(y_test, y_pred)
 st.subheader("Model Evaluation")
 
-results = [mse, rmse, r2]
+results = [[mse, rmse, r2]]
 results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared'])
 st.dataframe(results_df)
 
@@ -175,7 +175,7 @@ st.subheader("Single Data Point Prediction")
 
 st.image(joined_df[joined_df['listing'] == datapoint]['image-src'].values[0], width=300)
 
-final_output = [round(prediction[0]), round(y_test.iloc[0])]
+final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
 
 single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
 
