@@ -171,28 +171,28 @@ st.session_state["X_test_values"] = X_test.values  # Store only values
 st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
 st.session_state["X_test_index"] = X_test.index.tolist()  # Store index
 
-# st.success("Model trained successfully! Go to 'Use Model' page to test it.")
+st.success("Model trained successfully! Go to 'Use Model' page to test it.")
 
 # The following code should be placed in a separate Python file named 'Use Model.py' and removed from the current file.
 # Dropdown to select a value from X_test
-datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
+# datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
 
-index = joined_df[joined_df['listing'] == datapoint].index.tolist()
-single_data_point = X_test.iloc[[index[0]]]
+# index = joined_df[joined_df['listing'] == datapoint].index.tolist()
+# single_data_point = X_test.iloc[[index[0]]]
 
-prediction = model.predict(single_data_point)
-st.subheader("Single Data Point Prediction")
+# prediction = model.predict(single_data_point)
+# st.subheader("Single Data Point Prediction")
 
-st.image(joined_df.loc[index[0], 'image-src'])
+# st.image(joined_df.loc[index[0], 'image-src'])
 
-# st.write(f"image url {joined_df.loc[index[0], 'image-src']}")
+# # st.write(f"image url {joined_df.loc[index[0], 'image-src']}")
 
-final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
-single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
+# final_output = [[round(prediction[0]), round(y_test.iloc[0])]]
+# single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
 
-st.dataframe(single_point_df)
+# st.dataframe(single_point_df)
 
-if model_choice == "Linear Regression":
+# if model_choice == "Linear Regression":
     # Convert the single data point to an ndarray
     single_data_point_array = single_data_point.values
 

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 st.title("Use the Trained Model")
 
-if "trained_model" in st.session_state and "X_test" in st.session_state:
+if "trained_model" in st.session_state:
     model = st.session_state["trained_model"]
 
     # Convert back to DataFrame
