@@ -18,16 +18,38 @@ import feature_engineering as fe
 # Load data
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+# uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
-if uploaded_file is not None:
-    houses = btc.clean_data(uploaded_file)
-    st.write("Dataset Loaded Successfully!")
+# if uploaded_file is not None:
+#     houses = btc.clean_data(uploaded_file)
+#     st.write("Dataset Loaded Successfully!")
+# else:
+#     st.warning("Please upload a dataset to continue.")
+#     st.stop()
+
+# Check if the file is already in session_state
+if "uploaded_file" not in st.session_state:
+    uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+
+    if uploaded_file is not None:
+        # Save the uploaded file in session_state
+        st.session_state["uploaded_file"] = uploaded_file
+        st.write("Dataset Loaded Successfully!")
+    else:
+        st.warning("Please upload a dataset to continue.")
+        st.stop()
 else:
-    st.warning("Please upload a dataset to continue.")
-    st.stop()
+    # Use the uploaded file from session_state
+    uploaded_file = st.session_state["uploaded_file"]
+    st.write("Dataset already loaded successfully.")
 
 # Feature Engineering
+# Use the uploaded file (e.g., clean the data)
+if uploaded_file is not None:
+    houses = btc.clean_data(uploaded_file)
+else: 
+    st.warning("Please upload a dataset to continue.")
+    st.stop()
 
 ml_houses = fe.feature_refining(houses)
 
@@ -194,29 +216,29 @@ st.success("Model trained successfully! Go to 'Use Model' page to test it.")
 
 # if model_choice == "Linear Regression":
     # Convert the single data point to an ndarray
-    single_data_point_array = single_data_point.values
+    # single_data_point_array = single_data_point.values
 
-    # Maintain the order of columns
-    column_order = X_test.columns.tolist()
+    # # Maintain the order of columns
+    # column_order = X_test.columns.tolist()
 
-    output = np.multiply(model.coef_ , single_data_point_array) # this is for linear regression
+    # output = np.multiply(model.coef_ , single_data_point_array) # this is for linear regression
 
-    absolute_coefficients_y = np.abs(output[0])
-    percentages_y = (absolute_coefficients_y / np.sum(absolute_coefficients_y)) * 100
+    # absolute_coefficients_y = np.abs(output[0])
+    # percentages_y = (absolute_coefficients_y / np.sum(absolute_coefficients_y)) * 100
 
-    # Combine feature names and percentages, then sort by percentages in descending order
-    sorted_features_y = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
+    # # Combine feature names and percentages, then sort by percentages in descending order
+    # sorted_features_y = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
 
-    # Select the top 20 features
-    top_features_y = sorted_features_y[:20]
-    top_feature_names_y, top_percentages_y = zip(*top_features_y)
+    # # Select the top 20 features
+    # top_features_y = sorted_features_y[:20]
+    # top_feature_names_y, top_percentages_y = zip(*top_features_y)
 
-    # Create the plot
-    fig, ax = plt.subplots()
-    ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
-    ax.set_xlabel("Contribution (%)")
-    ax.set_title("Top 20 Feature Contributions in Percentages")
-    ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
+    # # Create the plot
+    # fig, ax = plt.subplots()
+    # ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
+    # ax.set_xlabel("Contribution (%)")
+    # ax.set_title("Top 20 Feature Contributions in Percentages")
+    # ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
 
-    # Display in Streamlit
-    st.pyplot(fig)
+    # # Display in Streamlit
+    # st.pyplot(fig)
