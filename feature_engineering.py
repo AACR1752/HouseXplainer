@@ -35,10 +35,8 @@ def feature_refining(houses):
     # Drop the identified columns
     houses.drop(columns=columns_to_drop, inplace=True)
 
-    # prompt: separate out the columns which are numbers and the ones which are object (string)
-
-    numeric_cols = houses.select_dtypes(include=np.number).columns
-    object_cols = houses.select_dtypes(include=object).columns
+    # numeric_cols = houses.select_dtypes(include=np.number).columns
+    # object_cols = houses.select_dtypes(include=object).columns
     
     numeric_features = ['rooms', 'bedrooms', 'bedrooms_above_ground',
                     'bedrooms_below_ground', 'bathrooms', '2_piece_bathrooms',
