@@ -1,10 +1,7 @@
 import streamlit as st
 import altair as alt
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import plotly.express as px
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.tree import DecisionTreeRegressor
@@ -18,7 +15,6 @@ import feature_engineering as fe
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
-# st.session_state["houses"] = None
 
 if uploaded_file is not None and "houses" not in st.session_state:
     houses = btc.clean_data(uploaded_file)
@@ -40,8 +36,6 @@ ml_houses = fe.feature_refining(houses)
 # features == X and price == y
 features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
 price = ml_houses['price']
- 
-# prompt: get a table of where correlating columns are put side by side along with their scores. And sort them in descending order.
 
 # Calculate the correlation matrix
 correlation_matrix = features.corr()
@@ -66,9 +60,6 @@ correlation_table = pd.DataFrame({
 })
 # correlation_table
 
- 
-# prompt: Using dataframe correlation_table: take rows where the correlation score is greater than 0.8. then in that subset, take column 1 and all the unique names in that small subset. then drop these columns from the features table
-
 # Filter the correlation table to include only rows where the correlation score is greater than 0.8
 filtered_correlation = correlation_table[correlation_table['CorrelationScore'] > 0.8]
 
@@ -84,7 +75,7 @@ col1_names = filtered_correlation['Column1'].unique()
 
 try:
     features = features.drop(columns=col1_names)
-    st.write("Columns dropped successfully.")
+    st.write("Correlated columns dropped successfully.")
 except KeyError as e:
     st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
 
@@ -95,8 +86,6 @@ for col in columns_to_drop:
         features = features.drop(columns=[col])
     else:
         st.write(f"Warning: Column '{col}' not found in features DataFrame.")
-
-
 
 # Data Cleaning and Preprocessing
 
@@ -139,7 +128,6 @@ top_feature_names, top_percentages = zip(*top_features)
 df = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
 
 # Plot using Streamlit's altair_chart
-
 source = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
 
 # Create the Altair bar chart
