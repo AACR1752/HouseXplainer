@@ -18,18 +18,14 @@ import feature_engineering as fe
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
-st.session_state["houses"] = None
+# st.session_state["houses"] = None
 
-if st.session_state["houses"] is None:
-    if uploaded_file is not None:
-        houses = btc.clean_data(uploaded_file)
-        st.session_state['houses'] = houses.values
-        st.session_state["houses_raw_columns"] = houses.columns.tolist()
-        st.session_state["houses_raw_index"] = houses.index.tolist()
-        st.write("Dataset Loaded Successfully!")
-    else:
-        st.warning("Please upload a dataset to continue.")
-        st.stop()
+if uploaded_file is not None and "houses" not in st.session_state:
+    houses = btc.clean_data(uploaded_file)
+    st.session_state['houses'] = houses.values
+    st.session_state["houses_raw_columns"] = houses.columns.tolist()
+    st.session_state["houses_raw_index"] = houses.index.tolist()
+    st.write("Dataset Loaded Successfully!")
 elif st.session_state["houses"] is not None:
     houses = pd.DataFrame(st.session_state['houses'], 
                           columns=st.session_state["houses_raw_columns"], 
