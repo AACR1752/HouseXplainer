@@ -138,21 +138,8 @@ bars = (
     .properties(width=800, height=600, title="Feature Importance")
 )
 
-
-# Add Labels
-text = bars.mark_text(
-    align="left",
-    baseline="middle",
-    dx=5,  # Offset for better readability
-).encode(
-    text=alt.Text("Contribution (%):Q", format=",")  # Format with commas
-)
-
-# Combine Chart + Labels
-chart = bars + text
-
 # Display in Streamlit
-st.altair_chart(chart, use_container_width=True)
+st.altair_chart(bars, use_container_width=True)
 
 # Single Data Point Prediction
 joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
