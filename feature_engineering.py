@@ -92,6 +92,7 @@ def feature_refining(houses):
                         'lot_features',
                         'topography', 'exterior_feature', 
                         'roof', 'waterfront_features', 'appliances_included',
+                        'appliances_excluded',
                         'laundry_features', 'topography',
                         ]
     split_exceptions = [
