@@ -151,7 +151,7 @@ bars = (
         y=alt.Y("Feature:N", title="Feature", sort="-x"),  # Sorting by Contribution
         color=alt.Color("Feature:N", legend=None),  # Optional: Color coding
     )
-    .properties(width=500, height=1000, title="Feature Importance")
+    .properties(width=1200, height=1000, title="Feature Importance")
 )
 
 # Display in Streamlit
