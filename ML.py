@@ -123,9 +123,6 @@ top_feature_names, top_percentages = zip(*top_features)
 
 # Streamlit bar chart
 
-# Create a DataFrame for Streamlit's st.barchart
-df = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
-
 # Plot using Streamlit's altair_chart
 source = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
 
@@ -138,11 +135,24 @@ bars = (
         y=alt.Y("Feature:N", title="Feature", sort="-x"),  # Sorting by Contribution
         color=alt.Color("Feature:N", legend=None),  # Optional: Color coding
     )
-    .properties(width=700, height=500, title="Feature Importance")
+    .properties(width=800, height=600, title="Feature Importance")
 )
 
+
+# Add Labels
+text = bars.mark_text(
+    align="left",
+    baseline="middle",
+    dx=5,  # Offset for better readability
+).encode(
+    text=alt.Text("Contribution (%):Q", format=",")  # Format with commas
+)
+
+# Combine Chart + Labels
+chart = bars + text
+
 # Display in Streamlit
-st.altair_chart(bars, use_container_width=True)
+st.altair_chart(chart, use_container_width=True)
 
 # Single Data Point Prediction
 joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
