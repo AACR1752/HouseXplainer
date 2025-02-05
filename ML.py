@@ -26,7 +26,7 @@ if uploaded_file is not None and "houses" not in st.session_state:
     st.session_state["houses_raw_columns"] = houses.columns.tolist()
     st.session_state["houses_raw_index"] = houses.index.tolist()
     st.write("Dataset Loaded Successfully!")
-elif st.session_state["houses"] is not None:
+elif "houses" in st.session_state:
     houses = pd.DataFrame(st.session_state['houses'], 
                           columns=st.session_state["houses_raw_columns"], 
                           index=st.session_state["houses_raw_index"])
