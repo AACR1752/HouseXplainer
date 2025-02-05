@@ -69,7 +69,7 @@ if "trained_model" in st.session_state:
 
             # Display in Streamlit
             st.pyplot(fig)
-            
+
         elif model_choice == "Random Forest":
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(single_data_point)
@@ -99,7 +99,7 @@ if "trained_model" in st.session_state:
 
             # Create the figure and plot
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.barh(top_20_features_sorted, top_20_percentages_sorted, color="gray")  # Single color
+            ax.barh(top_20_features_sorted, top_20_percentages_sorted, color='skyblue')  # Single color
             ax.set_xlabel("Contribution (%)")
             ax.set_ylabel("Feature")
             ax.set_title("Top 20 Features Impacting House Price Prediction")
