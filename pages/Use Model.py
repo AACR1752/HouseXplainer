@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import shap
+
 
 st.title("Use the Trained Model")
 
@@ -67,7 +69,44 @@ if "trained_model" in st.session_state:
 
             # Display in Streamlit
             st.pyplot(fig)
+            
+        elif model_choice == "Random Forest":
+            explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(single_data_point)
 
+            # Get feature names
+            feature_names = single_data_point.columns.tolist()
+
+            # Convert SHAP values into a structured array
+            shap_values_single = shap_values[0]  # Extract SHAP values for this instance
+
+            # Sort features by absolute impact
+            sorted_indices = np.argsort(np.abs(shap_values_single))[::-1]  # Descending order
+            top_20_indices = sorted_indices[:20]  # Select top 20 features
+
+            # Extract top 20 feature names and their SHAP values
+            top_20_features = [feature_names[i] for i in top_20_indices]
+            top_20_shap_values = shap_values_single[top_20_indices]
+
+            absolute_shap_values = np.abs(top_20_shap_values)
+            percentages = (absolute_shap_values / np.sum(absolute_shap_values)) * 100
+
+            # Sort features by percentage contribution in descending order
+            sorted_indices = np.argsort(percentages)[::-1]
+            top_20_features_sorted = [top_20_features[i] for i in sorted_indices]
+            top_20_percentages_sorted = percentages[sorted_indices]
+
+
+            # Create the figure and plot
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.barh(top_20_features_sorted, top_20_percentages_sorted, color="gray")  # Single color
+            ax.set_xlabel("Contribution (%)")
+            ax.set_ylabel("Feature")
+            ax.set_title("Top 20 Features Impacting House Price Prediction")
+            ax.invert_yaxis()  # Highest contribution at the top
+
+            # Display the plot in Streamlit
+            st.pyplot(fig)
 
 else:
     st.error("No trained model or test data found! Please train the model first.")
