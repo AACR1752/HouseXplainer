@@ -95,13 +95,13 @@ if "trained_model" in st.session_state:
             top_20_feature_names, top_20_percentages = zip(*top_20_features)
 
             # Define colors based on SHAP values
-            colors = ['red' if shap_values_single[feature_names.index(name)] < 0 else 'green' for name in top_20_feature_names]
+            # colors = ['red' if shap_values_single[feature_names.index(name)] < 0 else 'green' for name in top_20_feature_names]
 
             # Create figure
             fig, ax = plt.subplots(figsize=(10, 6))
 
             # Plot horizontal bar chart
-            ax.barh(top_20_feature_names, top_20_percentages, color=colors)
+            ax.barh(top_20_feature_names, top_20_percentages, color="skyblue")
 
             # Set labels and title
             ax.set_xlabel("Contribution (%)")
