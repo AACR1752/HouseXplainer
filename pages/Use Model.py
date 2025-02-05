@@ -41,7 +41,7 @@ if "trained_model" in st.session_state:
 
         st.dataframe(single_point_df)
 
-        if model_choice == "Linear Regression":
+        if model_choice == "Ridge Regression":
             # Convert the single data point to an ndarray
             single_data_point_array = single_data_point.values
 
@@ -80,32 +80,38 @@ if "trained_model" in st.session_state:
             # Convert SHAP values into a structured array
             shap_values_single = shap_values[0]  # Extract SHAP values for this instance
 
-            # Sort features by absolute impact
-            sorted_indices = np.argsort(np.abs(shap_values_single))[::-1]  # Descending order
-            top_20_indices = sorted_indices[:20]  # Select top 20 features
-
-            # Extract top 20 feature names and their SHAP values
-            top_20_features = [feature_names[i] for i in top_20_indices]
-            top_20_shap_values = shap_values_single[top_20_indices]
-
-            absolute_shap_values = np.abs(top_20_shap_values)
+            # Calculate absolute SHAP values and convert to percentages
+            absolute_shap_values = np.abs(shap_values_single)
             percentages = (absolute_shap_values / np.sum(absolute_shap_values)) * 100
 
+            # Combine feature names and percentages
+            feature_importance = list(zip(feature_names, percentages))
+
             # Sort features by percentage contribution in descending order
-            sorted_indices = np.argsort(percentages)[::-1]
-            top_20_features_sorted = [top_20_features[i] for i in sorted_indices]
-            top_20_percentages_sorted = percentages[sorted_indices]
+            sorted_feature_importance = sorted(feature_importance, key=lambda x: x[1], reverse=True)
 
+            # Select the top 20 features
+            top_20_features = sorted_feature_importance[:20]
+            top_20_feature_names, top_20_percentages = zip(*top_20_features)
 
-            # Create the figure and plot
+            # Define colors based on SHAP values
+            colors = ['red' if shap_values_single[feature_names.index(name)] < 0 else 'green' for name in top_20_feature_names]
+
+            # Create figure
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.barh(top_20_features_sorted, top_20_percentages_sorted, color='skyblue')  # Single color
+
+            # Plot horizontal bar chart
+            ax.barh(top_20_feature_names, top_20_percentages, color=colors)
+
+            # Set labels and title
             ax.set_xlabel("Contribution (%)")
             ax.set_ylabel("Feature")
             ax.set_title("Top 20 Features Impacting House Price Prediction")
-            ax.invert_yaxis()  # Highest contribution at the top
 
-            # Display the plot in Streamlit
+            # Invert y-axis to show the highest contribution at the top
+            ax.invert_yaxis()
+
+            # Display plot in Streamlit
             st.pyplot(fig)
 
 else:

@@ -3,10 +3,9 @@ import altair as alt
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
+from sklearn.linear_model import Ridge
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, r2_score
 import bronze_to_silver_cleaning as btc
 import feature_engineering as fe
@@ -93,14 +92,14 @@ for col in columns_to_drop:
 X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=0.2, random_state=100)
 
 # Sidebar model selection
-model_choice = st.sidebar.selectbox("Select Model", ["Linear Regression", "Random Forest"])
+model_choice = st.sidebar.selectbox("Select Model", ["Ridge Regression", "Random Forest"])
 
 if model_choice == "Random Forest":
     model = RandomForestRegressor(n_estimators=100, random_state=100)
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     feature_importance = model.feature_importances_
-elif model_choice == "Linear Regression":
+elif model_choice == "Ridge Regression":
     model = Ridge() 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
