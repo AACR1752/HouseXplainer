@@ -45,8 +45,8 @@ def clean_data(file):
     df_pandas = df_pandas.rename(columns={'listing-href': 'listing_url'})
 
     # Normalize the JSON column
-    json_df_1 = pd.json_normalize(df_pandas['key_facts'])
-    json_df_2 = pd.json_normalize(df_pandas['details'])
+    json_df_1 = pd.json_normalize(df_pandas['key_facts']).set_index(df_pandas.index)
+    json_df_2 = pd.json_normalize(df_pandas['details']).set_index(df_pandas.index)
     # json_df_3 = pd.json_normalize(df_pandas['rooms'])
 
     # Identify common columns
