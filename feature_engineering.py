@@ -87,7 +87,7 @@ def feature_refining(houses):
     
     columns_to_encode = ['architecture_style','property_type',
                         'driveway_parking', 'frontage_type',
-                        'sewer', 
+                        # 'sewer', 
                         'bathrooms_detail', 'basement_type',
                         'lot_features',
                         'topography', 'exterior_feature', 

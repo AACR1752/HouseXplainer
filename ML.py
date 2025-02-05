@@ -80,7 +80,7 @@ except KeyError as e:
     st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
 
 # Drop 'kitchens', 'rooms', and 'bathrooms' columns if they exist
-columns_to_drop = ['kitchens', 'rooms', 'bathrooms', 'bedrooms']
+columns_to_drop = ['kitchens', 'rooms', 'bathrooms', 'bedrooms', 'depth']
 for col in columns_to_drop:
     if col in features.columns:
         features = features.drop(columns=[col])
