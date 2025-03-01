@@ -72,66 +72,60 @@ if "trained_model" in st.session_state:
                 {"name": top_names, "score": top_scores}
             ]
 
+
             # Title
             st.title("🏆 Feature Importance Leaderboard")
 
-            # Create three columns for the podium
-            col4, col2, col1, col3, col5 = st.columns([1, 1.2, 1.5, 1.2, 1])  # Adjust column widths for positioning
-
-            # 1st Place (Center)
-            with col1:
+            # 1st Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
                         <h2>🥇 {top_names[0]}</h2>
-                        <h1>{top_scores[0]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-            # 2nd Place (Left)
-            with col2:
+            # 2nd Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
                         <h2>🥈 {top_names[1]}</h2>
-                        <h1>{top_scores[1]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-            # 3rd Place (Right)
-            with col3:
+            # 3rd Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
                         <h2>🥉 {top_names[2]}</h2>
-                        <h1>{top_scores[2]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-            with col4:
+            # 4th Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
                         <h2>🏅 {top_names[3]}</h2>
-                        <h1>{top_scores[3]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-
-            with col5:
+            # 5th Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
                         <h2>🎖️ {top_names[4]}</h2>
-                        <h1>{top_scores[4]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -187,11 +181,8 @@ if "trained_model" in st.session_state:
             # Title
             st.title("🏆 Feature Importance Leaderboard")
 
-            # Create three columns for the podium
-            col4, col2, col1, col3, col5 = st.columns([1, 1.2, 1.5, 1.2, 1])  # Adjust column widths for positioning
-
-            # 1st Place (Center)
-            with col1:
+            # 1st Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
@@ -202,8 +193,8 @@ if "trained_model" in st.session_state:
                     unsafe_allow_html=True,
                 )
 
-            # 2nd Place (Left)
-            with col2:
+            # 2nd Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
@@ -214,8 +205,8 @@ if "trained_model" in st.session_state:
                     unsafe_allow_html=True,
                 )
 
-            # 3rd Place (Right)
-            with col3:
+            # 3rd Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
@@ -226,7 +217,8 @@ if "trained_model" in st.session_state:
                     unsafe_allow_html=True,
                 )
 
-            with col4:
+            # 4th Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
@@ -237,8 +229,8 @@ if "trained_model" in st.session_state:
                     unsafe_allow_html=True,
                 )
 
-
-            with col5:
+            # 5th Place
+            with st.container():
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
