@@ -70,56 +70,56 @@ if "trained_model" in st.session_state:
             # Display in Streamlit
             st.pyplot(fig)
 
-            # Convert tuple to list and extract strings
-            top_names = [str(name) for name in top_feature_names_y]
-            top_scores = [float(score) for score in top_percentages_y]
+        # Convert tuple to list and extract strings
+        top_names = [str(name) for name in top_feature_names_y]
+        top_scores = [float(score) for score in top_percentages_y]
 
-            # Sample top features and their contributions
-            top_features = [
-                {"name": top_names, "score": top_scores}
-            ]
+        # Sample top features and their contributions
+        top_features = [
+            {"name": top_names, "score": top_scores}
+        ]
 
-            # Title
-            st.title("🏆 Feature Importance Leaderboard")
+        # Title
+        st.title("🏆 Feature Importance Leaderboard")
 
-            # Create three columns for the podium
-            col2, col1, col3 = st.columns([1, 1.2, 1])  # Adjust column widths for positioning
+        # Create three columns for the podium
+        col2, col1, col3 = st.columns([1, 1.2, 1])  # Adjust column widths for positioning
 
-            # 1st Place (Center)
-            with col1:
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
-                        <h2>🥇 {top_names[0]["name"]}</h2>
-                        <h1>{top_scores[0]["score"]}</h1>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+        # 1st Place (Center)
+        with col1:
+            st.markdown(
+                f"""
+                <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
+                    <h2>🥇 {top_names[0]}</h2>
+                    <h1>{top_scores[0]}</h1>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-            # 2nd Place (Left)
-            with col2:
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
-                        <h2>🥈 {top_names[1]["name"]}</h2>
-                        <h1>{top_scores[1]["score"]}</h1>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+        # 2nd Place (Left)
+        with col2:
+            st.markdown(
+                f"""
+                <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
+                    <h2>🥈 {top_names[1]}</h2>
+                    <h1>{top_scores[1]}</h1>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-            # 3rd Place (Right)
-            with col3:
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
-                        <h2>🥉 {top_names[2]["name"]}</h2>
-                        <h1>{top_scores[2]["score"]}</h1>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+        # 3rd Place (Right)
+        with col3:
+            st.markdown(
+                f"""
+                <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
+                    <h2>🥉 {top_names[2]}</h2>
+                    <h1>{top_scores[2]}</h1>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
             # Celebration Effect (Optional)
             st.balloons()  # Adds a fun animation effect!
