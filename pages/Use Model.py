@@ -90,8 +90,8 @@ if "trained_model" in st.session_state:
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
-                        <h2>🥇 {top_features[0]["name"]}</h2>
-                        <h1>{top_features[0]["score"]}</h1>
+                        <h2>🥇 {top_names[0]["name"]}</h2>
+                        <h1>{top_scores[0]["score"]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -102,8 +102,8 @@ if "trained_model" in st.session_state:
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
-                        <h2>🥈 {top_features[1]["name"]}</h2>
-                        <h1>{top_features[1]["score"]}</h1>
+                        <h2>🥈 {top_names[1]["name"]}</h2>
+                        <h1>{top_scores[1]["score"]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -114,8 +114,8 @@ if "trained_model" in st.session_state:
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
-                        <h2>🥉 {top_features[2]["name"]}</h2>
-                        <h1>{top_features[2]["score"]}</h1>
+                        <h2>🥉 {top_names[2]["name"]}</h2>
+                        <h1>{top_scores[2]["score"]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
