@@ -70,6 +70,58 @@ if "trained_model" in st.session_state:
             # Display in Streamlit
             st.pyplot(fig)
 
+            # Sample top features and their contributions
+            top_features = [
+                {"name": "Feature A", "score": 8790},  # 1st place
+                {"name": "Feature B", "score": 6970},  # 2nd place
+                {"name": "Feature C", "score": 5890},  # 3rd place
+            ]
+
+            # Title
+            st.title("🏆 Feature Importance Leaderboard")
+
+            # Create three columns for the podium
+            col2, col1, col3 = st.columns([1, 1.2, 1])  # Adjust column widths for positioning
+
+            # 1st Place (Center)
+            with col1:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
+                        <h2>🥇 {top_features[0]["name"]}</h2>
+                        <h1>{top_features[0]["score"]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            # 2nd Place (Left)
+            with col2:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
+                        <h2>🥈 {top_features[1]["name"]}</h2>
+                        <h1>{top_features[1]["score"]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            # 3rd Place (Right)
+            with col3:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
+                        <h2>🥉 {top_features[2]["name"]}</h2>
+                        <h1>{top_features[2]["score"]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            # Celebration Effect (Optional)
+            st.balloons()  # Adds a fun animation effect!
+
         elif model_choice == "Random Forest":
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(single_data_point)
