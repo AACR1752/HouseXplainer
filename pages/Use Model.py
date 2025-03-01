@@ -72,7 +72,7 @@ if "trained_model" in st.session_state:
 
             # Sample top features and their contributions
             top_features = [
-                {"name": str(top_feature_names_y), "score": int(top_features_y)}
+                {"name": str(top_feature_names_y), "score": top_features_y}
             ]
 
             # Title
