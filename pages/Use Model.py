@@ -70,9 +70,13 @@ if "trained_model" in st.session_state:
             # Display in Streamlit
             st.pyplot(fig)
 
+            # Convert tuple to list and extract strings
+            top_names = [str(name) for name in top_feature_names_y]
+            top_scores = [float(score) for score in top_percentages_y]
+
             # Sample top features and their contributions
             top_features = [
-                {"name": str(top_feature_names_y), "score": top_features_y}
+                {"name": top_names, "score": top_scores}
             ]
 
             # Title
