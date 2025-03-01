@@ -29,6 +29,9 @@ if "trained_model" in st.session_state:
     single_data_point = X_test.iloc[[index[0]]]
 
     if st.button("Predict"):
+        # Celebration Effect (Optional)
+        st.balloons()  # Adds a fun animation effect!
+
         prediction = model.predict(single_data_point)
         st.subheader("Single Data Point Prediction")
 
@@ -60,16 +63,6 @@ if "trained_model" in st.session_state:
             top_features_y = sorted_features_y[:20]
             top_feature_names_y, top_percentages_y = zip(*top_features_y)
 
-            # Create the plot
-            fig, ax = plt.subplots()
-            ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
-            ax.set_xlabel("Contribution (%)")
-            ax.set_title("Top 20 Feature Contributions in Percentages")
-            ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
-
-            # Display in Streamlit
-            st.pyplot(fig)
-
             # Convert tuple to list and extract strings
             top_names = [str(name) for name in top_feature_names_y]
             top_scores = [float(score) for score in top_percentages_y]
@@ -83,7 +76,7 @@ if "trained_model" in st.session_state:
             st.title("🏆 Feature Importance Leaderboard")
 
             # Create three columns for the podium
-            col2, col1, col3 = st.columns([1, 1.2, 1])  # Adjust column widths for positioning
+            col4, col2, col1, col3, col5 = st.columns([1, 1.2, 1.5, 1.2, 1])  # Adjust column widths for positioning
 
             # 1st Place (Center)
             with col1:
@@ -121,8 +114,40 @@ if "trained_model" in st.session_state:
                     unsafe_allow_html=True,
                 )
 
-            # Celebration Effect (Optional)
-            st.balloons()  # Adds a fun animation effect!
+            with col4:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
+                        <h2>🏅 {top_names[3]}</h2>
+                        <h1>{top_scores[3]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+
+            with col5:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
+                        <h2>🎖️ {top_names[4]}</h2>
+                        <h1>{top_scores[4]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+
+            # Create the plot
+            fig, ax = plt.subplots()
+            ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
+            ax.set_xlabel("Contribution (%)")
+            ax.set_title("Top 20 Feature Contributions in Percentages")
+            ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
+
+            # Display in Streamlit
+            st.pyplot(fig)
+
 
         elif model_choice == "Random Forest":
             explainer = shap.TreeExplainer(model)
@@ -147,6 +172,83 @@ if "trained_model" in st.session_state:
             # Select the top 20 features
             top_20_features = sorted_feature_importance[:20]
             top_20_feature_names, top_20_percentages = zip(*top_20_features)
+
+
+
+            # Convert tuple to list and extract strings
+            top_fnames = [str(name) for name in top_20_feature_names]
+            top_fscores = [float(score) for score in top_20_percentages]
+
+            # Sample top features and their contributions
+            top_forest_features = [
+                {"name": top_fnames, "score": top_fscores}
+            ]
+
+            # Title
+            st.title("🏆 Feature Importance Leaderboard")
+
+            # Create three columns for the podium
+            col4, col2, col1, col3, col5 = st.columns([1, 1.2, 1.5, 1.2, 1])  # Adjust column widths for positioning
+
+            # 1st Place (Center)
+            with col1:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
+                        <h2>🥇 {top_fnames[0]}</h2>
+                        <h1>{top_fscores[0]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            # 2nd Place (Left)
+            with col2:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
+                        <h2>🥈 {top_fnames[1]}</h2>
+                        <h1>{top_fscores[1]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            # 3rd Place (Right)
+            with col3:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
+                        <h2>🥉 {top_fnames[2]}</h2>
+                        <h1>{top_fscores[2]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            with col4:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
+                        <h2>🏅 {top_fnames[3]}</h2>
+                        <h1>{top_fscores[3]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+
+            with col5:
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
+                        <h2>🎖️ {top_fnames[4]}</h2>
+                        <h1>{top_fscores[4]}</h1>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
 
             # Define colors based on SHAP values
             # colors = ['red' if shap_values_single[feature_names.index(name)] < 0 else 'green' for name in top_20_feature_names]
