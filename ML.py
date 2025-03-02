@@ -8,12 +8,51 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import bronze_to_silver_cleaning as btc
+import preprocessing as pp
 import feature_engineering as fe
+import os
+import geopandas as gpd
+from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
 
 # Load data
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+# uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+
+path = "data/housesigmadata"
+files = os.listdir(path)
+# drop .DS_Store and areas from files keeping only .csv as one list and geojson in another
+csv_files = []
+for file in files:
+    if file.endswith('.csv'):
+        csv_files.append(file)
+
+all_dfs = []
+
+# Loop through the CSV files
+for file in csv_files:
+    file_path = os.path.join(path, file)  # Construct the full file path
+    try:
+        # Read each CSV file into a DataFrame
+        df = pd.read_csv(file_path)
+        all_dfs.append(df)
+    except pd.errors.ParserError:
+        print(f"Skipping file {file} due to parsing error.")
+    except Exception as e:
+        print(f"An error occurred while processing {file}: {e}")
+
+output = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
+output = pd.DataFrame(output)
+
+combined_df = pd.concat(all_dfs, ignore_index=True)
+combined_df.columns = map(str.lower, combined_df.columns)
+combined_df = combined_df.drop_duplicates(subset=['listing_id'])
+combined_df = combined_df[combined_df['city'].str.contains('Waterloo', case=False, na=False)]
+combined_df['address'] = combined_df['address'].str.replace(' - Waterloo', '')
+uploaded_file = pp.process_housing(df_house_sigma=combined_df, output=output)
 
 if uploaded_file is not None and "houses" not in st.session_state:
     houses = btc.clean_data(uploaded_file)

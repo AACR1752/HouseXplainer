@@ -6,3 +6,6 @@ seaborn
 scikit-learn
 plotly
 shap
+geopandas
+os
+re
