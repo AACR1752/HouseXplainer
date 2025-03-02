@@ -99,6 +99,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 3rd Place
             with st.container():
@@ -110,6 +112,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 4th Place
             with st.container():
@@ -121,6 +125,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 5th Place
             with st.container():
@@ -132,6 +138,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
 
             # Create the plot
@@ -194,6 +202,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 2nd Place
             with st.container():
@@ -206,6 +216,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 3rd Place
             with st.container():
@@ -218,6 +230,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 4th Place
             with st.container():
@@ -230,6 +244,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 5th Place
             with st.container():
@@ -242,6 +258,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
 
             # Define colors based on SHAP values
