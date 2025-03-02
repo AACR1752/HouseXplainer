@@ -86,6 +86,8 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
+             
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # 2nd Place
             with st.container():
