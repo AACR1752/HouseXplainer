@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 import numpy as np
+from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors, BallTree
 
 def transform_address(address):
   """
@@ -63,3 +64,89 @@ def process_housing(df_house_sigma, output):
     result_df = merged_df[['listing_id', 'address' , 'civic_addr', 'latitude', 'longitude', 'geometry', 'neighbourhood', 'type', 'listed', 'sold', 'details', 'key facts']]
     
     return result_df
+
+def predict_missing_neighbourhoods(result_df):
+    missing_neighborhoods = result_df[result_df['neighbourhood'].isna()]
+    existing_neighborhoods = result_df.dropna(subset=['neighbourhood'])
+
+    # Prepare the data for KNN
+    X = existing_neighborhoods[['latitude', 'longitude']]  # Features
+    y = existing_neighborhoods['neighbourhood']  # Target variable
+
+    # Initialize and train the KNN classifier
+    knn = KNeighborsClassifier(n_neighbors=5)  # You can adjust the number of neighbors
+    knn.fit(X, y)
+
+    # Predict neighborhoods for missing values
+    missing_neighborhoods_x = missing_neighborhoods[missing_neighborhoods['latitude'].notnull()]
+    missing_X = missing_neighborhoods_x[['latitude', 'longitude']]
+    predicted_neighborhoods = knn.predict(missing_X)
+
+    # Add the predicted neighborhoods to the missing_neighborhoods DataFrame
+    missing_neighborhoods_x['neighbourhood'] = predicted_neighborhoods
+    final_filled_df = pd.concat([existing_neighborhoods, missing_neighborhoods_x])
+  
+    return final_filled_df
+
+def add_school_details(final_filled_df, df_schools):
+    # Convert coordinates to NumPy arrays for faster processing
+    house_coords = final_filled_df[['latitude', 'longitude']].to_numpy()
+    school_coords = df_schools[['latitude', 'longitude']].to_numpy()
+
+    # Fit NearestNeighbors model on school coordinates
+    nn = NearestNeighbors(n_neighbors=1, metric='haversine')  # Haversine metric calculates geodesic distance
+    nn.fit(np.radians(school_coords))  # Convert degrees to radians for Haversine metric
+
+    # Find nearest school for each house
+    distances, indices = nn.kneighbors(np.radians(house_coords))
+
+    # Convert distances from radians to meters (Earth radius = 6371000 meters)
+    distances = distances.flatten() * 6371000
+
+    # Add distance column to housing DataFrame
+    final_filled_df['distance_to_nearest_school'] = distances
+    final_filled_df['log_distance_to_nearest_school'] = np.log1p(distances)
+
+    # Map nearest school type to each house
+    final_filled_df['nearest_school_type'] = df_schools.iloc[indices.flatten()]['school_type_label'].values
+    
+    return final_filled_df
+
+
+def add_amenities_details(final_filled_df, amenities):
+   # Convert coordinates to radians (required by BallTree for Haversine metric)
+    house_coords = np.radians(final_filled_df[['latitude', 'longitude']].to_numpy())
+    amenity_coords = np.radians(amenities[['latitude', 'longitude']].to_numpy())
+
+    # Fit BallTree model on amenities
+    tree = BallTree(amenity_coords, metric='haversine')  # Haversine metric for spherical distance
+
+    # Query amenities within 2 km (convert to radians: 1 km / Earth radius in meters)
+    radius = 1000 / 6371000  # 6371000 meters is Earth's radius
+    indices = tree.query_radius(house_coords, r=radius)
+
+    # Initialize empty lists for each output column
+    amenity_counts = []
+    amenity_types = []
+    amenity_objectids = []
+    amenity_type_codes = []
+
+    # Iterate over the list of indices
+    for idx in indices:
+        nearby_amenities = amenities.iloc[idx] if len(idx) > 0 else pd.DataFrame()
+
+        # Count number of amenities
+        amenity_counts.append(len(nearby_amenities))
+
+        # Get unique types, object IDs, and type codes
+        amenity_types.append(','.join(nearby_amenities['type'].unique()) if not nearby_amenities.empty else '')
+        amenity_objectids.append(','.join(map(str, nearby_amenities['type_objectid'].unique())) if not nearby_amenities.empty else '')
+        amenity_type_codes.append(','.join(map(str, nearby_amenities['type_code'].unique())) if not nearby_amenities.empty else '')
+
+    # Add the results to the final DataFrame
+    final_filled_df['amenities_count_1km'] = amenity_counts
+    final_filled_df['amenities_types_1km'] = amenity_types
+    final_filled_df['amenities_objectids_1km'] = amenity_objectids
+    final_filled_df['amenities_type_codes_1km'] = amenity_type_codes
+
+    return final_filled_df

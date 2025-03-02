@@ -12,7 +12,6 @@ import preprocessing as pp
 import feature_engineering as fe
 import os
 import geopandas as gpd
-from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 
@@ -47,12 +46,19 @@ for file in csv_files:
 output = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
 output = pd.DataFrame(output)
 
+df_schools = pd.read_csv('data/good_data/schools.csv')
+amenities = pd.read_csv('data/good_data/amenities.csv')
+
 combined_df = pd.concat(all_dfs, ignore_index=True)
 combined_df.columns = map(str.lower, combined_df.columns)
 combined_df = combined_df.drop_duplicates(subset=['listing_id'])
 combined_df = combined_df[combined_df['city'].str.contains('Waterloo', case=False, na=False)]
 combined_df['address'] = combined_df['address'].str.replace(' - Waterloo', '')
-uploaded_file = pp.process_housing(df_house_sigma=combined_df, output=output)
+result_df = pp.process_housing(df_house_sigma=combined_df, output=output)
+
+final_filled_df = pp.predict_missing_neighbourhoods(result_df)
+final_filled_df = pp.add_school_details(final_filled_df, df_schools)
+uploaded_file = pp.add_amenities_details(final_filled_df, amenities)
 
 if uploaded_file is not None and "houses" not in st.session_state:
     houses = btc.clean_data(uploaded_file)
