@@ -28,6 +28,13 @@ if "trained_model" in st.session_state:
     index = joined_df[joined_df['listing'] == datapoint].index.tolist()
     single_data_point = X_test.iloc[[index[0]]]
 
+    df = pd.DataFrame(
+    np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
+    columns=["lat", "lon"],
+    )
+    
+    st.map(df)
+
     if st.button("Predict"):
         # Celebration Effect (Optional)
         st.balloons()  # Adds a fun animation effect!
@@ -197,7 +204,6 @@ if "trained_model" in st.session_state:
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
                         <h2>🥇 {top_fnames[0]}</h2>
-                        <h1>{top_fscores[0]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -211,7 +217,6 @@ if "trained_model" in st.session_state:
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
                         <h2>🥈 {top_fnames[1]}</h2>
-                        <h1>{top_fscores[1]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -225,7 +230,6 @@ if "trained_model" in st.session_state:
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
                         <h2>🥉 {top_fnames[2]}</h2>
-                        <h1>{top_fscores[2]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -239,7 +243,6 @@ if "trained_model" in st.session_state:
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
                         <h2>🏅 {top_fnames[3]}</h2>
-                        <h1>{top_fscores[3]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -253,7 +256,6 @@ if "trained_model" in st.session_state:
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
                         <h2>🎖️ {top_fnames[4]}</h2>
-                        <h1>{top_fscores[4]}</h1>
                     </div>
                     """,
                     unsafe_allow_html=True,
