@@ -58,7 +58,9 @@ result_df = pp.process_housing(df_house_sigma=combined_df, output=output)
 
 final_filled_df = pp.predict_missing_neighbourhoods(result_df)
 final_filled_df = pp.add_school_details(final_filled_df, df_schools)
-uploaded_file = pp.add_amenities_details(final_filled_df, amenities)
+final_filled_df = pp.add_amenities_details(final_filled_df, amenities)
+df_house_sigma = combined_df.drop(columns=['address'])
+uploaded_file = pd.merge(df_house_sigma, final_filled_df, on='listing_id', how='inner')
 
 if uploaded_file is not None and "houses" not in st.session_state:
     houses = btc.clean_data(uploaded_file)
