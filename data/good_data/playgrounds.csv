@@ -1,0 +1,84 @@
+﻿OBJECTID,ASSET_ID,PLAYGROUND_NAME,PARK_NAME,LIFECYCLESTATUS,INSTALL_DATE,MANUFACTURER_SIGNAGE,NO_SMOKING_SIGNAGE,INFO_LINE_SIGNAGE,SURFACE_TYPE,EDGING_TYPE,POSTS,PLATFORMS,x,y
+1,10147899,Atlantic Park,Atlantic Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.505639812,43.515394546
+2,10147858,Lausanne Park,Lausanne Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,8,2,-80.5733352999999,43.4522678010001
+3,10147842,Columbia Forest Court Park,Columbia Forest Court Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.59213177,43.461411093
+4,10147923,Waterloo Park Zoo,Waterloo Park,Active,,Yes,Yes,Yes,Wood Fibre,Pressure Treated Lumber,6,1,-80.530911305,43.466950099
+5,10147905,Heasley Park,Heasley Park,Active,,Yes,Yes,Yes,Wood Fibre,Berm,21,6,-80.547816541,43.4876873810001
+6,10147875,Rim Ball 456,Rim Park,Active,,No,Yes,Yes,Sand,Berm,9,3,-80.5117049419999,43.5190339960001
+7,10147886,Dunvegan Park,Dunvegan Park,Active,,Yes,Yes,Yes,Wood Fibre,Berm,9,5,-80.5024961619999,43.493455553
+8,10147844,Klosters Park,Klosters Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,0,0,-80.585333025,43.4565673710001
+9,10147894,Exmoor Park,Exmoor Park,Active,7/22/1996 12:00:00 AM,No,Yes,Yes,Sand,Pressure Treated Lumber,6,2,-80.484270008,43.488148848
+10,10147872,Bluestream Park,Bluestream Park,Active,,Yes,Yes,Yes,Wood Fibre,Berm,9,2,-80.517091302,43.495433274
+11,10147860,Autumn Willow Park,Autumn Willow Park,Active,10/13/2013 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Concrete,12,5,-80.6049336739999,43.4620991630001
+12,10147908,Conservation Meadows Park,Conservation Meadows Park,Active,10/22/2014 12:00:00 AM,Yes,No,Yes,Wood Fibre,Berm,12,3,-80.575578862,43.4929654110001
+13,10147912,Cornerbrook Park,Cornerbrook Park,Active,,Yes,Yes,Yes,Sand,Berm,14,3,-80.567262697,43.492460195
+14,10147898,Angler Way Park,Angler Way Park,Active,,Yes,Yes,Yes,Sand,Berm,18,5,-80.500891827,43.5138748470001
+15,10147920,Woolgrass Park,Woolgrass Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,20,5,-80.60157771,43.4710650150001
+16,10201545,Jacob Green,Jacob Green,Active,10/9/2017 4:00:00 AM,Yes,Yes,Yes,Wood Fibre,Berm,12,3,-80.570832404,43.498580041
+17,10147895,Bechtel Park,Bechtel Park,Active,,No,Yes,Yes,Sand,Berm,21,7,-80.491609055,43.4827446910001
+18,10199985,Rock Elm Park,Rock Elm Park,Active,11/13/2016 5:00:00 AM,Yes,Yes,No,Wood Fibre,Concrete,0,0,-80.5988219609999,43.461989972
+19,10147873,Westwind Park,Westwind Park,Active,,Yes,Yes,Yes,Wood Fibre,Berm,0,0,-80.5618530309999,43.443899623
+20,10147865,Bolingbrooke Park,Bolingbrooke Park,Active,9/26/2006 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Pressure Treated Lumber,16,3,-80.54989619,43.4419232720001
+21,10147843,Blue Beech Park,Blue Beech Park,Active,9/24/2004 12:00:00 AM,Yes,Yes,Yes,Sand,Berm,24,5,-80.59216958,43.4671085080001
+22,10147859,Sundew Park,Sundew Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,19,4,-80.596100672,43.457532358
+23,10147856,Bonn # 3 (Karlsfeld),Bonn Park # 3,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.577759449,43.4571943830001
+24,10147883,Forwell Creek Park,Forwell Creek Park,Active,,Yes,Yes,Yes,Sand,Berm,10,3,-80.521797914,43.4886806870001
+25,10147931,Royal Fern Park,Royal Fern Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.5906510519999,43.465784796
+26,10147932,Mountain Maple Park,Mountain Maple Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.590258116,43.4645955
+27,10147882,Eastbridge Green ,Eastbridge Green,Active,9/13/2012 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Pressure Treated Lumber,12,3,-80.505832912,43.504775431
+28,10147876,Rim Artificial Fields,Rim Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,45,8,-80.497892281,43.5199291710001
+29,10147925,Laurelwood Park,Laurelwood Park,Active,,Yes,Yes,Yes,Sand,Berm,9,3,-80.57205333,43.468738726
+30,10147881,Bluenose Park,Bluenose Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,7,2,-80.500935875,43.5087122780001
+31,10147854,Interlaken Park,Interlaken Park,Active,,Yes,Yes,Yes,Sand,Berm,6,2,-80.583663889,43.4548640030001
+32,10147906,Lakeshore Optimist Park,Lakeshore Optimist Park,Active,10/13/2010 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Berm,10,3,-80.555283872,43.4981758370001
+33,10147840,Alexandra Park,Alexandra Park,Active,6/1/2014 12:00:00 AM,Yes,Yes,Yes,Sand,Pressure Treated Lumber,11,3,-80.5241580049999,43.46044428
+34,10147930,Butternut Park,Butternut Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,0,1,-80.588665786,43.4645240660001
+35,10147924,Waterloo Park West,Waterloo Park,Active,,Yes,Yes,Yes,Sand,Concrete,0,0,-80.534068724,43.4652657090001
+36,10147917,Creekside Park,Creekside Park,Active,,No,Yes,Yes,Sand,Concrete,0,0,-80.597124894,43.4732503910001
+37,10147892,Carriage Way Park,Carriage Way Park,Active,10/31/2013 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Concrete,21,4,-80.482727992,43.493198514
+38,10147916,Werni Park,Werni Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,0,0,-80.596496786,43.4746309350001
+39,10147921,Waterloo Park Lagoon,Waterloo Park,Active,,Yes,No,Yes,Wood Fibre,Pressure Treated Lumber,29,5,-80.528395496,43.4670449880001
+40,10147911,Pinebrook Park,Pinebrook Park,Active,,Yes,Yes,Yes,Sand,Berm,22,6,-80.561283761,43.4975254300001
+41,10147870,Anndale Park,Anndale Park,Active,9/14/2015 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Berm,12,2,-80.518899628,43.499634298
+42,10147849,Culpepper Park,Culpepper Park,Active,10/1/2013 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Armour Stone,12,3,-80.5415263849999,43.4551853740001
+43,10197879,Clair Lake Park,Clair Lake Park,Active,6/1/2017 12:00:00 AM,,,,,,,,-80.5557919399999,43.4618656490001
+44,10147866,Pinerow Park,Pinerow Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,6,3,-80.5704604919999,43.447859834
+45,10147914,Old Oak Park,Old Oak Park,Active,,No,No,Yes,Sand,Pressure Treated Lumber,17,9,-80.585578846,43.4716646750001
+46,10147855,Lucerne Park,Lucerne Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,0,0,-80.581207552,43.4544353690001
+47,10147851,Rummelhardt Park,Rummelhardt Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,8,3,-80.5647691029999,43.449801087
+48,10147847,Old Post Park,Old Post Park,Active,1/10/2016 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Pressure Treated Lumber,13,4,-80.558075193,43.46606825
+49,10147857,Bonn # 5 (Brandenburg),Bonn Park # 5,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,12,2,-80.57872952,43.4566837240001
+50,10147913,Rideau River Park,Rideau River Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,7,2,-80.59000358,43.490650809
+51,10147928,Basswood Park,Basswood Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.5856095839999,43.464897766
+52,10147845,Salzburg Park,Salzburg Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,8,2,-80.588286123,43.4618506840001
+53,10147907,Wasaga Park,Wasaga Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,19,4,-80.5888760839999,43.48928412
+54,10147853,Royal Beech Park ,Royal Beech Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,13,5,-80.570350014,43.451698003
+55,10147897,University Downs Park,University Downs Park,Active,,Yes,Yes,Yes,Wood Fibre,Berm,7,5,-80.489864789,43.4890320710001
+56,10147864,Westvale Park,Westvale Park,Active,,Yes,Yes,Yes,Sand,Berm,18,3,-80.5570191049999,43.4474215550001
+57,10147868,Mary Allen Park,Mary Allen Park,Active,,Yes,Yes,Yes,Sand,Berm,13,4,-80.5148312699999,43.4633027310001
+58,10147887,Wintermeyer Park,Wintermeyer Park,Active,,Yes,Yes,Yes,Sand,Berm,8,2,-80.494551004,43.499504458
+59,10147891,Maverick Park,Maverick Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,8,3,-80.491920217,43.499957974
+60,10147929,Starflower Park,Star Flower Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.587378332,43.4642415440001
+61,10147877,Deer Run Park,Deer Run Park,Active,,Yes,Yes,Yes,Wood Fibre,Berm,8,3,-80.522498319,43.5088064970001
+62,10147903,Whitecap Park,Whitecap Park,Active,,Yes,No,Yes,Sand,Pressure Treated Lumber,10,4,-80.503050145,43.5151741270001
+63,10147879,Haida Park,Haida Park,Active,10/17/2003 12:00:00 AM,Yes,Yes,Yes,Sand,Plastic,11,2,-80.515503015,43.5124711510001
+64,10147900,Chesapeake Park,Chesapeake Park,Active,,Yes,Yes,Yes,Sand,Berm,0,0,-80.504983021,43.508191164
+65,10147904,Moses Springer Park,Moses Springer Park,Active,,No,No,Yes,Wood Fibre,Berm,18,5,-80.512771702,43.475141593
+66,10147926,Blue Beech Link,Blue Beech Link,Active,10/31/2006 12:00:00 AM,Yes,Yes,Yes,Sand,Berm,26,5,-80.5962531709999,43.4700909060001
+67,10147841,Black Cherry Park,Black Cherry Park,Active,6/1/2004 12:00:00 AM,No,Yes,Yes,Sand,Pressure Treated Lumber,4,1,-80.590881607,43.462825697
+68,10147878,Canewood Park,Canewood Park,Active,8/30/2011 12:00:00 AM,Yes,Yes,Yes,Wood Fibre,Pressure Treated Lumber,13,3,-80.5561638619999,43.486436337
+69,10147869,Glen Acres Park,Glen Acres Park,Active,12/17/1998 12:00:00 AM,Yes,Yes,Yes,Sand,Pressure Treated Lumber,10,2,-80.51113667,43.467634994
+70,10147919,Goldthread Park,Goldthread Park,Active,,Yes,Yes,Yes,Wood Fibre,Concrete,1,0,-80.60175101,43.473123586
+71,10147874,Rim Park Diamond 123,Rim Park,Active,,Yes,Yes,Yes,Sand,Berm,12,5,-80.50756404,43.515153701
+72,10147871,Kingscourt Park,Kingscourt Park,Active,,No,Yes,Yes,Wood Fibre,Pressure Treated Lumber,10,3,-80.523660518,43.4953283880001
+73,10147848,Regency Park,Regency Park,Active,,Yes,Yes,Yes,Wood Fibre,Pressure Treated Lumber,10,4,-80.562494108,43.460068585
+74,10147922,Waterloo Park East,Waterloo Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.5304003429999,43.467582931
+75,10147888,Auburn Park,Auburn Park,Active,,Yes,No,Yes,Wood Fibre,Plastic,18,4,-80.494249032,43.494225038
+76,10147862,Brighton park,Brighton Park,Active,,Yes,Yes,Yes,Sand,Berm,5,4,-80.518236171,43.4706885750001
+77,10147927,White Elm Park,White Elm Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,10,4,-80.58727664,43.465624313
+78,10147896,Westmount Sports Park,Westmount Sports Park,Active,,Yes,Yes,Yes,Wood Fibre,Berm,2,1,-80.559811313,43.4785728030001
+79,10147915,Birchmount Park,Birchmount Park,Active,,No,Yes,Yes,Sand,Pressure Treated Lumber,0,0,-80.59028735,43.474749527
+80,10147918,Winterberry Park,Winterberry Park,Active,,No,Yes,Yes,Wood Fibre,Concrete,2,0,-80.5991028129999,43.472612412
+81,10147885,Sandowne Park,Sandowne Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,13,4,-80.5015668359999,43.490439811
+82,10147867,Bordeaux Park,Bordeaux Park,Active,,No,Yes,Yes,Sand,Concrete,0,0,-80.576113596,43.448894948
+83,10147850,Thorndale Park,Thorndale Park,Active,,Yes,Yes,Yes,Sand,Pressure Treated Lumber,20,5,-80.550163243,43.4494338280001
