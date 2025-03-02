@@ -29,10 +29,10 @@ if "trained_model" in st.session_state:
     single_data_point = X_test.iloc[[index[0]]]
 
     df = pd.DataFrame(
-    np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
+    np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
     columns=["lat", "lon"],
     )
-    
+
     st.map(df)
 
     if st.button("Predict"):
