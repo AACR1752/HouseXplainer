@@ -57,7 +57,7 @@ else:
     st.warning("Please upload a dataset to continue.")
     st.stop()
 
-if model_choice == "Ridge Regression":
+if model_choice == "Random Forest":
     houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
 
 houses = houses.dropna(subset=['sold']) #these are removed events
@@ -76,7 +76,7 @@ columns_to_encode = ['architecture_style','property_type',
                      ]
 split_exceptions = ['bathrooms_detail',]
 
-if model_choice == "Random Forest":
+if model_choice == "Ridge Regression":
     columns_to_encode += ['neighbourhood']
 
 # TODO: Appliances Excluded has to be penalizing in giving value to the prices
