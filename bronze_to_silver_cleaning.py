@@ -14,9 +14,9 @@ def convert_to_json(input):
         result[key] = value
     return result
 
-def clean_data(file):
+def clean_data(df_pandas):
     # Load the data
-    df_pandas = pd.read_csv(file)
+    # df_pandas = pd.read_csv(file)
     df_pandas.columns = df_pandas.columns.str.replace(' ', '_').str.lower()
 
     # Drop duplicates based on 'listing_id' column
