@@ -2,6 +2,35 @@ import re
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors, BallTree
+import os
+
+def combine_dataframes(path):
+  files = os.listdir(path)
+  # drop .DS_Store and areas from files keeping only .csv as one list and geojson in another
+  csv_files = []
+  for file in files:
+      if file.endswith('.csv'):
+          csv_files.append(file)
+
+  all_dfs = []
+
+  # Loop through the CSV files
+  for file in csv_files:
+      file_path = os.path.join(path, file)  # Construct the full file path
+      try:
+          # Read each CSV file into a DataFrame
+          df = pd.read_csv(file_path)
+          all_dfs.append(df)
+      except pd.errors.ParserError:
+          print(f"Skipping file {file} due to parsing error.")
+      except Exception as e:
+          print(f"An error occurred while processing {file}: {e}")
+
+  combined_df = pd.concat(all_dfs, ignore_index=True)
+  combined_df.columns = map(str.lower, combined_df.columns)
+  combined_df = combined_df.drop_duplicates(subset=['listing_id'])
+  
+  return combined_df
 
 def transform_address(address):
   """
@@ -57,11 +86,8 @@ def process_housing(df_house_sigma, output):
     # Perform the merge using the lowercase columns
     merged_df = pd.merge(df_house_sigma, output, left_on='address_lower', right_on='civic_addr_lower', how='left')
 
-    # Drop the temporary lowercase columns if not needed
-    # merged_df.drop(columns=['address_lower', 'civic_addr_lower'], inplace=True)
-
     # Select the specified columns
-    result_df = merged_df[['listing_id', 'address' , 'civic_addr', 'latitude', 'longitude', 'geometry', 'neighbourhood', 'type', 'listed', 'sold', 'details', 'key facts']]
+    result_df = merged_df[['listing_id', 'address', 'civic_addr', 'latitude', 'longitude', 'geometry', 'neighbourhood']]
     
     return result_df
 
@@ -121,7 +147,7 @@ def add_amenities_details(final_filled_df, amenities):
     # Fit BallTree model on amenities
     tree = BallTree(amenity_coords, metric='haversine')  # Haversine metric for spherical distance
 
-    # Query amenities within 2 km (convert to radians: 1 km / Earth radius in meters)
+    # Query amenities within 1 km (convert to radians: 1 km / Earth radius in meters)
     radius = 1000 / 6371000  # 6371000 meters is Earth's radius
     indices = tree.query_radius(house_coords, r=radius)
 
