@@ -102,6 +102,8 @@ for col in columns_to_drop:
     if col in features.columns:
         features = features.drop(columns=[col])
 
+# drop columns with nan values in features
+features = features.dropna(axis=1)
 
 # Separate data based on 'image-src' prefix
 data_df = features[features['image-src'].str.startswith('data', na=False)]
