@@ -61,7 +61,7 @@ if model_choice == "Ridge Regression":
     houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
 
 houses = houses.dropna(subset=['sold']) #these are removed events
-ml_houses = fe.feature_refining(houses, model_choice)
+ml_houses = fe.feature_refining(houses)
 
 columns_to_encode = ['architecture_style','property_type',
                      'driveway_parking', 'frontage_type',
