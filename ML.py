@@ -87,8 +87,8 @@ for column in columns_to_encode:
 # This is the final dataframe that will be used for ML
 # features == X and price == y
 
-features = ml_houses.drop(columns=['listing_id', 'listing'])
-# price = ml_houses['price']
+features = ml_houses.drop(columns=['listing_id', 'price', 'listing', 'image-src'])
+price = ml_houses['price']
 
 features = fe.correlation_analysis(features)
 
@@ -103,40 +103,40 @@ for col in columns_to_drop:
         features = features.drop(columns=[col])
 
 # drop columns with nan values in features
-features = features.dropna(axis=1)
+# features = features.dropna(axis=1)
 
 # Separate data based on 'image-src' prefix
-data_df = features[features['image-src'].str.startswith('data', na=False)]
-http_df = features[features['image-src'].str.startswith('http', na=False)]
+# data_df = features[features['image-src'].str.startswith('data', na=False)]
+# http_df = features[features['image-src'].str.startswith('http', na=False)]
 
 # Train/Test Split
 seed = 1000
 test_size = 0.2
 
-# Split the 'http' data into training and testing sets
-http_train, http_test = train_test_split(http_df, test_size=test_size, random_state=seed) # Adjust test_size as needed
+# # Split the 'http' data into training and testing sets
+# http_train, http_test = train_test_split(http_df, test_size=test_size, random_state=seed) # Adjust test_size as needed
 
-# Combine the 'data' data with the training portion of 'http' data
-X_train = pd.concat([data_df, http_train], ignore_index=True)
+# # Combine the 'data' data with the training portion of 'http' data
+# X_train = pd.concat([data_df, http_train], ignore_index=True)
 
-# The test set will consist only of 'http' data
-X_test = http_test
-y_train = X_train['price']
-y_test = X_test['price']
+# # The test set will consist only of 'http' data
+# X_test = http_test
+# y_train = X_train['price']
+# y_test = X_test['price']
 
-# Drop 'price' column from X_train and X_test
-X_train = X_train.drop(columns=['price', 'image-src'])
-X_test = X_test.drop(columns=['price', 'image-src'])
+# # Drop 'price' column from X_train and X_test
+# X_train = X_train.drop(columns=['price', 'image-src'])
+# X_test = X_test.drop(columns=['price', 'image-src'])
 
-st.write(X_train.info())
-st.write(y_train.shape)
+# st.write(X_train.info())
+# st.write(y_train.shape)
 
-X_train = X_train.fillna(X_train.mean())
-X_test = X_test.fillna(X_test.mean())
+# X_train = X_train.fillna(X_train.mean())
+# X_test = X_test.fillna(X_test.mean())
 
 # Data Cleaning and Preprocessing
 
-# X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
+X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
 
 if model_choice == "Random Forest":
     model = RandomForestRegressor(n_estimators=100, random_state=100)

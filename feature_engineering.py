@@ -103,10 +103,10 @@ def feature_refining(houses):
 def correlation_analysis(features):
     # Calculate the correlation matrix
     # assuming img-src is not a feature
-    img = features['image-src']
-    features = features.select_dtypes(include=np.number)
-    price = features['price']
-    features = features.drop(columns=['price'])
+    # img = features['image-src']
+    # features = features.select_dtypes(include=np.number)
+    # price = features['price']
+    # features = features.drop(columns=['price'])
     correlation_matrix = features.corr()
     correlation_matrix = correlation_matrix.mask(np.equal(*np.indices(correlation_matrix.shape)))
     corr_pairs = correlation_matrix.stack() # Stack the correlation matrix
@@ -128,6 +128,6 @@ def correlation_analysis(features):
     except KeyError as e:
         st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
 
-    features['image-src'] = img
-    features['price'] = price
+    # features['image-src'] = img
+    # features['price'] = price
     return features
