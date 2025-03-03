@@ -102,6 +102,8 @@ def feature_refining(houses):
 
 def correlation_analysis(features):
     # Calculate the correlation matrix
+    # assuming img-src is not a feature
+    img = features['image-src']
     features = features.select_dtypes(include=np.number)
     correlation_matrix = features.corr()
     correlation_matrix = correlation_matrix.mask(np.equal(*np.indices(correlation_matrix.shape)))
@@ -124,4 +126,5 @@ def correlation_analysis(features):
     except KeyError as e:
         st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
 
+    features['image-src'] = img
     return features
