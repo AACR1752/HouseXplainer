@@ -87,8 +87,8 @@ for column in columns_to_encode:
 # This is the final dataframe that will be used for ML
 # features == X and price == y
 
-features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
-price = ml_houses['price']
+features = ml_houses.drop(columns=['listing_id', 'listing'])
+# price = ml_houses['price']
 
 features = fe.correlation_analysis(features)
 
