@@ -8,12 +8,39 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import bronze_to_silver_cleaning as btc
+import preprocessing as pp
 import feature_engineering as fe
+import geopandas as gpd
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
 
 # Load data
 st.title("House Price Prediction App")
 st.sidebar.header("Upload Data")
-uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+# uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
+
+# Sidebar model selection
+model_choice = st.sidebar.selectbox("Select Model", ["Ridge Regression", "Random Forest"])
+
+path = "data/housesigmadata"
+combined_df = pp.combine_dataframes(path)
+
+combined_df = combined_df[combined_df['city'].str.contains('Waterloo', case=False, na=False)]
+combined_df['address'] = combined_df['address'].str.replace(' - Waterloo', '')
+
+output = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
+output = pd.DataFrame(output)
+df_schools = pd.read_csv('data/good_data/schools.csv')
+amenities = pd.read_csv('data/good_data/amenities.csv')
+
+result_df = pp.process_housing(df_house_sigma=combined_df, output=output)
+
+final_filled_df = pp.predict_missing_neighbourhoods(result_df)
+final_filled_df = pp.add_school_details(final_filled_df, df_schools)
+final_filled_df = pp.add_amenities_details(final_filled_df, amenities)
+df_house_sigma = combined_df.drop(columns=['address'])
+uploaded_file = pd.merge(df_house_sigma, final_filled_df, on='listing_id', how='inner')
 
 if uploaded_file is not None and "houses" not in st.session_state:
     houses = btc.clean_data(uploaded_file)
@@ -29,70 +56,79 @@ else:
     st.warning("Please upload a dataset to continue.")
     st.stop()
 
+if model_choice == "Ridge Regression":
+    houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
+
 ml_houses = fe.feature_refining(houses)
+
+columns_to_encode = ['architecture_style','property_type',
+                     'driveway_parking', 'frontage_type',
+                     'sewer','basement_type','topography',
+                     'bathrooms_detail', 
+                     'lot_features',
+                     'exterior_feature',
+                     'roof', 
+                     'waterfront_features', 
+                     'appliances_included',
+                     'laundry_features',
+                     ]
+split_exceptions = ['bathrooms_detail',]
+
+if model_choice == "Ridge Regression":
+    columns_to_encode += ['neighbourhood']
+
+# TODO: Appliances Excluded has to be penalizing in giving value to the prices
+
+for column in columns_to_encode:
+    if column in houses.columns:
+        encoded_df = fe.one_hot_encode_column(houses, column, split_exceptions=split_exceptions)
+        ml_houses = pd.concat([ml_houses, encoded_df], axis=1)
 
 # This is the final dataframe that will be used for ML
 # features == X and price == y
+
 features = ml_houses.drop(columns=['listing_id', 'price', 'listing'])
 price = ml_houses['price']
 
-# Calculate the correlation matrix
-correlation_matrix = features.corr()
-
-# Remove diagonal part
-correlation_matrix = correlation_matrix.mask(np.equal(*np.indices(correlation_matrix.shape)))
-
-# Stack the correlation matrix
-corr_pairs = correlation_matrix.stack()
-
-# Sort by absolute value
-sorted_pairs = corr_pairs.abs().sort_values(ascending=False)
-
-# Get the top n pairs (adjust n as needed)
-top_n_pairs = sorted_pairs.head(20)  # Example: top 20 pairs
-
-# Create a DataFrame for the results
-correlation_table = pd.DataFrame({
-    'Column1': top_n_pairs.index.get_level_values(0),
-    'Column2': top_n_pairs.index.get_level_values(1),
-    'CorrelationScore': top_n_pairs.values
-})
-# correlation_table
-
-# Filter the correlation table to include only rows where the correlation score is greater than 0.8
-filtered_correlation = correlation_table[correlation_table['CorrelationScore'] > 0.8]
-
-# Get the unique names from 'Column1' in the filtered table
-col1_names = filtered_correlation['Column1'].unique()
-
-# Assuming 'features' is another DataFrame where you want to drop the columns
-# Replace 'features' with your actual DataFrame name if it's different
-# Drop the specified columns from the features table
-# Note that if any of the columns in col1_names do not exist in the features table,
-# a KeyError will occur. You may consider adding a try-except block to handle the error gracefully
-# or use the errors='ignore' parameter in the drop function.
-
-try:
-    features = features.drop(columns=col1_names)
-    st.write("Correlated columns dropped successfully.")
-except KeyError as e:
-    st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
+features = fe.correlation_analysis(features)
 
 # Drop 'kitchens', 'rooms', and 'bathrooms' columns if they exist
-columns_to_drop = ['kitchens', 'rooms', 'bathrooms', 'bedrooms', 'depth']
+columns_to_drop = ['kitchens', 'rooms', 
+                   'latitude', 'longitude', 'year_built', 'building_age', 'house_year',
+                   'distance_to_nearest_school',
+                   'bathrooms', 
+                   'bedrooms', 'depth',]
 for col in columns_to_drop:
     if col in features.columns:
         features = features.drop(columns=[col])
-    else:
-        st.write(f"Warning: Column '{col}' not found in features DataFrame.")
+
+
+# Separate data based on 'image-src' prefix
+data_df = features[features['image-src'].str.startswith('data', na=False)]
+http_df = features[features['image-src'].str.startswith('http', na=False)]
+
+# Train/Test Split
+seed = 1000
+test_size = 0.2
+
+# Split the 'http' data into training and testing sets
+http_train, http_test = train_test_split(http_df, test_size=test_size, random_state=seed) # Adjust test_size as needed
+
+# Combine the 'data' data with the training portion of 'http' data
+X_train = pd.concat([data_df, http_train], ignore_index=True)
+
+# The test set will consist only of 'http' data
+X_test = http_test
+y_train = X_train['price']
+y_test = X_test['price']
+
+# Drop 'price' column from X_train and X_test
+X_train = X_train.drop(columns=['price', 'image-src'])
+X_test = X_test.drop(columns=['price', 'image-src'])
 
 # Data Cleaning and Preprocessing
 
-# Train/Test Split
-X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=0.2, random_state=100)
-
-# Sidebar model selection
-model_choice = st.sidebar.selectbox("Select Model", ["Ridge Regression", "Random Forest"])
+# X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
 
 if model_choice == "Random Forest":
     model = RandomForestRegressor(n_estimators=100, random_state=100)

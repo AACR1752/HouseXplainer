@@ -2,6 +2,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 import pandas as pd
 import numpy as np
 import re
+import streamlit as st
 
 def calculate_house_age(year_string):
     if '-' in str(year_string):
@@ -10,13 +11,35 @@ def calculate_house_age(year_string):
             return (start + end) / 2
         except ValueError:
             return None  # Handle cases where splitting fails
-    elif str(year_string).isdigit() and len(str(year_string)) == 4:
+    else:
         try:
             return 2025 - int(year_string)
         except ValueError:
             return None
-    else:
-        return None
+
+def one_hot_encode_column(houses, column, split_exceptions=[]):
+    if column in houses.columns:
+        if column not in split_exceptions:
+            houses[f'{column}_arr'] = houses[column].apply(lambda x: x.split(',') if isinstance(x, str) else [])
+        else:
+            houses[f'{column}_arr'] = houses[column].apply(lambda x: [x] if isinstance(x, str) else [])
+
+        mlb = MultiLabelBinarizer()
+        encoded_data = mlb.fit_transform(houses[f'{column}_arr'])
+        encoded_df = pd.DataFrame(encoded_data, columns=mlb.classes_)
+
+        # Add column variable as suffix to encoded column names
+        encoded_df = encoded_df.add_suffix(f'_{column}')
+
+        # Drop columns containing "none" case-insensitive
+        encoded_df = encoded_df.drop(columns=[col for col in encoded_df.columns if re.search(r"none", col, re.IGNORECASE)])
+
+        # Drop columns with '*' in their names
+        encoded_df = encoded_df.drop(columns=[col for col in encoded_df.columns if '*' in col])
+        
+        encoded_df = encoded_df.fillna(0)
+
+        return encoded_df
 
 def feature_refining(houses):
     # prompt: st.write all the column names one by one
@@ -25,15 +48,10 @@ def feature_refining(houses):
     #drop rows where listed is missing
     houses.dropna(subset=['listed'], inplace=True)
 
-    
-    # Count non-NaN values in each column
-    value_counts = houses.count()
-
     # Identify columns with less than 10 non-NaN values
-    columns_to_drop = value_counts[value_counts < 10].index
-
-    # Drop the identified columns
-    houses.drop(columns=columns_to_drop, inplace=True)
+    # value_counts = houses.count()
+    # columns_to_drop = value_counts[value_counts < 10].index #not needed
+    # houses.drop(columns=columns_to_drop, inplace=True)
 
     # numeric_cols = houses.select_dtypes(include=np.number).columns
     # object_cols = houses.select_dtypes(include=object).columns
@@ -44,8 +62,9 @@ def feature_refining(houses):
                     'frontage_length', 'depth']
 
     for col in numeric_features:
-        houses[col] = pd.to_numeric(houses[col], errors='coerce')
-        houses[col] = houses[col].astype(float)
+        if col in houses.columns:
+            houses[col] = pd.to_numeric(houses[col], errors='coerce')
+            houses[col] = houses[col].astype(float)
     
     
     houses['house_year'] = houses['year_built'].fillna(houses['building_age'])
@@ -64,6 +83,7 @@ def feature_refining(houses):
     ml_houses['listing_id'] = houses['listing_id']
     ml_houses['price'] = houses['sold']
     ml_houses['listing'] = houses['listing']
+    ml_houses['image-src'] = houses['image-src']
 
     # Convert 'price' column to numeric, handling '$' and ','
     ml_houses['price'] = ml_houses['price'].astype(str).str.replace(r'[$,]', '', regex=True)
@@ -71,63 +91,37 @@ def feature_refining(houses):
 
     
     # place listing_id as the first column in the df
-
-    # Get the current column order
     cols = ml_houses.columns.tolist()
-
-    # Move 'listing_id' to the first position
     cols.insert(0, cols.pop(cols.index('listing_id')))
-
-    # Reorder the DataFrame
     ml_houses = ml_houses.reindex(columns=cols)
     
     # Reset the index of the DataFrame
     ml_houses = ml_houses.reset_index(drop=True)
 
-    
-    columns_to_encode = ['architecture_style','property_type',
-                        'driveway_parking', 'frontage_type',
-                        # 'sewer', 
-                        'bathrooms_detail', 'basement_type',
-                        'lot_features',
-                        'topography', 'exterior_feature', 
-                        'roof', 'waterfront_features', 'appliances_included',
-                        # 'appliances_excluded',
-                        'laundry_features', 'topography',
-                        ]
-    split_exceptions = [
-        'bathrooms_detail',
-        ]
-
-    
-    def one_hot_encode_column(column):
-        if column not in split_exceptions:
-            houses[f'{column}_arr'] = houses[column].apply(lambda x: x.split(',') if isinstance(x, str) else [])
-        else:
-            houses[f'{column}_arr'] = houses[column].apply(lambda x: [x] if isinstance(x, str) else [])
-
-        mlb = MultiLabelBinarizer()
-        encoded_data = mlb.fit_transform(houses[f'{column}_arr'])
-        encoded_df = pd.DataFrame(encoded_data, columns=mlb.classes_)
-
-        # Add column variable as suffix to encoded column names
-        encoded_df = encoded_df.add_suffix(f'_{column}')
-
-        return encoded_df
-
-    
-    # TODO: Appliances Excluded has to be penalizing in giving value to the prices
-
-    
-    for column in columns_to_encode:
-        encoded_df = one_hot_encode_column(column)
-        ml_houses = pd.concat([ml_houses, encoded_df], axis=1)
-
-    # Drop columns containing "none" case-insensitive
-    ml_houses = ml_houses.drop(columns=[col for col in ml_houses.columns if re.search(r"none", col, re.IGNORECASE)])
-
-    # Drop columns with '*' in their names
-    ml_houses = ml_houses.drop(columns=[col for col in ml_houses.columns if '*' in col])
-    ml_houses = ml_houses.fillna(0)
-
     return ml_houses
+
+def correlation_analysis(features):
+    # Calculate the correlation matrix
+    features = features.select_dtypes(include=np.number)
+    correlation_matrix = features.corr()
+    correlation_matrix = correlation_matrix.mask(np.equal(*np.indices(correlation_matrix.shape)))
+    corr_pairs = correlation_matrix.stack() # Stack the correlation matrix
+    sorted_pairs = corr_pairs.abs().sort_values(ascending=False) # Sort by absolute value
+    top_n_pairs = sorted_pairs.head(20)  # Get the top 20 pairs
+
+    # Create a DataFrame for the results
+    correlation_table = pd.DataFrame({
+        'Column1': top_n_pairs.index.get_level_values(0),
+        'Column2': top_n_pairs.index.get_level_values(1),
+        'CorrelationScore': top_n_pairs.values
+    })
+
+    # Filter the correlation table to include only rows where the correlation score is greater than 0.8
+    filtered_correlation = correlation_table[correlation_table['CorrelationScore'] > 0.8]
+    col1_names = filtered_correlation['Column1'].unique()
+    try:
+        features = features.drop(columns=col1_names)
+    except KeyError as e:
+        st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
+
+    return features
