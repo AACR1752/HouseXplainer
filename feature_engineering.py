@@ -41,7 +41,7 @@ def one_hot_encode_column(houses, column, split_exceptions=[]):
 
         return encoded_df
 
-def feature_refining(houses, model_choice):
+def feature_refining(houses):
     # prompt: st.write all the column names one by one
     houses.dropna(axis=1, how='all', inplace=True)
 
@@ -98,37 +98,14 @@ def feature_refining(houses, model_choice):
     # Reset the index of the DataFrame
     ml_houses = ml_houses.reset_index(drop=True)
 
-    columns_to_encode = ['architecture_style','property_type',
-                     'driveway_parking', 'frontage_type',
-                     'sewer','basement_type','topography',
-                    #  'bathrooms_detail', 
-                     'lot_features',
-                     'exterior_feature',
-                     'roof', 
-                     'waterfront_features', 
-                     'appliances_included',
-                     'laundry_features',
-                     ]
-    split_exceptions = ['bathrooms_detail',]
-
-    if model_choice == "Ridge Regression":
-        columns_to_encode += ['neighbourhood']
-
-    # TODO: Appliances Excluded has to be penalizing in giving value to the prices
-
-    for column in columns_to_encode:
-        if column in houses.columns:
-            encoded_df = one_hot_encode_column(houses, column, split_exceptions=split_exceptions)
-            ml_houses = pd.concat([ml_houses, encoded_df], axis=1)
-
     return ml_houses
 
 def correlation_analysis(features):
     # Calculate the correlation matrix
     # assuming img-src is not a feature
-    # img = features['image-src']
-    # features = features.select_dtypes(include=np.number)
-    # price = features['price']
+    img = features['image-src']
+    price = features['price']
+    features = features.select_dtypes(include=np.number)
     # features = features.drop(columns=['price'])
     correlation_matrix = features.corr()
     correlation_matrix = correlation_matrix.mask(np.equal(*np.indices(correlation_matrix.shape)))
@@ -151,6 +128,6 @@ def correlation_analysis(features):
     except KeyError as e:
         st.write(f"Error: Column(s) {e} not found in the features DataFrame.")
 
-    # features['image-src'] = img
-    # features['price'] = price
+    features['image-src'] = img
+    features['price'] = price
     return features

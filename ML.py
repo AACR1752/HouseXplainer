@@ -63,6 +63,29 @@ if model_choice == "Ridge Regression":
 houses = houses.dropna(subset=['sold']) #these are removed events
 ml_houses = fe.feature_refining(houses, model_choice)
 
+columns_to_encode = ['architecture_style','property_type',
+                     'driveway_parking', 'frontage_type',
+                     'sewer','basement_type','topography',
+                    #  'bathrooms_detail', 
+                     'lot_features',
+                     'exterior_feature',
+                     'roof', 
+                     'waterfront_features', 
+                     'appliances_included',
+                     'laundry_features',
+                     ]
+split_exceptions = ['bathrooms_detail',]
+
+if model_choice == "Random Forest":
+    columns_to_encode += ['neighbourhood']
+
+# TODO: Appliances Excluded has to be penalizing in giving value to the prices
+
+for column in columns_to_encode:
+    if column in houses.columns:
+        encoded_df = fe.one_hot_encode_column(houses, column, split_exceptions=split_exceptions)
+        ml_houses = pd.concat([ml_houses, encoded_df], axis=1)
+
 ml_houses['depth'].fillna(ml_houses['depth'].mean())
 ml_houses['frontage_length'].fillna(ml_houses['frontage_length'].mean())
 ml_houses = ml_houses.fillna(0)
@@ -70,11 +93,8 @@ ml_houses = ml_houses.fillna(0)
 # This is the final dataframe that will be used for ML
 # features == X and price == y
 
-features = ml_houses.drop(columns=['listing_id', 'price', 'listing', 'image-src'])
+features = ml_houses.drop(columns=['listing_id', 'listing'])
 price = ml_houses['price']
-
-# features = features.fillna(0)
-# price = price.fillna(0)
 
 features = fe.correlation_analysis(features)
 
@@ -88,49 +108,32 @@ for col in columns_to_drop:
     if col in features.columns:
         features = features.drop(columns=[col])
 
-features = features.fillna(0)
-
-# Get the sum of null values for each column
-null_sums = features.isnull().sum()
-# Iterate through the null sums and print each column's sum
-for column_name, null_sum in null_sums.items():
-  if null_sum > 0:
-    print(f"Column '{column_name}': {null_sum} null values")
-
-# drop columns with nan values in features
-# features = features.dropna(axis=1)
-
 # Separate data based on 'image-src' prefix
-# data_df = features[features['image-src'].str.startswith('data', na=False)]
-# http_df = features[features['image-src'].str.startswith('http', na=False)]
+data_df = features[features['image-src'].str.startswith('data', na=False)]
+http_df = features[features['image-src'].str.startswith('http', na=False)]
 
 # Train/Test Split
 seed = 1000
 test_size = 0.2
 
 # # Split the 'http' data into training and testing sets
-# http_train, http_test = train_test_split(http_df, test_size=test_size, random_state=seed) # Adjust test_size as needed
+http_train, http_test = train_test_split(http_df, test_size=test_size, random_state=seed) # Adjust test_size as needed
 
 # # Combine the 'data' data with the training portion of 'http' data
-# X_train = pd.concat([data_df, http_train], ignore_index=True)
+X_train = pd.concat([data_df, http_train], ignore_index=True)
 
-# # The test set will consist only of 'http' data
-# X_test = http_test
-# y_train = X_train['price']
-# y_test = X_test['price']
+# The test set will consist only of 'http' data
+X_test = http_test
+y_train = X_train['price']
+y_test = X_test['price']
 
-# # Drop 'price' column from X_train and X_test
-# X_train = X_train.drop(columns=['price', 'image-src'])
-# X_test = X_test.drop(columns=['price', 'image-src'])
-
-# st.write(y_train.shape)
-
-# X_train = X_train.fillna(X_train.mean())
-# X_test = X_test.fillna(X_test.mean())
+# Drop 'price' column from X_train and X_test
+X_train = X_train.drop(columns=['price', 'image-src'])
+X_test = X_test.drop(columns=['price', 'image-src'])
 
 # Data Cleaning and Preprocessing
 
-X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
+# X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
 
 if model_choice == "Random Forest":
     model = RandomForestRegressor(n_estimators=100, random_state=100)
