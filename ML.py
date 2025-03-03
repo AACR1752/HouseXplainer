@@ -128,6 +128,12 @@ y_test = X_test['price']
 X_train = X_train.drop(columns=['price', 'image-src'])
 X_test = X_test.drop(columns=['price', 'image-src'])
 
+X_train = X_train.fillna(X_train.mean())
+X_test = X_test.fillna(X_test.mean())
+
+st.write(X_train.info())
+st.write(y_train.shape)
+
 # Data Cleaning and Preprocessing
 
 # X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
