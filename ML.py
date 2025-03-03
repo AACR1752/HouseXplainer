@@ -60,11 +60,12 @@ else:
 if model_choice == "Ridge Regression":
     houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
 
+houses = houses.dropna(subset=['sold']) #these are removed events
 ml_houses = fe.feature_refining(houses, model_choice)
 
-# drop rows where 'price' is missing
-ml_houses.dropna(subset=['price'], inplace=True)
-# fill the missing values with 0 in ml_houses
+ml_houses['depth'].fillna(ml_houses['depth'].mean())
+ml_houses['frontage_length'].fillna(ml_houses['frontage_length'].mean())
+ml_houses = ml_houses.fillna(0)
 
 # This is the final dataframe that will be used for ML
 # features == X and price == y
