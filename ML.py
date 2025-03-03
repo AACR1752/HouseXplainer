@@ -11,7 +11,6 @@ import bronze_to_silver_cleaning as btc
 import preprocessing as pp
 import feature_engineering as fe
 import geopandas as gpd
-import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 
@@ -65,8 +64,8 @@ ml_houses = fe.feature_refining(houses)
 
 columns_to_encode = ['architecture_style','property_type',
                      'driveway_parking', 'frontage_type',
-                     'sewer','basement_type','topography',
-                    #  'bathrooms_detail', 
+                     'basement_type','topography',
+                    #  'bathrooms_detail', 'sewer',
                      'lot_features',
                      'exterior_feature',
                      'roof', 
