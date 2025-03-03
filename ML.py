@@ -62,17 +62,9 @@ if model_choice == "Ridge Regression":
 
 ml_houses = fe.feature_refining(houses, model_choice)
 
-# # Get the sum of null values for each column
-# null_sums = ml_houses.isnull().sum()
-# # Iterate through the null sums and print each column's sum
-# for column_name, null_sum in null_sums.items():
-#   if null_sum > 0:
-#     print(f"Column '{column_name}': {null_sum} null values")
-
 # drop rows where 'price' is missing
 ml_houses.dropna(subset=['price'], inplace=True)
 # fill the missing values with 0 in ml_houses
-ml_houses = ml_houses.fillna(0)
 
 # This is the final dataframe that will be used for ML
 # features == X and price == y
@@ -94,6 +86,15 @@ columns_to_drop = ['kitchens', 'rooms',
 for col in columns_to_drop:
     if col in features.columns:
         features = features.drop(columns=[col])
+
+features = features.fillna(0)
+
+# Get the sum of null values for each column
+null_sums = features.isnull().sum()
+# Iterate through the null sums and print each column's sum
+for column_name, null_sum in null_sums.items():
+  if null_sum > 0:
+    print(f"Column '{column_name}': {null_sum} null values")
 
 # drop columns with nan values in features
 # features = features.dropna(axis=1)
