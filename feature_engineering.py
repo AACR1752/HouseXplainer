@@ -41,7 +41,7 @@ def one_hot_encode_column(houses, column, split_exceptions=[]):
 
         return encoded_df
 
-def feature_refining(houses):
+def feature_refining(houses, model_choice):
     # prompt: st.write all the column names one by one
     houses.dropna(axis=1, how='all', inplace=True)
 
@@ -97,6 +97,29 @@ def feature_refining(houses):
     
     # Reset the index of the DataFrame
     ml_houses = ml_houses.reset_index(drop=True)
+
+    columns_to_encode = ['architecture_style','property_type',
+                     'driveway_parking', 'frontage_type',
+                     'sewer','basement_type','topography',
+                    #  'bathrooms_detail', 
+                     'lot_features',
+                     'exterior_feature',
+                     'roof', 
+                     'waterfront_features', 
+                     'appliances_included',
+                     'laundry_features',
+                     ]
+    split_exceptions = ['bathrooms_detail',]
+
+    if model_choice == "Ridge Regression":
+        columns_to_encode += ['neighbourhood']
+
+    # TODO: Appliances Excluded has to be penalizing in giving value to the prices
+
+    for column in columns_to_encode:
+        if column in houses.columns:
+            encoded_df = one_hot_encode_column(houses, column, split_exceptions=split_exceptions)
+            ml_houses = pd.concat([ml_houses, encoded_df], axis=1)
 
     return ml_houses
 

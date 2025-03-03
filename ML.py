@@ -11,6 +11,7 @@ import bronze_to_silver_cleaning as btc
 import preprocessing as pp
 import feature_engineering as fe
 import geopandas as gpd
+import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 
@@ -59,36 +60,28 @@ else:
 if model_choice == "Ridge Regression":
     houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
 
-ml_houses = fe.feature_refining(houses)
+ml_houses = fe.feature_refining(houses, model_choice)
 
-columns_to_encode = ['architecture_style','property_type',
-                     'driveway_parking', 'frontage_type',
-                     'sewer','basement_type','topography',
-                     'bathrooms_detail', 
-                     'lot_features',
-                     'exterior_feature',
-                     'roof', 
-                     'waterfront_features', 
-                     'appliances_included',
-                     'laundry_features',
-                     ]
-split_exceptions = ['bathrooms_detail',]
+# # Get the sum of null values for each column
+# null_sums = ml_houses.isnull().sum()
+# # Iterate through the null sums and print each column's sum
+# for column_name, null_sum in null_sums.items():
+#   if null_sum > 0:
+#     print(f"Column '{column_name}': {null_sum} null values")
 
-if model_choice == "Ridge Regression":
-    columns_to_encode += ['neighbourhood']
-
-# TODO: Appliances Excluded has to be penalizing in giving value to the prices
-
-for column in columns_to_encode:
-    if column in houses.columns:
-        encoded_df = fe.one_hot_encode_column(houses, column, split_exceptions=split_exceptions)
-        ml_houses = pd.concat([ml_houses, encoded_df], axis=1)
+# drop rows where 'price' is missing
+ml_houses.dropna(subset=['price'], inplace=True)
+# fill the missing values with 0 in ml_houses
+ml_houses = ml_houses.fillna(0)
 
 # This is the final dataframe that will be used for ML
 # features == X and price == y
 
 features = ml_houses.drop(columns=['listing_id', 'price', 'listing', 'image-src'])
 price = ml_houses['price']
+
+# features = features.fillna(0)
+# price = price.fillna(0)
 
 features = fe.correlation_analysis(features)
 
@@ -128,7 +121,6 @@ test_size = 0.2
 # X_train = X_train.drop(columns=['price', 'image-src'])
 # X_test = X_test.drop(columns=['price', 'image-src'])
 
-# st.write(X_train.info())
 # st.write(y_train.shape)
 
 # X_train = X_train.fillna(X_train.mean())
