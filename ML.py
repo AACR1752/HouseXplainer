@@ -128,11 +128,11 @@ y_test = X_test['price']
 X_train = X_train.drop(columns=['price', 'image-src'])
 X_test = X_test.drop(columns=['price', 'image-src'])
 
-X_train = X_train.fillna(X_train.mean())
-X_test = X_test.fillna(X_test.mean())
-
 st.write(X_train.info())
 st.write(y_train.shape)
+
+X_train = X_train.fillna(X_train.mean())
+X_test = X_test.fillna(X_test.mean())
 
 # Data Cleaning and Preprocessing
 
