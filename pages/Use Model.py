@@ -58,8 +58,8 @@ if "trained_model" in st.session_state:
 
         # Predicted Range
 
-        min_price = final_output - 176417  
-        max_price = final_output + 176417  
+        min_price = final_output[0][0] - 176417  
+        max_price = final_output[0][0] + 176417  
 
         # Create the color scale
         fig = go.Figure()
