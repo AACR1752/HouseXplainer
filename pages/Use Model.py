@@ -1,21 +1,9 @@
 import streamlit as st
 import pandas as pd
-import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 import shap
 
-gdf = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
-
-# Convert civic_addr to lowercase for case-insensitive matching
-gdf["civic_addr_lower"] = gdf["civic_addr"].str.lower()
-
-# Extract latitude & longitude from GeoJSON
-gdf["lat"] = gdf.geometry.y
-gdf["lon"] = gdf.geometry.x
-
-# Keep only relevant columns
-gdf = gdf[["civic_addr_lower", "lat", "lon"]]
 
 st.title("Use the Trained Model")
 
@@ -40,29 +28,12 @@ if "trained_model" in st.session_state:
     index = joined_df[joined_df['listing'] == datapoint].index.tolist()
     single_data_point = X_test.iloc[[index[0]]]
 
-    # df = pd.DataFrame(
-    # np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
-    # columns=["lat", "lon"],
-    # 
+    df = pd.DataFrame(
+    np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
+    columns=["lat", "lon"],
+    )
 
-    # Merge X_test with geo-data on lowercase address
-    X_test_geo = X_test.merge(gdf, left_on="listing", right_on="civic_addr_lower", how="left")
-
-    if index:
-        single_data_point = X_test.iloc[[index[0]]]
-        st.write("Selected House Data:", single_data_point)
-    else:
-        st.warning("No matching house found.")
-
-    # Create DataFrame for Map
-    if "lat" in X_test_geo.columns and "lon" in X_test_geo.columns:
-        df = X_test_geo[["lat", "lon"]].dropna()  # Drop rows without lat/lon
-    else:
-        df = pd.DataFrame(columns=["lat", "lon"])  # Empty DataFrame if missing
-
-    # Display map
     st.map(df)
-
 
     if st.button("Predict"):
         # Celebration Effect (Optional)
