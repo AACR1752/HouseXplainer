@@ -62,35 +62,30 @@ if "trained_model" in st.session_state:
         min_price = predicted_price - 176417  
         max_price = predicted_price + 176417
 
-        # Normalize the predicted price within range (0 to 1 scale for plotting)
-        normalized_price = (predicted_price - min_price) / (max_price - min_price)  
+        # Normalize the predicted price for plotting
+        normalized_price = (predicted_price - min_price) / (max_price - min_price)
 
-        # Create the color scale
+        # Create figure
         fig = go.Figure()
 
-        # Add price range bar with labels
+        # Add background price range bar (Fix width)
         fig.add_trace(go.Bar(
-            x=[max_price - min_price],  # Width of the bar
-            y=[1], 
-            orientation='h',
+            x=[min_price, max_price],  # Correctly setting x values
+            y=[1, 1],  # Keep y the same for horizontal alignment
+            orientation="h",
             marker=dict(
-                color=['#4285F4', '#34A853', '#EA4335'],  # Blue -> Green -> Red
-                colorscale="bluered",
-                cmin=min_price,
-                cmax=max_price,
+                color=["#4285F4", "#34A853", "#EA4335"],  # Gradient color from blue to red
             ),
-            text=[f"${min_price:,}   |   ${predicted_price:,}   |   ${max_price:,}"],  # Display values
-            textposition="inside",  # Show text inside the bar
-            width=0.2,
+            width=0.2,  # Make the bar thick enough to be visible
             showlegend=False
         ))
 
         # Add predicted price marker
         fig.add_trace(go.Scatter(
-            x=[predicted_price - min_price], 
+            x=[predicted_price], 
             y=[1], 
             mode="markers+text",
-            marker=dict(symbol="arrow-bar-up", size=20, color="teal"),
+            marker=dict(symbol="triangle-up", size=15, color="teal"),
             text=[f"${predicted_price:,}"],
             textposition="top center",
             name="Predicted Price"
@@ -101,8 +96,8 @@ if "trained_model" in st.session_state:
             title="Predicted Price Indicator",
             xaxis=dict(
                 title="Price Range",
-                range=[0, max_price - min_price],
-                tickvals=[0, predicted_price - min_price, max_price - min_price],
+                range=[min_price - 100000, max_price + 100000],  # Extend range slightly
+                tickvals=[min_price, predicted_price, max_price],
                 ticktext=[f"${min_price:,}", f"${predicted_price:,}", f"${max_price:,}"],
             ),
             yaxis=dict(visible=False),
