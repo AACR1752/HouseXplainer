@@ -58,15 +58,19 @@ if "trained_model" in st.session_state:
 
         # Predicted Range
 
-        min_price = final_output[0][0] - 176417  
-        max_price = final_output[0][0] + 176417  
+        predicted_price = final_output[0][0]
+        min_price = predicted_price - 176417  
+        max_price = predicted_price + 176417
+
+        # Normalize the predicted price within range (0 to 1 scale for plotting)
+        normalized_price = (predicted_price - min_price) / (max_price - min_price)  
 
         # Create the color scale
         fig = go.Figure()
 
-        # Add background price range bar
+        # Add price range bar with labels
         fig.add_trace(go.Bar(
-            x=[1], 
+            x=[max_price - min_price],  # Width of the bar
             y=[1], 
             orientation='h',
             marker=dict(
@@ -75,26 +79,35 @@ if "trained_model" in st.session_state:
                 cmin=min_price,
                 cmax=max_price,
             ),
-            width=0.3,
+            text=[f"${min_price:,}   |   ${predicted_price:,}   |   ${max_price:,}"],  # Display values
+            textposition="inside",  # Show text inside the bar
+            width=0.2,
             showlegend=False
         ))
 
-        # Add a marker for the predicted price
+        # Add predicted price marker
         fig.add_trace(go.Scatter(
-            x=[final_output], 
+            x=[predicted_price - min_price], 
             y=[1], 
-            mode="markers",
+            mode="markers+text",
             marker=dict(symbol="arrow-bar-up", size=20, color="teal"),
+            text=[f"${predicted_price:,}"],
+            textposition="top center",
             name="Predicted Price"
         ))
 
         # Layout adjustments
         fig.update_layout(
             title="Predicted Price Indicator",
-            xaxis=dict(title="Price Range", range=[0, 1], showticklabels=False),
+            xaxis=dict(
+                title="Price Range",
+                range=[0, max_price - min_price],
+                tickvals=[0, predicted_price - min_price, max_price - min_price],
+                ticktext=[f"${min_price:,}", f"${predicted_price:,}", f"${max_price:,}"],
+            ),
             yaxis=dict(visible=False),
-            width=600,
-            height=100,
+            width=700,
+            height=150,
             plot_bgcolor="rgba(0,0,0,0)",
         )
 
