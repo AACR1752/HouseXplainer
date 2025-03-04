@@ -7,17 +7,15 @@ import shap
 
 gdf = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
 
-    # Extract latitude & longitude from geometry
-gdf["lat"] = gdf.latitude
-gdf["lon"] = gdf.longitude
+# Convert civic_addr to lowercase for case-insensitive matching
+gdf["civic_addr_lower"] = gdf["civic_addr"].str.lower()
 
-    # Drop unnecessary columns
-gdf = gdf[["listing", "lat", "lon"]]
+# Extract latitude & longitude from GeoJSON
+gdf["lat"] = gdf.geometry.y
+gdf["lon"] = gdf.geometry.x
 
-    # Convert back to DataFrame if needed
-geo_df = pd.DataFrame(gdf)
-
-gdf.rename(columns={"civic_addr": "listing"}, inplace=True)  # Match column name with X_test
+# Keep only relevant columns
+gdf = gdf[["civic_addr_lower", "lat", "lon"]]
 
 st.title("Use the Trained Model")
 
@@ -46,8 +44,11 @@ if "trained_model" in st.session_state:
     # np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
     # columns=["lat", "lon"],
     # )
-        # Merge X_test with latitude & longitude data
-    X_test_geo = X_test.merge(geo_df, on="listing", how="left")
+    # Normalize "listing" column in X_test to lowercase for matching
+    X_test["listing_lower"] = X_test["listing"].str.lower()
+
+    # Merge X_test with geo-data on lowercase address
+    X_test_geo = X_test.merge(gdf, left_on="listing_lower", right_on="civic_addr_lower", how="left")
 
     if index:
         single_data_point = X_test.iloc[[index[0]]]
@@ -55,16 +56,13 @@ if "trained_model" in st.session_state:
     else:
         st.warning("No matching house found.")
 
-    # Create DataFrame for Streamlit Map (with populated lat/lon)
-    if "lat" in X_test.columns and "lon" in X_test.columns:
-        df = X_test[["lat", "lon"]].dropna()  # Drop missing lat/lon values
+    # Create DataFrame for Map
+    if "lat" in X_test_geo.columns and "lon" in X_test_geo.columns:
+        df = X_test_geo[["lat", "lon"]].dropna()  # Drop rows without lat/lon
     else:
-        df = pd.DataFrame(columns=["lat", "lon"])  # Empty DataFrame if columns don't exist
+        df = pd.DataFrame(columns=["lat", "lon"])  # Empty DataFrame if missing
 
-    # Create a DataFrame to store latitudes and longitudes
-    df = pd.DataFrame(columns=["lat", "lon"])
-
-        # Display map
+    # Display map
     st.map(df)
 
 
