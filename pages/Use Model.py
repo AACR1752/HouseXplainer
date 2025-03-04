@@ -43,12 +43,10 @@ if "trained_model" in st.session_state:
     # df = pd.DataFrame(
     # np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
     # columns=["lat", "lon"],
-    # )
-    # Normalize "listing" column in X_test to lowercase for matching
-    X_test["listing_lower"] = X_test["listing"].str.lower()
+    # 
 
     # Merge X_test with geo-data on lowercase address
-    X_test_geo = X_test.merge(gdf, left_on="listing_lower", right_on="civic_addr_lower", how="left")
+    X_test_geo = X_test.merge(gdf, left_on="listing", right_on="civic_addr_lower", how="left")
 
     if index:
         single_data_point = X_test.iloc[[index[0]]]
