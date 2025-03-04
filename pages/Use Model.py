@@ -1,9 +1,22 @@
 import streamlit as st
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 import shap
 
+geo_file = "good_data/address_dictionary_neighbourhoods.geojson"
+gdf = gpd.read_file(geo_file)
+
+    # Extract latitude & longitude from geometry
+gdf["lat"] = gdf.geometry.y
+gdf["lon"] = gdf.geometry.x
+
+    # Drop unnecessary columns
+gdf = gdf[["listing", "lat", "lon"]]
+
+    # Convert back to DataFrame if needed
+geo_df = pd.DataFrame(gdf)
 
 st.title("Use the Trained Model")
 
@@ -28,12 +41,31 @@ if "trained_model" in st.session_state:
     index = joined_df[joined_df['listing'] == datapoint].index.tolist()
     single_data_point = X_test.iloc[[index[0]]]
 
-    df = pd.DataFrame(
-    np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
-    columns=["lat", "lon"],
-    )
+    # df = pd.DataFrame(
+    # np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
+    # columns=["lat", "lon"],
+    # )
+        # Merge X_test with latitude & longitude data
+    X_test_geo = X_test.merge(geo_df, on="listing", how="left")
 
+    if index:
+        single_data_point = X_test.iloc[[index[0]]]
+        st.write("Selected House Data:", single_data_point)
+    else:
+        st.warning("No matching house found.")
+
+    # Create DataFrame for Streamlit Map (with populated lat/lon)
+    if "lat" in X_test.columns and "lon" in X_test.columns:
+        df = X_test[["lat", "lon"]].dropna()  # Drop missing lat/lon values
+    else:
+        df = pd.DataFrame(columns=["lat", "lon"])  # Empty DataFrame if columns don't exist
+
+    # Create a DataFrame to store latitudes and longitudes
+    df = pd.DataFrame(columns=["lat", "lon"])
+
+        # Display map
     st.map(df)
+
 
     if st.button("Predict"):
         # Celebration Effect (Optional)
