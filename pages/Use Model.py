@@ -8,14 +8,16 @@ import shap
 gdf = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
 
     # Extract latitude & longitude from geometry
-gdf["lat"] = gdf.geometry.y
-gdf["lon"] = gdf.geometry.x
+gdf["lat"] = gdf.latitude
+gdf["lon"] = gdf.longitude
 
     # Drop unnecessary columns
 gdf = gdf[["listing", "lat", "lon"]]
 
     # Convert back to DataFrame if needed
 geo_df = pd.DataFrame(gdf)
+
+gdf.rename(columns={"civic_addr": "listing"}, inplace=True)  # Match column name with X_test
 
 st.title("Use the Trained Model")
 
