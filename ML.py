@@ -62,13 +62,14 @@ if model_choice == "Random Forest":
 houses = houses.dropna(subset=['sold']) #these are removed events
 ml_houses = fe.feature_refining(houses)
 
-columns_to_encode = ['architecture_style','property_type',
+columns_to_encode = ['architecture_style',
+                    #  'property_type',
                      'driveway_parking', 'frontage_type',
-                     'basement_type','topography',
-                    #  'bathrooms_detail', 'sewer',
+                     'basement_type',
+                    #  'bathrooms_detail', 'sewer', 'topography',
                      'lot_features',
                      'exterior_feature',
-                     'roof', 
+                    #  'roof', 
                      'waterfront_features', 
                      'appliances_included',
                      'laundry_features',
@@ -101,7 +102,9 @@ features = fe.correlation_analysis(features)
 columns_to_drop = ['kitchens', 'rooms', 
                    'latitude', 'longitude', 'year_built', 'building_age', 'house_year',
                    'distance_to_nearest_school',
-                   'bathrooms', 
+                   'bathrooms',  'bedrooms_above_ground',
+                   'garage',
+                   'frontage_length',
                    'bedrooms', 'depth',]
 for col in columns_to_drop:
     if col in features.columns:
@@ -183,7 +186,9 @@ st.altair_chart(bars, use_container_width=True)
 
 # Single Data Point Prediction
 joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
-joined_df = joined_df.merge(houses[['listing_id', 'image-src']], on='listing_id', how='inner')
+joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood',
+                                    'latitude','longitude', 'bedrooms',
+                                    'bathrooms', 'property_type']], on='listing_id', how='inner')
 
 # Store the trained model and other variables in session state
 st.session_state["trained_model"] = model

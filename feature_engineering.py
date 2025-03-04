@@ -74,7 +74,7 @@ def feature_refining(houses):
     average_house_age = houses['house_age'].mean()
 
     # Fill NaN values in 'house_age' with the average house age
-    houses['house_age'].fillna(average_house_age, inplace=True)
+    houses['house_age'].fillna(average_house_age)
 
     # ## Create ML Dataframes
 

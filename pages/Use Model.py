@@ -22,18 +22,28 @@ if "trained_model" in st.session_state:
     y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
     model_choice = st.session_state["model_choice"]
 
+    # TODO: Bring in the filters for neighbourhood, property_type, bedrooms, bathrooms
+    # st.selectboxes 
+    # neighbourhood_name = 
+    # bedroom_selection =
+    # bathroom_selection = 
+    # property_type_selection =
+
+    # TODO: joined_df will shrink based on the selection above
+    # joined_df = (smaller set of listings based on the above filters).filter
+
     # Dropdown to select a value from X_test
     datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
 
     index = joined_df[joined_df['listing'] == datapoint].index.tolist()
     single_data_point = X_test.iloc[[index[0]]]
 
-    df = pd.DataFrame(
-    np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
-    columns=["lat", "lon"],
-    )
+    # pd.DataFrame(
+    # np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
+    # columns=["lat", "lon"],
+    # )
 
-    st.map(df)
+    st.map(joined_df[["latitude", "longitude"]])
 
     if st.button("Predict"):
         # Celebration Effect (Optional)
