@@ -5,8 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import shap
 
-geo_file = "data\good_data\address_dictionary_neighbourhoods.geojson"
-gdf = gpd.read_file(geo_file)
+gdf = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
 
     # Extract latitude & longitude from geometry
 gdf["lat"] = gdf.geometry.y
