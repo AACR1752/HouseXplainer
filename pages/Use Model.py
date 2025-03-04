@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import shap
 
+import plotly.graph_objects as go
+
 
 st.title("Use the Trained Model")
 
@@ -28,6 +30,8 @@ if "trained_model" in st.session_state:
     index = joined_df[joined_df['listing'] == datapoint].index.tolist()
     single_data_point = X_test.iloc[[index[0]]]
 
+
+    # Display all the available houses
     df = pd.DataFrame(
     np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
     columns=["lat", "lon"],
@@ -50,6 +54,53 @@ if "trained_model" in st.session_state:
         single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
 
         st.dataframe(single_point_df)
+
+
+        # Predicted Range
+
+        min_price = final_output - 176417  
+        max_price = final_output + 176417  
+
+        # Create the color scale
+        fig = go.Figure()
+
+        # Add background price range bar
+        fig.add_trace(go.Bar(
+            x=[1], 
+            y=[1], 
+            orientation='h',
+            marker=dict(
+                color=['#4285F4', '#34A853', '#EA4335'],  # Blue -> Green -> Red
+                colorscale="bluered",
+                cmin=min_price,
+                cmax=max_price,
+            ),
+            width=0.3,
+            showlegend=False
+        ))
+
+        # Add a marker for the predicted price
+        fig.add_trace(go.Scatter(
+            x=[final_output], 
+            y=[1], 
+            mode="markers",
+            marker=dict(symbol="arrow-bar-up", size=20, color="teal"),
+            name="Predicted Price"
+        ))
+
+        # Layout adjustments
+        fig.update_layout(
+            title="Predicted Price Indicator",
+            xaxis=dict(title="Price Range", range=[0, 1], showticklabels=False),
+            yaxis=dict(visible=False),
+            width=600,
+            height=100,
+            plot_bgcolor="rgba(0,0,0,0)",
+        )
+
+        # Display in Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+
 
         if model_choice == "Ridge Regression":
             # Convert the single data point to an ndarray
