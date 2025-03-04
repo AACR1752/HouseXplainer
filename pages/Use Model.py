@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import shap
 
+import plotly.graph_objects as go
+
 
 st.title("Use the Trained Model")
 
@@ -38,11 +40,6 @@ if "trained_model" in st.session_state:
     index = joined_df[joined_df['listing'] == datapoint].index.tolist()
     single_data_point = X_test.iloc[[index[0]]]
 
-    # pd.DataFrame(
-    # np.random.randn(1000, 2) / [50, 50] + [43.4643, -80.5204],
-    # columns=["lat", "lon"],
-    # )
-
     st.map(joined_df[["latitude", "longitude"]])
 
     if st.button("Predict"):
@@ -60,6 +57,61 @@ if "trained_model" in st.session_state:
         single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
 
         st.dataframe(single_point_df)
+
+
+        # Predicted Range
+
+        predicted_price = final_output[0][0]
+        min_price = predicted_price - 176417  
+        max_price = predicted_price + 176417
+
+        # Normalize the predicted price for plotting
+        normalized_price = (predicted_price - min_price) / (max_price - min_price)
+
+        # Create figure
+        fig = go.Figure()
+
+        # Add background price range bar (Fix width)
+        fig.add_trace(go.Bar(
+            x=[min_price, max_price],  # Correctly setting x values
+            y=[1, 1],  # Keep y the same for horizontal alignment
+            orientation="h",
+            marker=dict(
+                color=["#4285F4", "#34A853", "#EA4335"],  # Gradient color from blue to red
+            ),
+            width=0.2,  # Make the bar thick enough to be visible
+            showlegend=False
+        ))
+
+        # Add predicted price marker
+        fig.add_trace(go.Scatter(
+            x=[predicted_price], 
+            y=[1], 
+            mode="markers+text",
+            marker=dict(symbol="triangle-up", size=15, color="teal"),
+            text=[f"${predicted_price:,}"],
+            textposition="top center",
+            name="Predicted Price"
+        ))
+
+        # Layout adjustments
+        fig.update_layout(
+            title="Predicted Price Indicator",
+            xaxis=dict(
+                title="Price Range",
+                range=[min_price - 100000, max_price + 100000],  # Extend range slightly
+                tickvals=[min_price, predicted_price, max_price],
+                ticktext=[f"${min_price:,}", f"${predicted_price:,}", f"${max_price:,}"],
+            ),
+            yaxis=dict(visible=False),
+            width=700,
+            height=150,
+            plot_bgcolor="rgba(0,0,0,0)",
+        )
+
+        # Display in Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+
 
         if model_choice == "Ridge Regression":
             # Convert the single data point to an ndarray
