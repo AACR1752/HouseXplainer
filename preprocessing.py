@@ -109,6 +109,8 @@ def predict_missing_neighbourhoods(result_df):
     predicted_neighborhoods = knn.predict(missing_X)
 
     # Add the predicted neighborhoods to the missing_neighborhoods DataFrame
+    # WARNING: A value is trying to be set on a copy of a slice from a DataFrame.
+    # Try using .loc[row_indexer,col_indexer] = value instead
     missing_neighborhoods_x['neighbourhood'] = predicted_neighborhoods
     final_filled_df = pd.concat([existing_neighborhoods, missing_neighborhoods_x])
   
