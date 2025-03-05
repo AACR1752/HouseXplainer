@@ -25,26 +25,38 @@ if "trained_model" in st.session_state:
     model_choice = st.session_state["model_choice"]
 
     # TODO: Bring in the filters for neighbourhood, property_type, bedrooms, bathrooms
+    
     # st.selectboxes 
-    # neighbourhood_name = 
-    # bedroom_selection =
-    # bathroom_selection = 
-    # property_type_selection =
+    neighbourhood_name = st.selectbox("Select Neighourhood", joined_df['neighbourhood'].unique().tolist())
+    # bedroom_selection = st.selectbox("Select Bedroom", joined_df['bedrooms'].tolist())
+    # bathroom_selection = st.selectbox("Select Bathroom", joined_df['bathrooms'].tolist())
+    small_df = joined_df[(joined_df['neighbourhood'] == neighbourhood_name)]
+    property_type_selection = st.selectbox("Select Property Type", small_df['property_type'].unique().tolist())
 
     # TODO: joined_df will shrink based on the selection above
-    # joined_df = (smaller set of listings based on the above filters).filter
+    filtered_df = joined_df[
+    (joined_df['neighbourhood'] == neighbourhood_name) &
+    # (joined_df['bedrooms'] == bedroom_selection) &
+    # (joined_df['bathrooms'] == bathroom_selection) &
+    (joined_df['property_type'] == property_type_selection)]
 
     # Dropdown to select a value from X_test
-    datapoint = st.selectbox("Select House", joined_df['listing'].tolist())
+    # Update the selectbox for the house listing based on the filtered DataFrame
+    try: 
+        datapoint = st.selectbox("Select House", filtered_df['listing'].tolist())
 
-    index = joined_df[joined_df['listing'] == datapoint].index.tolist()
-    single_data_point = X_test.iloc[[index[0]]]
+        # Get the index of the selected house
+        index = filtered_df[filtered_df['listing'] == datapoint].index.tolist()
+        single_data_point = X_test.iloc[[index[0]]]
 
-    st.map(joined_df[["latitude", "longitude"]])
+        st.map(filtered_df[["latitude", "longitude"]])
+
+    except:
+        st.write("There is no available listings with current selection!")
 
     if st.button("Predict"):
         # Celebration Effect (Optional)
-        st.balloons()  # Adds a fun animation effect!
+        # st.balloons()  # Adds a fun animation effect!
 
         prediction = model.predict(single_data_point)
         st.subheader("Single Data Point Prediction")
@@ -60,10 +72,10 @@ if "trained_model" in st.session_state:
 
 
         # Predicted Range
-
+        rmse = int(round(st.session_state["rmse"],0))
         predicted_price = final_output[0][0]
-        min_price = predicted_price - 176417  
-        max_price = predicted_price + 176417
+        min_price = predicted_price - rmse  
+        max_price = predicted_price + rmse
 
         # Normalize the predicted price for plotting
         normalized_price = (predicted_price - min_price) / (max_price - min_price)
@@ -83,17 +95,6 @@ if "trained_model" in st.session_state:
             showlegend=False
         ))
 
-        # Add predicted price marker
-        fig.add_trace(go.Scatter(
-            x=[predicted_price], 
-            y=[1], 
-            mode="markers+text",
-            marker=dict(symbol="triangle-up", size=15, color="teal"),
-            text=[f"${predicted_price:,}"],
-            textposition="top center",
-            name="Predicted Price"
-        ))
-
         # Layout adjustments
         fig.update_layout(
             title="Predicted Price Indicator",
@@ -109,9 +110,39 @@ if "trained_model" in st.session_state:
             plot_bgcolor="rgba(0,0,0,0)",
         )
 
+        # Add predicted price marker
+        # fig.add_trace(go.Scatter(
+        #     x=[predicted_price],
+        #     y=[1],  # Lower Y value to place triangle under the bar
+        #     mode="markers+text",
+        #     marker=dict(symbol="triangle-up", size=15, color="teal"),
+        #     text=[f"${predicted_price:,}"],
+        #     textposition="bottom center",  # Text below the triangle
+        #     name="Predicted Price"
+        # ))
+
         # Display in Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
+        # log_distance_to_nearest_school
+        # Rename the column in X_test
+        X_test = X_test.rename(columns={'log_distance_to_nearest_school': 'Proximity to School'})
+        # Define the suffixes to remove
+        suffixes_to_remove = ['driveway_parking', 'frontage_type',
+                            'basement_type', 'lot_features', 'exterior_feature',
+                            'waterfront_features', 'appliances_included', 'laundry_features']
+
+        # Function to remove suffixes from column names
+        def remove_suffixes(col_name, suffixes):
+            for suffix in suffixes:
+                if col_name.endswith(suffix):
+                    return col_name[:-len(suffix)-1]
+            return col_name
+
+        # Rename columns in X_test
+        X_test.columns = [remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
+        colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
+        badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
 
         if model_choice == "Ridge Regression":
             # Convert the single data point to an ndarray
@@ -141,75 +172,22 @@ if "trained_model" in st.session_state:
                 {"name": top_names, "score": top_scores}
             ]
 
-
             # Title
             st.title("🏆 Feature Importance Leaderboard")
 
-            # 1st Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
-                        <h2>🥇 {top_names[0]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 2nd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
-                        <h2>🥈 {top_names[1]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 3rd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
-                        <h2>🥉 {top_names[2]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 4th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
-                        <h2>🏅 {top_names[3]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 5th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
-                        <h2>🎖️ {top_names[4]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
+            for i in range(0,5):
+                # 1st Place
+                with st.container():
+                    st.markdown(
+                        f"""
+                        <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
+                            <h2>{badge[i]} {top_names[i]}</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                
+                    st.markdown("<br>", unsafe_allow_html=True)
 
             # Create the plot
             fig, ax = plt.subplots()
@@ -260,71 +238,19 @@ if "trained_model" in st.session_state:
             # Title
             st.title("🏆 Feature Importance Leaderboard")
 
-            # 1st Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
-                        <h2>🥇 {top_fnames[0]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 2nd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
-                        <h2>🥈 {top_fnames[1]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 3rd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
-                        <h2>🥉 {top_fnames[2]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 4th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
-                        <h2>🏅 {top_fnames[3]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 5th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
-                        <h2>🎖️ {top_fnames[4]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
+            for i in range(0,5):
+                # 1st Place
+                with st.container():
+                    st.markdown(
+                        f"""
+                        <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
+                            <h2>{badge[i]} {top_fnames[i]}</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                
+                    st.markdown("<br>", unsafe_allow_html=True)
 
             # Define colors based on SHAP values
             # colors = ['red' if shap_values_single[feature_names.index(name)] < 0 else 'green' for name in top_20_feature_names]

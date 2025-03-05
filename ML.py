@@ -103,7 +103,7 @@ columns_to_drop = ['kitchens', 'rooms',
                    'latitude', 'longitude', 'year_built', 'building_age', 'house_year',
                    'distance_to_nearest_school',
                    'bathrooms',  'bedrooms_above_ground',
-                   'garage',
+                   'garage', 'Airport_lot_features', 'Schools_lot_features',
                    'frontage_length',
                    'bedrooms', 'depth',]
 for col in columns_to_drop:
@@ -157,6 +157,8 @@ st.subheader("Model Evaluation")
 results = [[mse, rmse, r2]]
 results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared'])
 st.dataframe(results_df)
+
+st.session_state["rmse"] = rmse
 
 # Feature Importance
 feature_names = X_test.columns.tolist()
