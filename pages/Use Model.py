@@ -7,7 +7,7 @@ import shap
 import plotly.graph_objects as go
 
 
-st.title("Use the Trained Model")
+st.title("Using the Trained Model")
 
 if "trained_model" in st.session_state:
     model = st.session_state["trained_model"]
@@ -97,12 +97,17 @@ if "trained_model" in st.session_state:
 
         # Layout adjustments
         fig.update_layout(
-            title="Predicted Price Indicator",
+            # title="Predicted Price Indicator",
             xaxis=dict(
                 title="Price Range",
                 range=[min_price - 100000, max_price + 100000],  # Extend range slightly
                 tickvals=[min_price, predicted_price, max_price],
                 ticktext=[f"${min_price:,}", f"${predicted_price:,}", f"${max_price:,}"],
+                tickfont=dict(
+                    size=14,  # Increase font size
+                    color="black",  # Change font color if needed
+                    family="Arial, sans-serif"  # Change font family if needed
+        ),
             ),
             yaxis=dict(visible=False),
             width=700,
@@ -236,7 +241,7 @@ if "trained_model" in st.session_state:
             ]
 
             # Title
-            st.title("🏆 Feature Importance Leaderboard")
+            st.title("🏆 Top 5 Features")
 
             for i in range(0,5):
                 # 1st Place
