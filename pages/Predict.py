@@ -91,7 +91,7 @@ if "trained_model" in st.session_state:
             # map_style="pdk.map_styles.ROAD"
         ))
 
-        st.map(filtered_df[["latitude", "longitude"]])
+        # st.map(filtered_df[["latitude", "longitude"]])
 
     except:
         st.write("There is no available listings with current selection!")
