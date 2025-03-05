@@ -168,6 +168,8 @@ if "trained_model" in st.session_state:
             top_features_y = sorted_features_y[:20]
             top_feature_names_y, top_percentages_y = zip(*top_features_y)
 
+            top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
+
             # Convert tuple to list and extract strings
             top_names = [str(name) for name in top_feature_names_y]
             top_scores = [float(score) for score in top_percentages_y]

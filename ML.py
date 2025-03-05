@@ -158,6 +158,8 @@ sorted_features = sorted(zip(feature_names, feature_importance), key=lambda x: x
 top_features = sorted_features[:20]
 top_feature_names, top_percentages = zip(*top_features)
 
+top_feature_names = [name.replace('_', ' ') for name in top_feature_names]
+
 # Streamlit bar chart
 
 # Plot using Streamlit's altair_chart
