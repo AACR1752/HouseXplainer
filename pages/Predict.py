@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import shap
 
 import plotly.graph_objects as go
+import pydeck as pdk
 
 
 st.title("Predict House Prices")
@@ -48,6 +49,47 @@ if "trained_model" in st.session_state:
         # Get the index of the selected house
         index = filtered_df[filtered_df['listing'] == datapoint].index.tolist()
         single_data_point = X_test.iloc[[index[0]]]
+
+        school_df = pd.read_csv('data/good_data/schools.csv')
+
+        # Define House Layer (Blue Circles)
+        house_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=filtered_df,
+            get_position=["longitude", "latitude"],
+            get_radius=50,  # Adjust size
+            get_fill_color=[0, 0, 255, 180],  # Blue for houses
+            pickable=True,
+            opacity=0.8,
+        )
+
+        # Define School Layer (Red Triangles)
+        school_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=school_df,
+            get_position=["longitude", "latitude"],
+            get_radius=80,  # Bigger size for schools
+            get_fill_color=[255, 0, 0, 200],  # Red for schools
+            pickable=True,
+            opacity=0.9,
+        )
+
+        # Set the Map View
+        view_state = pdk.ViewState(
+            latitude=filtered_df["latitude"].mean(),
+            longitude=filtered_df["longitude"].mean(),
+            zoom=13,  # Adjust zoom for visibility
+            pitch=30,  # Adds slight tilt for better visualization
+        )
+
+        # Display the Map with Mapbox Style (Hybrid with Amenities)
+        st.pydeck_chart(pdk.Deck(
+            layers=[house_layer, school_layer],
+            initial_view_state=view_state,
+            tooltip={"text": "{listing}\n{school_name}"},
+            map_style="mapbox://styles/mapbox/satellite-streets-v12"  # Hybrid map with schools/amenities
+            # map_style="pdk.map_styles.ROAD"
+        ))
 
         st.map(filtered_df[["latitude", "longitude"]])
 
@@ -180,7 +222,7 @@ if "trained_model" in st.session_state:
             ]
 
             # Title
-            st.title("🏆 Feature Importance Leaderboard")
+            st.title("🏆 Top 5 features")
 
             for i in range(0,5):
                 # 1st Place
