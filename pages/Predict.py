@@ -7,7 +7,7 @@ import shap
 import plotly.graph_objects as go
 
 
-st.title("Using the Trained Model")
+st.title("Predict House Prices")
 
 if "trained_model" in st.session_state:
     model = st.session_state["trained_model"]
