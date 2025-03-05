@@ -44,14 +44,6 @@ uploaded_file = pd.merge(df_house_sigma, final_filled_df, on='listing_id', how='
 
 if uploaded_file is not None and "houses" not in st.session_state:
     houses = btc.clean_data(uploaded_file)
-    st.session_state['houses'] = houses.values
-    st.session_state["houses_raw_columns"] = houses.columns.tolist()
-    st.session_state["houses_raw_index"] = houses.index.tolist()
-    st.write("Dataset Loaded Successfully!")
-elif "houses" in st.session_state:
-    houses = pd.DataFrame(st.session_state['houses'], 
-                          columns=st.session_state["houses_raw_columns"], 
-                          index=st.session_state["houses_raw_index"])
 else:
     st.warning("Please upload a dataset to continue.")
     st.stop()
