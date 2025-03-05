@@ -95,17 +95,6 @@ if "trained_model" in st.session_state:
             showlegend=False
         ))
 
-        # Add predicted price marker
-        fig.add_trace(go.Scatter(
-            x=[predicted_price], 
-            y=[1], 
-            mode="markers+text",
-            marker=dict(symbol="triangle-up", size=15, color="teal"),
-            text=[f"${predicted_price:,}"],
-            textposition="top center",
-            name="Predicted Price"
-        ))
-
         # Layout adjustments
         fig.update_layout(
             title="Predicted Price Indicator",
@@ -120,6 +109,17 @@ if "trained_model" in st.session_state:
             height=150,
             plot_bgcolor="rgba(0,0,0,0)",
         )
+
+        # Add predicted price marker
+        # fig.add_trace(go.Scatter(
+        #     x=[predicted_price],
+        #     y=[1],  # Lower Y value to place triangle under the bar
+        #     mode="markers+text",
+        #     marker=dict(symbol="triangle-up", size=15, color="teal"),
+        #     text=[f"${predicted_price:,}"],
+        #     textposition="bottom center",  # Text below the triangle
+        #     name="Predicted Price"
+        # ))
 
         # Display in Streamlit
         st.plotly_chart(fig, use_container_width=True)
