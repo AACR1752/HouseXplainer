@@ -13,6 +13,9 @@ import geopandas as gpd
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 
+# Set the page configuration to wide mode
+st.set_page_config(layout="wide")
+
 # Load data
 st.title("HouseXplainer - A House Price Prediction App")
 st.sidebar.header("Selection Panel")

@@ -16,10 +16,11 @@ def display_graph(top_feature_names, top_percentages):
         .mark_bar()
         .encode(
             x=alt.X("Contribution (%):Q", title="Contribution (%)"),
-            y=alt.Y("Feature:N", title="Feature", sort="-x"),  # Sorting by Contribution
+            y=alt.Y("Feature:N", title=None, sort="-x",
+                    axis=alt.Axis(labelFontSize=14, titleFontSize=16, labelLimit=300)),  # Sorting by Contribution
             color=alt.Color("Feature:N", legend=None),  # Optional: Color coding
         )
-        .properties(width=800, height=600, title="Feature Importance")
+        .properties(width=800, height=800, title="Feature Importance")
     )
 
     # Display in Streamlit
