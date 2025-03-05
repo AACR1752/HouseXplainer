@@ -141,6 +141,8 @@ if "trained_model" in st.session_state:
 
         # Rename columns in X_test
         X_test.columns = [remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
+        colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
+        badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
 
         if model_choice == "Ridge Regression":
             # Convert the single data point to an ndarray
@@ -170,75 +172,22 @@ if "trained_model" in st.session_state:
                 {"name": top_names, "score": top_scores}
             ]
 
-
             # Title
             st.title("🏆 Feature Importance Leaderboard")
 
-            # 1st Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
-                        <h2>🥇 {top_names[0]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 2nd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
-                        <h2>🥈 {top_names[1]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 3rd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
-                        <h2>🥉 {top_names[2]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 4th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
-                        <h2>🏅 {top_names[3]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 5th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
-                        <h2>🎖️ {top_names[4]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
+            for i in range(0,5):
+                # 1st Place
+                with st.container():
+                    st.markdown(
+                        f"""
+                        <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
+                            <h2>{badge[i]} {top_names[i]}</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                
+                    st.markdown("<br>", unsafe_allow_html=True)
 
             # Create the plot
             fig, ax = plt.subplots()
@@ -289,71 +238,19 @@ if "trained_model" in st.session_state:
             # Title
             st.title("🏆 Feature Importance Leaderboard")
 
-            # 1st Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: gold;">
-                        <h2>🥇 {top_fnames[0]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 2nd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: silver;">
-                        <h2>🥈 {top_fnames[1]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 3rd Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #cd7f32;">
-                        <h2>🥉 {top_fnames[2]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 4th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #DAA520;">
-                        <h2>🏅 {top_fnames[3]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
-            # 5th Place
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: #B22222;">
-                        <h2>🎖️ {top_fnames[4]}</h2>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-             
-                st.markdown("<br>", unsafe_allow_html=True)
-
+            for i in range(0,5):
+                # 1st Place
+                with st.container():
+                    st.markdown(
+                        f"""
+                        <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
+                            <h2>{badge[i]} {top_fnames[i]}</h2>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                
+                    st.markdown("<br>", unsafe_allow_html=True)
 
             # Define colors based on SHAP values
             # colors = ['red' if shap_values_single[feature_names.index(name)] < 0 else 'green' for name in top_20_feature_names]
