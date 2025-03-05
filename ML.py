@@ -158,6 +158,8 @@ results = [[mse, rmse, r2]]
 results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared'])
 st.dataframe(results_df)
 
+st.session_state["rmse"] = rmse
+
 # Feature Importance
 feature_names = X_test.columns.tolist()
 sorted_features = sorted(zip(feature_names, feature_importance), key=lambda x: x[1], reverse=True)
