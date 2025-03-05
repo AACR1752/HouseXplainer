@@ -89,7 +89,6 @@ def feature_refining(houses):
     # Convert 'price' column to numeric, handling '$' and ','
     ml_houses['price'] = ml_houses['price'].astype(str).str.replace(r'[$,]', '', regex=True)
     ml_houses['price'] = pd.to_numeric(ml_houses['price'], errors='coerce')
-
     
     # place listing_id as the first column in the df
     cols = ml_houses.columns.tolist()
