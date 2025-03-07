@@ -166,17 +166,10 @@ if "trained_model" in st.session_state:
         # Define the suffixes to remove
         suffixes_to_remove = ['driveway_parking', 'frontage_type',
                             'basement_type', 'lot_features', 'exterior_feature',
-                            'waterfront_features', 'appliances_included', 'laundry_features']
-
-        # Function to remove suffixes from column names
-        def remove_suffixes(col_name, suffixes):
-            for suffix in suffixes:
-                if col_name.endswith(suffix):
-                    return col_name[:-len(suffix)-1]
-            return col_name
+                            'waterfront_features', 'appliances_included']
 
         # Rename columns in X_test
-        X_test.columns = [remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
+        X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
         colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
         badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
     
@@ -206,7 +199,7 @@ if "trained_model" in st.session_state:
 
         # List of words to drop columns containing them
         words_to_drop = ["schedule", "attachments", "airport",
-                        "seller", 
+                        "seller", "garage",
                         "other", "locati", "multi", "is", "building",
                         "negoti"]
 
