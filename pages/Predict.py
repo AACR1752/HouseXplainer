@@ -198,10 +198,7 @@ if "trained_model" in st.session_state:
             sorted_features = sorted(list(zip(column_order, percentages)), key=lambda x: x[1], reverse=True)
 
         # List of words to drop columns containing them
-        words_to_drop = ["schedule", "attachments", "airport",
-                        "seller", "garage",
-                        "other", "locati", "multi", "is", "building",
-                        "negoti"]
+        words_to_drop = md.words_to_drop
 
         # Filter sorted_features to remove any feature names containing the words in words_to_drop
         filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
