@@ -72,7 +72,7 @@ else:
                         #  'bathrooms_detail', 'sewer', 'topography',
                         'lot_features',
                         'exterior_feature',
-                        #  'roof', 
+                         'roof', 
                         'waterfront_features', 
                         'appliances_included',
                         'laundry_features',
@@ -105,9 +105,10 @@ else:
     columns_to_drop = ['kitchens', 'rooms', 
                     'latitude', 'longitude', 'year_built', 'building_age', 'house_year',
                     'distance_to_nearest_school',
-                    'bathrooms',  'bedrooms_above_ground',
-                    'garage', 'Airport_lot_features', 'Schools_lot_features',
-                    'frontage_length',
+                    'bathrooms', 
+                    # 'bedrooms_above_ground',
+                    # 'garage', 'Airport_lot_features', 'Schools_lot_features',
+                    # 'frontage_length',
                     'bedrooms', 'depth',]
     for col in columns_to_drop:
         if col in features.columns:
@@ -141,15 +142,16 @@ else:
     # X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
 
     if model_choice == "Random Forest":
-        model = RandomForestRegressor(n_estimators=100, random_state=100)
+        model = RandomForestRegressor(n_estimators=100, random_state=seed)
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         feature_importance = model.feature_importances_
     elif model_choice == "Ridge Regression":
-        model = Ridge() 
+        model = Ridge(random_state=seed, solver='lbfgs', positive=True) 
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
-        feature_importance = np.abs(model.coef_)
+        absolute_coefficients = np.abs(model.coef_)
+        feature_importance = (absolute_coefficients / np.sum(absolute_coefficients)) * 100
 
     # Model Evaluation
     mse = mean_squared_error(y_test, y_pred)
@@ -165,7 +167,17 @@ else:
     # Feature Importance
     feature_names = X_test.columns.tolist()
     sorted_features = sorted(zip(feature_names, feature_importance), key=lambda x: x[1], reverse=True)
-    top_features = sorted_features[:20]
+
+    # List of words to drop columns containing them
+    words_to_drop = ["schedule", "attachments", "airport",
+                    "seller", 
+                     "other", "locati", "multi", "is", "building",
+                     "negoti"]
+
+    # Filter sorted_features to remove any feature names containing the words in words_to_drop
+    filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
+
+    top_features = filtered_sorted_features[:20]
     top_feature_names, top_percentages = zip(*top_features)
 
     st.session_state["top_feature_names"] = top_feature_names

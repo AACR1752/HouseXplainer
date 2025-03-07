@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import shap
-
+import modules as md
 import plotly.graph_objects as go
 import pydeck as pdk
 
@@ -157,17 +157,6 @@ if "trained_model" in st.session_state:
             plot_bgcolor="rgba(0,0,0,0)",
         )
 
-        # Add predicted price marker
-        # fig.add_trace(go.Scatter(
-        #     x=[predicted_price],
-        #     y=[1],  # Lower Y value to place triangle under the bar
-        #     mode="markers+text",
-        #     marker=dict(symbol="triangle-up", size=15, color="teal"),
-        #     text=[f"${predicted_price:,}"],
-        #     textposition="bottom center",  # Text below the triangle
-        #     name="Predicted Price"
-        # ))
-
         # Display in Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
@@ -190,136 +179,69 @@ if "trained_model" in st.session_state:
         X_test.columns = [remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
         colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
         badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
+    
+        # Maintain the order of columns
+        column_order = X_test.columns.tolist()
 
         if model_choice == "Ridge Regression":
-            # Convert the single data point to an ndarray
+            feature_importance = model.coef_
             single_data_point_array = single_data_point.values
-
-            # Maintain the order of columns
-            column_order = X_test.columns.tolist()
-
-            output = np.multiply(model.coef_ , single_data_point_array) # this is for linear regression
+            output = np.multiply(feature_importance , single_data_point_array) # this is for linear regression
 
             absolute_coefficients_y = np.abs(output[0])
             percentages_y = (absolute_coefficients_y / np.sum(absolute_coefficients_y)) * 100
 
             # Combine feature names and percentages, then sort by percentages in descending order
-            sorted_features_y = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
-
-            # Select the top 20 features
-            top_features_y = sorted_features_y[:20]
-            top_feature_names_y, top_percentages_y = zip(*top_features_y)
-
-            top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
-
-            # Convert tuple to list and extract strings
-            top_names = [str(name) for name in top_feature_names_y]
-            top_scores = [float(score) for score in top_percentages_y]
-
-            # Sample top features and their contributions
-            top_features = [
-                {"name": top_names, "score": top_scores}
-            ]
-
-            # Title
-            st.title("🏆 Top 5 features")
-
-            for i in range(0,5):
-                # 1st Place
-                with st.container():
-                    st.markdown(
-                        f"""
-                        <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
-                            <h2>{badge[i]} {top_names[i]}</h2>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
-                
-                    st.markdown("<br>", unsafe_allow_html=True)
-
-            # Create the plot
-            fig, ax = plt.subplots()
-            ax.barh(top_feature_names_y, top_percentages_y, color='skyblue')
-            ax.set_xlabel("Contribution (%)")
-            ax.set_title("Top 20 Feature Contributions in Percentages")
-            ax.invert_yaxis()  # Invert y-axis to show the highest contribution at the top
-
-            # Display in Streamlit
-            st.pyplot(fig)
-
-
+            sorted_features = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
         elif model_choice == "Random Forest":
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(single_data_point)
 
-            # Get feature names
-            feature_names = single_data_point.columns.tolist()
-
-            # Convert SHAP values into a structured array
-            shap_values_single = shap_values[0]  # Extract SHAP values for this instance
-
             # Calculate absolute SHAP values and convert to percentages
-            absolute_shap_values = np.abs(shap_values_single)
+            absolute_shap_values = np.abs(shap_values[0]) # Extract SHAP values for this instance
             percentages = (absolute_shap_values / np.sum(absolute_shap_values)) * 100
-
-            # Combine feature names and percentages
-            feature_importance = list(zip(feature_names, percentages))
-
+  
             # Sort features by percentage contribution in descending order
-            sorted_feature_importance = sorted(feature_importance, key=lambda x: x[1], reverse=True)
+            sorted_features = sorted(list(zip(column_order, percentages)), key=lambda x: x[1], reverse=True)
 
-            # Select the top 20 features
-            top_20_features = sorted_feature_importance[:20]
-            top_20_feature_names, top_20_percentages = zip(*top_20_features)
+        # List of words to drop columns containing them
+        words_to_drop = ["schedule", "attachments", "airport",
+                        "seller", 
+                        "other", "locati", "multi", "is", "building",
+                        "negoti"]
 
-            top_20_feature_names = [name.replace('_', ' ') for name in top_20_feature_names]
+        # Filter sorted_features to remove any feature names containing the words in words_to_drop
+        filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
 
-            # Convert tuple to list and extract strings
-            top_fnames = [str(name) for name in top_20_feature_names]
-            top_fscores = [float(score) for score in top_20_percentages]
+        # Select the top 20 features
+        top_features_y = filtered_sorted_features[:20]
+        top_feature_names_y, top_percentages_y = zip(*top_features_y)
 
-            # Sample top features and their contributions
-            top_forest_features = [
-                {"name": top_fnames, "score": top_fscores}
-            ]
+        top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
 
-            # Title
-            st.title("🏆 Top 5 Features")
+        # Convert tuple to list and extract strings
+        top_names = [str(name) for name in top_feature_names_y]
+        top_scores = [float(score) for score in top_percentages_y]
 
-            for i in range(0,5):
-                # 1st Place
-                with st.container():
-                    st.markdown(
-                        f"""
-                        <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
-                            <h2>{badge[i]} {top_fnames[i]}</h2>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
-                
-                    st.markdown("<br>", unsafe_allow_html=True)
+        # Title
+        st.title("🏆 Top 5 features")
 
-            # Define colors based on SHAP values
-            # colors = ['red' if shap_values_single[feature_names.index(name)] < 0 else 'green' for name in top_20_feature_names]
-
-            # Create figure
-            fig, ax = plt.subplots(figsize=(10, 6))
-
-            # Plot horizontal bar chart
-            ax.barh(top_20_feature_names, top_20_percentages, color="skyblue")
-
-            # Set labels and title
-            ax.set_xlabel("Contribution (%)")
-            ax.set_ylabel("Feature")
-            ax.set_title("Top 20 Features Impacting House Price Prediction")
-
-            # Invert y-axis to show the highest contribution at the top
-            ax.invert_yaxis()
-
-            # Display plot in Streamlit
-            st.pyplot(fig)
+        for i in range(0,5):
+            # 1st Place
+            with st.container():
+                st.markdown(
+                    f"""
+                    <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
+                        <h2>{badge[i]} {top_names[i]}</h2>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            
+                st.markdown("<br>", unsafe_allow_html=True)
+        
+        md.display_graph(top_feature_names=top_feature_names_y,
+                         top_percentages=top_percentages_y)
 
 else:
     st.error("No trained model or test data found! Please train the model first.")
