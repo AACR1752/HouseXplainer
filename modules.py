@@ -38,3 +38,10 @@ def drop_columns_containing_words(df, words):
 
 def should_drop(feature_name, words):
         return any(word.lower() in feature_name.lower() for word in words)
+
+# Function to remove suffixes from column names
+def remove_suffixes(col_name, suffixes):
+    for suffix in suffixes:
+        if col_name.endswith(suffix):
+            return col_name[:-len(suffix)-1]
+    return col_name
