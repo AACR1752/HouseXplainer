@@ -20,7 +20,7 @@ def display_graph(top_feature_names, top_percentages):
                     axis=alt.Axis(labelFontSize=14, titleFontSize=16, labelLimit=300)),  # Sorting by Contribution
             color=alt.Color("Feature:N", legend=None),  # Optional: Color coding
         )
-        .properties(width=800, height=800, title="Feature Importance")
+        .properties(width=800, height=800, title="Top 20 Features as per Importance")
     )
 
     # Display in Streamlit
@@ -29,3 +29,12 @@ def display_graph(top_feature_names, top_percentages):
 def display_df(results):
     results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared'])
     st.dataframe(results_df)
+
+# Define a function to drop columns containing any of the specified words (case insensitive)
+def drop_columns_containing_words(df, words):
+    cols_to_drop = [col for col in df.columns if any(word.lower() in col.lower() for word in words)]
+    df = df.drop(columns=cols_to_drop)
+    return df
+
+def should_drop(feature_name, words):
+        return any(word.lower() in feature_name.lower() for word in words)
