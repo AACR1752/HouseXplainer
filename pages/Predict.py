@@ -1,12 +1,18 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import shap
 import modules as md
 import plotly.graph_objects as go
 import pydeck as pdk
 
+
+# Set page configuration
+st.set_page_config(
+    page_title="Predict House Prices",
+    page_icon="📊",
+    layout="wide"
+)
 
 st.title("Predict House Prices")
 
@@ -164,17 +170,17 @@ if "trained_model" in st.session_state:
         # Rename the column in X_test
         X_test = X_test.rename(columns={'log_distance_to_nearest_school': 'Proximity to School'})
         # Define the suffixes to remove
-        suffixes_to_remove = ['driveway_parking', 'frontage_type',
+        suffixes_to_remove = ['driveway_parking',
                             'basement_type', 'lot_features', 'exterior_feature',
                             'waterfront_features', 'appliances_included']
 
-        # Rename columns in X_test
-        X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
+        # # Rename columns in X_test
+        # X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
         colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
         badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
     
         # Maintain the order of columns
-        column_order = X_test.columns.tolist()
+        column_order = [col.strip() for col in X_test.columns.tolist()]
 
         if model_choice == "Ridge Regression":
             feature_importance = model.coef_

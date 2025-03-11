@@ -5,7 +5,7 @@ import pandas as pd
 words_to_drop = ["schedule", "attachments", "airport",
                     "seller", "garage", "frontage", "microwave",
                     "other", "locati", "multi", "is", "building",
-                    "negoti"]
+                    "negoti", "condition"]
 
 def display_graph(top_feature_names, top_percentages):
     top_feature_names = [name.replace('_', ' ') for name in top_feature_names]
