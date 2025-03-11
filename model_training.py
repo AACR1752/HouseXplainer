@@ -10,9 +10,39 @@ import bronze_to_silver_cleaning as btc
 import preprocessing as pp
 import feature_engineering as fe
 import geopandas as gpd
-import re
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
+
+ # Train/Test Split
+seed = 1000
+test_size = 0.2
+
+
+def split_dataset(features,price, images=True):
+    if images:
+        # Separate data based on 'image-src' prefix
+        data_df = features[features['image-src'].str.startswith('data', na=False)]
+        http_df = features[features['image-src'].str.startswith('http', na=False)]
+
+        # # Split the 'http' data into training and testing sets
+        http_train, http_test = train_test_split(http_df, test_size=test_size, random_state=seed) # Adjust test_size as needed
+
+        # # Combine the 'data' data with the training portion of 'http' data
+        X_train = pd.concat([data_df, http_train], ignore_index=True)
+
+        # The test set will consist only of 'http' data
+        X_test = http_test
+        y_train = X_train['price']
+        y_test = X_test['price']
+
+        # Drop 'price' column from X_train and X_test
+        X_train = X_train.drop(columns=['price', 'image-src'])
+        X_test = X_test.drop(columns=['price', 'image-src'])
+    else:
+        X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
+
+    return X_train, X_test, y_train, y_test
+
 
 def main(model_choice):
     path = "data/housesigmadata"
@@ -50,14 +80,12 @@ def main(model_choice):
     ml_houses = fe.feature_refining(houses)
 
     columns_to_encode = [
-                        # 'architecture_style',
-                        #  'property_type',
-                        'driveway_parking', 'frontage_type',
+                        # 'property_type',
+                        'driveway_parking',
                         'basement_type',
                         #  'bathrooms_detail', 'sewer', 'topography',
                         'lot_features',
                         'exterior_feature',
-                            'roof', 
                         'waterfront_features', 
                         'appliances_included',
                         'laundry_features',
@@ -65,7 +93,7 @@ def main(model_choice):
     split_exceptions = ['bathrooms_detail',]
 
     if model_choice == "Ridge Regression":
-        columns_to_encode += ['neighbourhood']
+        columns_to_encode += ['neighbourhood', 'architecture_style', 'roof', 'frontage_type']
 
     # TODO: Appliances Excluded has to be penalizing in giving value to the prices
 
@@ -90,45 +118,20 @@ def main(model_choice):
     columns_to_drop = ['kitchens', 'rooms', 
                     'latitude', 'longitude', 'year_built', 'building_age', 'house_year',
                     'distance_to_nearest_school',
-                    'bathrooms', "  ",
+                    'bathrooms',
                     # 'bedrooms_above_ground',
                     # 'garage', 'Airport_lot_features', 'Schools_lot_features',
                     # 'frontage_length',
                     'bedrooms', 'depth',]
     for col in columns_to_drop:
         if col in features.columns:
-            features = features.drop(columns=[col])
+            features = features.drop(columns=[col])  
     
     # This is an attempt to remove an empty space feature. unsure about the space count.
     # The code below doesn't work
-    features = features.drop([col for col in features.columns if re.match(r'^\s+$', col)], axis=1)
-    
-    # Separate data based on 'image-src' prefix
-    data_df = features[features['image-src'].str.startswith('data', na=False)]
-    http_df = features[features['image-src'].str.startswith('http', na=False)]
+    # features = features.drop([col for col in features.columns if re.match(r'^\s+$', col)], axis=1)
 
-    # Train/Test Split
-    seed = 1000
-    test_size = 0.2
-
-    # # Split the 'http' data into training and testing sets
-    http_train, http_test = train_test_split(http_df, test_size=test_size, random_state=seed) # Adjust test_size as needed
-
-    # # Combine the 'data' data with the training portion of 'http' data
-    X_train = pd.concat([data_df, http_train], ignore_index=True)
-
-    # The test set will consist only of 'http' data
-    X_test = http_test
-    y_train = X_train['price']
-    y_test = X_test['price']
-
-    # Drop 'price' column from X_train and X_test
-    X_train = X_train.drop(columns=['price', 'image-src'])
-    X_test = X_test.drop(columns=['price', 'image-src'])
-
-    # Data Cleaning and Preprocessing
-
-    # X_train, X_test, y_train, y_test = train_test_split(features, price, test_size=test_size, random_state=seed)
+    X_train, X_test, y_train, y_test = split_dataset(features, price, images=True)
 
     if model_choice == "Random Forest":
         model = RandomForestRegressor(n_estimators=100, random_state=seed)

@@ -3,7 +3,9 @@ import modules as md
 import model_training
 
 # Set the page configuration to wide mode
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="HouseXplainer - Home",
+                   page_icon="🏠",
+                   layout="wide")
 
 # Load data
 st.title("HouseXplainer - A House Price Prediction App")
