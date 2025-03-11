@@ -13,7 +13,7 @@ st.set_page_config(page_title="HouseXplainer - Home",
                    layout="wide")
 
 # Load data
-st.title("HouseXplainer - A House Price Prediction App")
+st.title("HouseXplainer - Xplain the whY behind a house")
 
 model_choice = "Random Forest" #We are fixing on random as the winner!
 
@@ -242,7 +242,7 @@ if "trained_model" in st.session_state:
         
         with img_col:
             try:
-                st.image(joined_df.loc[index[0], 'image-src'], use_column_width=True)
+                st.image(joined_df.loc[index[0], 'image-src'], use_container_width=True)
             except:
                 st.error("Image could not be loaded")
             
