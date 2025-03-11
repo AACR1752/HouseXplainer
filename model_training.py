@@ -43,32 +43,30 @@ def split_dataset(features,price, images=True):
 
     return X_train, X_test, y_train, y_test
 
-
-def main(model_choice):
+@st.cache_data
+def initial_data():
     path = "data/housesigmadata"
     combined_df = pp.combine_dataframes(path)
-
     combined_df = combined_df[combined_df['city'].str.contains('Waterloo', case=False, na=False)]
     combined_df['address'] = combined_df['address'].str.replace(' - Waterloo', '')
-
     output = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
     output = pd.DataFrame(output)
     df_schools = pd.read_csv('data/good_data/schools.csv')
     amenities = pd.read_csv('data/good_data/amenities.csv')
-
     result_df = pp.process_housing(df_house_sigma=combined_df, output=output)
-
     final_filled_df = pp.predict_missing_neighbourhoods(result_df)
     final_filled_df = pp.add_school_details(final_filled_df, df_schools)
     final_filled_df = pp.add_amenities_details(final_filled_df, amenities)
     df_house_sigma = combined_df.drop(columns=['address'])
     uploaded_file = pd.merge(df_house_sigma, final_filled_df, on='listing_id', how='inner')
+    houses = btc.clean_data(uploaded_file)
 
-    if uploaded_file is not None and "houses" not in st.session_state:
-        houses = btc.clean_data(uploaded_file)
-    else:
-        st.warning("Please upload a dataset to continue.")
-        st.stop()
+    return houses
+
+
+def main(model_choice):
+    
+    houses = initial_data()
 
     if model_choice == "Random Forest":
         houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
@@ -127,10 +125,6 @@ def main(model_choice):
         if col in features.columns:
             features = features.drop(columns=[col])  
     
-    # This is an attempt to remove an empty space feature. unsure about the space count.
-    # The code below doesn't work
-    # features = features.drop([col for col in features.columns if re.match(r'^\s+$', col)], axis=1)
-
     X_train, X_test, y_train, y_test = split_dataset(features, price, images=True)
 
     if model_choice == "Random Forest":
@@ -149,12 +143,10 @@ def main(model_choice):
     mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
-    st.subheader("Model Evaluation")
-
     results = [[mse, rmse, r2]]
     st.session_state["evaluation"] = results
     st.session_state["rmse"] = rmse
-    md.display_df(results)
+    # md.display_df(results)
 
     # Feature Importance
     feature_names = X_test.columns.tolist()
@@ -172,7 +164,7 @@ def main(model_choice):
     st.session_state["top_feature_names"] = top_feature_names
     st.session_state["top_percentages"] = top_percentages
 
-    md.display_graph(top_feature_names, top_percentages)
+    # md.display_graph(top_feature_names, top_percentages)
 
     # Single Data Point Prediction
     joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
