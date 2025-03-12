@@ -89,40 +89,80 @@ if "trained_model" in st.session_state:
 
         # Define House Layer (Blue Circles)
         house_layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=filtered_df,
-            get_position=["longitude", "latitude"],
-            get_radius=50,  # Adjust size
-            get_fill_color=[0, 0, 255, 180],  # Blue for houses
-            pickable=True,
-            opacity=0.8,
-        )
-
-        # Define School Layer (Red Triangles)
-        school_layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=school_df,
-            get_position=["longitude", "latitude"],
-            get_radius=80,  # Bigger size for schools
-            get_fill_color=[255, 0, 0, 200],  # Red for schools
+            "PolygonLayer",
+            data=[{
+                "contour": [[
+                    # Main rounded rectangle
+                    [row["longitude"] - 0.0008, row["latitude"] - 0.0005],  # Bottom left
+                    [row["longitude"] - 0.0008, row["latitude"] + 0.0005],  # Top left
+                    [row["longitude"] + 0.0008, row["latitude"] + 0.0005],  # Top right
+                    [row["longitude"] + 0.0008, row["latitude"] - 0.0005],  # Bottom right
+                    # Pointer triangle at bottom
+                    [row["longitude"] + 0.0005, row["latitude"] - 0.0005],  # Bottom right of rectangle
+                    [row["longitude"], row["latitude"] - 0.0008],           # Point of triangle
+                    [row["longitude"] - 0.0005, row["latitude"] - 0.0005],  # Bottom left of rectangle
+                    [row["longitude"] - 0.0008, row["latitude"] - 0.0005],  # Back to start (bottom left)
+                ]],
+                "listing": row["listing"] if "listing" in row else "House",
+                "latitude": row["latitude"],
+                "longitude": row["longitude"]
+            } for _, row in filtered_df.iterrows()],
+            get_polygon="contour",
+            get_fill_color=[26, 188, 156, 220],  # Teal/turquoise color (#1ABC9C)
+            get_line_color=[255, 255, 255, 180],  # White border
+            get_line_width=2,
+            stroked=True,
             pickable=True,
             opacity=0.9,
+            tooltip={"html": "<b>Listing:</b> {listing}"}
+        )
+
+        # # Text layer for the house listings
+        # house_text_layer = pdk.Layer(
+        #     "TextLayer",
+        #     data=filtered_df,
+        #     get_position=["longitude", "latitude"],
+        #     get_text="listing",  # Using listing column
+        #     get_size=14,
+        #     get_color=[255, 255, 255],  # White text
+        #     get_angle=0,
+        #     get_text_anchor="middle",
+        #     get_alignment_baseline="center",
+        #     pickable=True,
+        # )
+
+        # Define School Layer (Red Polygons for schools - triangle shape)
+        school_layer = pdk.Layer(
+            "PolygonLayer",
+            data=[{
+                "contour": [[
+                    [row["longitude"], row["latitude"]],
+                    [row["longitude"] + 0.0005, row["latitude"] + 0.0005],
+                    [row["longitude"] - 0.0005, row["latitude"] + 0.0005]
+                ]],
+                "s_name": row["school_name"] if "school_name" in row else "School"
+            } for _, row in school_df.iterrows()],
+            get_polygon="contour",
+            get_fill_color=[255, 0, 0, 200],
+            pickable=True,
+            opacity=0.9,
+            tooltip={"School": "<b>Listing:</b> {s_name}"}
         )
 
         # Set the Map View
         view_state = pdk.ViewState(
             latitude=filtered_df["latitude"].mean(),
             longitude=filtered_df["longitude"].mean(),
-            zoom=14,  # Adjust zoom for visibility
-            pitch=5,  # Adds slight tilt for better visualization
+            zoom=14,
+            pitch=5
         )
 
-        # Display the Map with Mapbox Style
+        # Display the Map
         r = pdk.Deck(
             layers=[house_layer, school_layer],
             initial_view_state=view_state,
-            tooltip={"text": "{listing}\n{school_name}"},
-            map_style="mapbox://styles/mapbox/satellite-streets-v12"
+            map_style="mapbox://styles/mapbox/satellite-streets-v12",
+            tooltip={"html": True}
         )
         map_placeholder = st.pydeck_chart(r)
 
