@@ -35,31 +35,35 @@ if "trained_model" in st.session_state:
     y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
     model_choice = st.session_state["model_choice"]
 
-    # TODO: Bring in the filters for neighbourhood, property_type, bedrooms, bathrooms
-    
-    # st.selectboxes 
-    neighbourhood_name = st.selectbox("Select Neighourhood", joined_df['neighbourhood'].unique().tolist())
-    # bedroom_selection = st.selectbox("Select Bedroom", joined_df['bedrooms'].tolist())
-    # bathroom_selection = st.selectbox("Select Bathroom", joined_df['bathrooms'].tolist())
-    small_df = joined_df[(joined_df['neighbourhood'] == neighbourhood_name)]
-    property_type_selection = st.selectbox("Select Property Type", small_df['property_type'].unique().tolist())
+    # Create two columns with balanced ratio
+    col1, col2 = st.columns([2, 3])
 
-    # TODO: joined_df will shrink based on the selection above
-    filtered_df = joined_df[
-    (joined_df['neighbourhood'] == neighbourhood_name) &
-    # (joined_df['bedrooms'] == bedroom_selection) &
-    # (joined_df['bathrooms'] == bathroom_selection) &
-    (joined_df['property_type'] == property_type_selection)]
+    with col1:
+        # st.selectboxes 
+        neighbourhood_name = st.selectbox("Select Neighourhood", joined_df['neighbourhood'].unique().tolist())
+        # bedroom_selection = st.selectbox("Select Bedroom", joined_df['bedrooms'].tolist())
+        # bathroom_selection = st.selectbox("Select Bathroom", joined_df['bathrooms'].tolist())
+        small_df = joined_df[(joined_df['neighbourhood'] == neighbourhood_name)]
+        property_type_selection = st.selectbox("Select Property Type", small_df['property_type'].unique().tolist())
 
-    # Dropdown to select a value from X_test
-    # Update the selectbox for the house listing based on the filtered DataFrame
-    try: 
-        datapoint = st.selectbox("Select House", filtered_df['listing'].tolist())
+        # TODO: joined_df will shrink based on the selection above
+        filtered_df = joined_df[
+        (joined_df['neighbourhood'] == neighbourhood_name) &
+        # (joined_df['bedrooms'] == bedroom_selection) &
+        # (joined_df['bathrooms'] == bathroom_selection) &
+        (joined_df['property_type'] == property_type_selection)]
 
-        # Get the index of the selected house
-        index = filtered_df[filtered_df['listing'] == datapoint].index.tolist()
-        single_data_point = X_test.iloc[[index[0]]]
+        
+        # Update the selectbox for the house listing based on the filtered DataFrame
+        try: 
+            datapoint = st.selectbox("Select House", filtered_df['listing'].tolist())
+            # Get the index of the selected house
+            index = filtered_df[filtered_df['listing'] == datapoint].index.tolist()
+            single_data_point = X_test.iloc[[index[0]]]
+        except:
+            st.write("There is no available listings with current selection!")
 
+    with col2:
         school_df = pd.read_csv('data/good_data/schools.csv')
 
         # Define House Layer (Blue Circles)
@@ -102,11 +106,10 @@ if "trained_model" in st.session_state:
         ))
 
         # st.map(filtered_df[["latitude", "longitude"]])
+    with col1:
+        predict = st.button("Predict")
 
-    except:
-        st.write("There is no available listings with current selection!")
-
-    if st.button("Predict"):
+    if predict:
         # Celebration Effect (Optional)
         # st.balloons()  # Adds a fun animation effect!
 
