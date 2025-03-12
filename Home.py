@@ -308,6 +308,7 @@ if "trained_model" in st.session_state:
             
                 st.markdown("<br>", unsafe_allow_html=True)
         
+        st.write("")
         md.display_graph(top_feature_names=top_feature_names_y,
                          top_percentages=top_percentages_y)
 
