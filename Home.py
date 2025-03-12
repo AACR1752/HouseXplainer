@@ -6,7 +6,6 @@ import modules as md
 import plotly.graph_objects as go
 import pydeck as pdk
 import model_training
-import plotly.express as px
 
 # Set the page configuration to wide mode
 st.set_page_config(page_title="HouseXplainer - Home",
@@ -68,7 +67,6 @@ if "trained_model" in st.session_state:
         small_df = joined_df[(joined_df['neighbourhood'] == neighbourhood_name)]
         property_type_selection = st.selectbox("Select Property Type", small_df['property_type'].unique().tolist())
 
-        # TODO: joined_df will shrink based on the selection above
         filtered_df = joined_df[
         (joined_df['neighbourhood'] == neighbourhood_name) &
         # (joined_df['bedrooms'] == bedroom_selection) &
