@@ -6,6 +6,7 @@ import modules as md
 import plotly.graph_objects as go
 import pydeck as pdk
 import model_training
+import plotly.express as px
 
 # Set the page configuration to wide mode
 st.set_page_config(page_title="HouseXplainer - Home",
@@ -13,7 +14,7 @@ st.set_page_config(page_title="HouseXplainer - Home",
                    layout="wide")
 
 # Load data
-st.title("HouseXplainer - Xplain the whY behind a house")
+st.title("HouseXplainer - AI-powered Insights Tool")
 
 model_choice = "Random Forest" #We are fixing on random as the winner!
 
@@ -36,216 +37,135 @@ if "trained_model" in st.session_state:
     model_choice = st.session_state["model_choice"]
 
     # Create two columns with balanced ratio
-    col1, col2 = st.columns([2, 3])  # Adjusted ratio to give more width to first column
-    
-    with col2:
-        # Place the map in the second column
-        try:
-            st.subheader("Property Map")
-            school_df = pd.read_csv('data/good_data/schools.csv')
-            
-            # Prepare data with icon column for houses
-            filtered_df_with_icon = joined_df.copy()  # Use joined_df initially
-            filtered_df_with_icon['icon_data'] = [{
-                "url": "https://img.icons8.com/color/48/000000/home.png",
-                "width": 128,
-                "height": 128,
-                "anchorY": 128
-            } for _ in range(len(filtered_df_with_icon))]
-            
-            # Prepare data with icon column for schools
-            school_df_with_icon = school_df.copy()
-            school_df_with_icon['icon_data'] = [{
-                "url": "https://img.icons8.com/color/48/000000/school.png",
-                "width": 128,
-                "height": 128,
-                "anchorY": 128
-            } for _ in range(len(school_df_with_icon))]
-            
-            # Define House Layer with icons - will be updated later
-            house_layer = pdk.Layer(
-                "IconLayer",
-                data=filtered_df_with_icon,
-                get_position=["longitude", "latitude"],
-                get_icon="icon_data",
-                get_size=4,
-                size_scale=10,
-                pickable=True,
-            )
-            
-            # Define School Layer with icons
-            school_layer = pdk.Layer(
-                "IconLayer",
-                data=school_df_with_icon,
-                get_position=["longitude", "latitude"],
-                get_icon="icon_data",
-                get_size=4,
-                size_scale=10,
-                pickable=True,
-            )
-            
-            # Add fallback layers in case the icons don't load
-            house_fallback_layer = pdk.Layer(
-                "ScatterplotLayer",
-                data=joined_df,  # Use joined_df initially
-                get_position=["longitude", "latitude"],
-                get_radius=50,
-                get_fill_color=[0, 0, 255, 180],  # Blue for houses
-                pickable=True,
-                opacity=0.8,
-                visible=False,  # Only show if primary layer fails
-            )
-            
-            school_fallback_layer = pdk.Layer(
-                "ScatterplotLayer",
-                data=school_df,
-                get_position=["longitude", "latitude"],
-                get_radius=80,
-                get_fill_color=[255, 0, 0, 200],  # Red for schools
-                pickable=True,
-                opacity=0.9,
-                visible=False,  # Only show if primary layer fails
-            )
-            
-            # Initialize view with all data first
-            view_state = pdk.ViewState(
-                latitude=joined_df["latitude"].mean(),
-                longitude=joined_df["longitude"].mean(),
-                zoom=12,
-                pitch=5,
-            )
-            
-            # Display the Map with Mapbox Style
-            r = pdk.Deck(
-                layers=[house_layer, school_layer, house_fallback_layer, school_fallback_layer],
-                initial_view_state=view_state,
-                tooltip={"text": "{listing}\n{school_name}"},
-                map_style="mapbox://styles/mapbox/satellite-streets-v12"
-            )
-            map_placeholder = st.pydeck_chart(r)
-            
-            # Add a small legend below the map
-            legend_col1, legend_col2 = st.columns(2)
-            with legend_col1:
-                st.markdown("🏠 **Houses**")
-            with legend_col2:
-                st.markdown("🏫 **Schools**")
-                
-        except Exception as e:
-            st.error(f"Map cannot be displayed: {e}")
-    
-    with col1:
-        # Add vertical spacing to align with map
-        st.write("")
-        st.write("")
-        st.write("")
-        
-        # Create a container with styling to center content
-        with st.container():
-            # Center the content with CSS
-            st.markdown("""
-                <style>
-                    .centered-container {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        padding: 20px;
-                        background-color: #f8f9fa;
-                        border-radius: 10px;
-                        margin-top: 30px;
-                    }
-                    .selection-title {
-                        text-align: center;
-                        margin-bottom: 20px;
-                    }
-                </style>
-                <div class="centered-container">
-                    <h3 class="selection-title">Property Selection</h3>
-                </div>
-                """, unsafe_allow_html=True)
-            
-            # Place selectboxes in the first column with more space
-            neighbourhood_name = st.selectbox("Select Neighbourhood", joined_df['neighbourhood'].unique().tolist())
-            small_df = joined_df[(joined_df['neighbourhood'] == neighbourhood_name)]
-            property_type_selection = st.selectbox("Select Property Type", small_df['property_type'].unique().tolist())
-            
-            # Filter data based on selections
-            filtered_df = joined_df[
-                (joined_df['neighbourhood'] == neighbourhood_name) &
-                # (joined_df['bedrooms'] == bedroom_selection) &
-                # (joined_df['bathrooms'] == bathroom_selection) &
-                (joined_df['property_type'] == property_type_selection)]
-            
-            # Update map with filtered data
-            try:
-                # Update filtered data for house layer
-                filtered_df_with_icon = filtered_df.copy()
-                filtered_df_with_icon['icon_data'] = [{
-                    "url": "https://img.icons8.com/color/48/000000/home.png",
-                    "width": 128,
-                    "height": 128,
-                    "anchorY": 128
-                } for _ in range(len(filtered_df_with_icon))]
-                
-                # Update layers with filtered data
-                house_layer.data = filtered_df_with_icon
-                house_fallback_layer.data = filtered_df
-                
-                # Update view state
-                if not filtered_df.empty:
-                    view_state.latitude = filtered_df["latitude"].mean()
-                    view_state.longitude = filtered_df["longitude"].mean()
-                    view_state.zoom = 14
-                
-                # Update the map
-                r.initial_view_state = view_state
-                r.layers[0].data = filtered_df_with_icon
-                r.layers[2].data = filtered_df
-                
-                # Replace the map
-                map_placeholder.pydeck_chart(r)
-            except:
-                # If update fails, continue with selection
-                pass
-            
-            # Dropdown to select a value from X_test
-            try: 
-                datapoint = st.selectbox("Select House", filtered_df['listing'].tolist())
-                
-                # Get the index of the selected house
-                index = filtered_df[filtered_df['listing'] == datapoint].index.tolist()
-                single_data_point = X_test.iloc[[index[0]]]
-                
-                # Add some spacing
-                st.write("")
-                st.write("")
-                
-                # Add the Predict button in the first column with custom styling
-                col1_but1, col1_but2, col1_but3 = st.columns([1, 2, 1])
-                with col1_but2:
-                    predict_button = st.button("Predict", use_container_width=True)
-                
-            except:
-                st.error("There are no available listings with current selection!")
-                predict_button = False
+    col1, col2 = st.columns([2, 3])
 
-    # The rest of the code for prediction results (outside the columns)
-    if 'predict_button' in locals() and predict_button:
-        # Prediction results section after the columns
-        st.markdown("---")  # Add a divider
+    with col1:
+        # Center the content with CSS
+        st.markdown("""
+            <style>
+                .centered-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                    border-radius: 10px;
+                    margin-top: 30px;
+                }
+                .selection-title {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+            </style>
+            <div class="centered-container">
+                <h3 class="selection-title">Property Selection</h3>
+            </div>
+            """, unsafe_allow_html=True)
+        neighbourhood_name = st.selectbox("Select Neighourhood", joined_df['neighbourhood'].unique().tolist())
+        # bedroom_selection = st.selectbox("Select Bedroom", joined_df['bedrooms'].tolist())
+        # bathroom_selection = st.selectbox("Select Bathroom", joined_df['bathrooms'].tolist())
+        small_df = joined_df[(joined_df['neighbourhood'] == neighbourhood_name)]
+        property_type_selection = st.selectbox("Select Property Type", small_df['property_type'].unique().tolist())
+
+        # TODO: joined_df will shrink based on the selection above
+        filtered_df = joined_df[
+        (joined_df['neighbourhood'] == neighbourhood_name) &
+        # (joined_df['bedrooms'] == bedroom_selection) &
+        # (joined_df['bathrooms'] == bathroom_selection) &
+        (joined_df['property_type'] == property_type_selection)]
+
+        
+        # Update the selectbox for the house listing based on the filtered DataFrame
+        try: 
+            datapoint = st.selectbox("Select House", filtered_df['listing'].tolist())
+            # Get the index of the selected house
+            index = filtered_df[filtered_df['listing'] == datapoint].index.tolist()
+            single_data_point = X_test.iloc[[index[0]]]
+        except:
+            st.write("There is no available listings with current selection!")
+
+    with col2:
+        st.markdown("<h3 style='text-align: center;'>Property Map</h3>", unsafe_allow_html=True)
+        school_df = pd.read_csv('data/good_data/schools.csv')
+
+        # Define House Layer (Blue Circles)
+        house_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=filtered_df,
+            get_position=["longitude", "latitude"],
+            get_radius=50,  # Adjust size
+            get_fill_color=[0, 0, 255, 180],  # Blue for houses
+            pickable=True,
+            opacity=0.8,
+        )
+
+        # Define School Layer (Red Triangles)
+        school_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=school_df,
+            get_position=["longitude", "latitude"],
+            get_radius=80,  # Bigger size for schools
+            get_fill_color=[255, 0, 0, 200],  # Red for schools
+            pickable=True,
+            opacity=0.9,
+        )
+
+        # Set the Map View
+        view_state = pdk.ViewState(
+            latitude=filtered_df["latitude"].mean(),
+            longitude=filtered_df["longitude"].mean(),
+            zoom=14,  # Adjust zoom for visibility
+            pitch=5,  # Adds slight tilt for better visualization
+        )
+
+        # Display the Map with Mapbox Style
+        r = pdk.Deck(
+            layers=[house_layer, school_layer],
+            initial_view_state=view_state,
+            tooltip={"text": "{listing}\n{school_name}"},
+            map_style="mapbox://styles/mapbox/satellite-streets-v12"
+        )
+        map_placeholder = st.pydeck_chart(r)
+
+        # # Display the Map with Mapbox Style (Hybrid with Amenities)
+        # st.pydeck_chart(pdk.Deck(
+        #     layers=[house_layer, school_layer],
+        #     initial_view_state=view_state,
+        #     tooltip={"text": "{listing}\n{school_name}"},
+        #     map_style="mapbox://styles/mapbox/satellite-streets-v12"  # Hybrid map with schools/amenities
+        #     # map_style="pdk.map_styles.ROAD"
+        # ))
+
+        # st.map(filtered_df[["latitude", "longitude"]])
+    with col1:
+        st.markdown(
+            """
+            <style>
+            div.stButton > button {
+                display: block;
+                margin: 0 auto;
+                width: 50%;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+        predict = st.button("Predict", use_container_width=True)
+
+    if predict:
+        # Celebration Effect (Optional)
+        # st.balloons()  # Adds a fun animation effect!
         prediction = model.predict(single_data_point)
         st.subheader("Single Data Point Prediction")
 
         # Create two columns for image and prediction results
         img_col, pred_col = st.columns([1, 1])
-        
+
+
         with img_col:
-            try:
-                st.image(joined_df.loc[index[0], 'image-src'], use_container_width=True)
-            except:
-                st.error("Image could not be loaded")
-            
+            st.image(joined_df.loc[index[0], 'image-src'])
+
         with pred_col:
             final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
             single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
@@ -316,16 +236,15 @@ if "trained_model" in st.session_state:
         # Display in Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
-        # log_distance_to_nearest_school
         # Rename the column in X_test
         X_test = X_test.rename(columns={'log_distance_to_nearest_school': 'Proximity to School'})
-        # Define the suffixes to remove
+        
         suffixes_to_remove = ['driveway_parking',
                             'basement_type', 'lot_features', 'exterior_feature',
                             'waterfront_features', 'appliances_included']
 
         # # Rename columns in X_test
-        # X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
+        X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
         colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
         badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
     
@@ -353,7 +272,6 @@ if "trained_model" in st.session_state:
             # Sort features by percentage contribution in descending order
             sorted_features = sorted(list(zip(column_order, percentages)), key=lambda x: x[1], reverse=True)
 
-        # List of words to drop columns containing them
         words_to_drop = md.words_to_drop
 
         # Filter sorted_features to remove any feature names containing the words in words_to_drop

@@ -50,3 +50,16 @@ def remove_suffixes(col_name, suffixes):
         if col_name.endswith(suffix):
             return col_name[:-len(suffix)-1]
     return col_name
+
+@st.cache_data
+def render_school_map():
+    school_df = pd.read_csv('data/good_data/schools.csv')
+    # Prepare data with icon column for schools
+    school_df_with_icon = school_df.copy()
+    school_df_with_icon['icon_data'] = [{
+        "url": "https://img.icons8.com/color/48/000000/school.png",
+        "width": 128,
+        "height": 128,
+        "anchorY": 128
+    } for _ in range(len(school_df_with_icon))]
+    return school_df_with_icon
