@@ -156,20 +156,17 @@ if "trained_model" in st.session_state:
     if predict:
         # Celebration Effect (Optional)
         # st.balloons()  # Adds a fun animation effect!
-
         prediction = model.predict(single_data_point)
         st.subheader("Single Data Point Prediction")
 
         # Create two columns for image and prediction results
         img_col, pred_col = st.columns([1, 1])
 
+
         with img_col:
             st.image(joined_df.loc[index[0], 'image-src'])
 
         with pred_col:
-            # final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
-            # single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
-            # st.dataframe(single_point_df)
             final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
             single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
             
@@ -191,7 +188,6 @@ if "trained_model" in st.session_state:
                 value=f"{accuracy:.1f}%",
                 delta=f"${diff:,} difference"
             )
-
 
         # Predicted Range
         rmse = int(round(st.session_state["rmse"],0))
@@ -291,12 +287,16 @@ if "trained_model" in st.session_state:
         top_names = [str(name) for name in top_feature_names_y]
         top_scores = [float(score) for score in top_percentages_y]
 
-        # Title
+        # Title with divider
+        st.markdown("---")
         st.title("🏆 Top 5 features")
 
+        # Create a row of columns for the top 5 features
+        feature_cols = st.columns(5)
+        
         for i in range(0,5):
-            # 1st Place
-            with st.container():
+            # Display each feature in its own column
+            with feature_cols[i]:
                 st.markdown(
                     f"""
                     <div style="text-align: center; padding: 20px; border-radius: 10px; background-color: {colors[i]};">
@@ -305,8 +305,6 @@ if "trained_model" in st.session_state:
                     """,
                     unsafe_allow_html=True,
                 )
-            
-                st.markdown("<br>", unsafe_allow_html=True)
         
         st.write("")
         md.display_graph(top_feature_names=top_feature_names_y,
