@@ -6,6 +6,7 @@ import modules as md
 import plotly.graph_objects as go
 import pydeck as pdk
 import model_training
+import plotly.express as px
 
 # Set the page configuration to wide mode
 st.set_page_config(page_title="HouseXplainer - Home",
@@ -13,7 +14,7 @@ st.set_page_config(page_title="HouseXplainer - Home",
                    layout="wide")
 
 # Load data
-st.title("HouseXplainer - A House Price Prediction App")
+st.title("HouseXplainer - AI-powered Insights Tool")
 
 model_choice = "Random Forest" #We are fixing on random as the winner!
 
@@ -39,7 +40,28 @@ if "trained_model" in st.session_state:
     col1, col2 = st.columns([2, 3])
 
     with col1:
-        # st.selectboxes 
+        # Center the content with CSS
+        st.markdown("""
+            <style>
+                .centered-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                    border-radius: 10px;
+                    margin-top: 30px;
+                }
+                .selection-title {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+            </style>
+            <div class="centered-container">
+                <h3 class="selection-title">Property Selection</h3>
+            </div>
+            """, unsafe_allow_html=True)
         neighbourhood_name = st.selectbox("Select Neighourhood", joined_df['neighbourhood'].unique().tolist())
         # bedroom_selection = st.selectbox("Select Bedroom", joined_df['bedrooms'].tolist())
         # bathroom_selection = st.selectbox("Select Bathroom", joined_df['bathrooms'].tolist())
@@ -64,6 +86,7 @@ if "trained_model" in st.session_state:
             st.write("There is no available listings with current selection!")
 
     with col2:
+        st.markdown("<h3 style='text-align: center;'>Property Map</h3>", unsafe_allow_html=True)
         school_df = pd.read_csv('data/good_data/schools.csv')
 
         # Define House Layer (Blue Circles)
@@ -96,18 +119,39 @@ if "trained_model" in st.session_state:
             pitch=5,  # Adds slight tilt for better visualization
         )
 
-        # Display the Map with Mapbox Style (Hybrid with Amenities)
-        st.pydeck_chart(pdk.Deck(
+        # Display the Map with Mapbox Style
+        r = pdk.Deck(
             layers=[house_layer, school_layer],
             initial_view_state=view_state,
             tooltip={"text": "{listing}\n{school_name}"},
-            map_style="mapbox://styles/mapbox/satellite-streets-v12"  # Hybrid map with schools/amenities
-            # map_style="pdk.map_styles.ROAD"
-        ))
+            map_style="mapbox://styles/mapbox/satellite-streets-v12"
+        )
+        map_placeholder = st.pydeck_chart(r)
+
+        # # Display the Map with Mapbox Style (Hybrid with Amenities)
+        # st.pydeck_chart(pdk.Deck(
+        #     layers=[house_layer, school_layer],
+        #     initial_view_state=view_state,
+        #     tooltip={"text": "{listing}\n{school_name}"},
+        #     map_style="mapbox://styles/mapbox/satellite-streets-v12"  # Hybrid map with schools/amenities
+        #     # map_style="pdk.map_styles.ROAD"
+        # ))
 
         # st.map(filtered_df[["latitude", "longitude"]])
     with col1:
-        predict = st.button("Predict")
+        st.markdown(
+            """
+            <style>
+            div.stButton > button {
+                display: block;
+                margin: 0 auto;
+                width: 50%;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+        predict = st.button("Predict", use_container_width=True)
 
     if predict:
         # Celebration Effect (Optional)
@@ -116,14 +160,37 @@ if "trained_model" in st.session_state:
         prediction = model.predict(single_data_point)
         st.subheader("Single Data Point Prediction")
 
-        st.image(joined_df.loc[index[0], 'image-src'])
+        # Create two columns for image and prediction results
+        img_col, pred_col = st.columns([1, 1])
 
-        # st.write(f"image url {joined_df.loc[index[0], 'image-src']}")
+        with img_col:
+            st.image(joined_df.loc[index[0], 'image-src'])
 
-        final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
-        single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
-
-        st.dataframe(single_point_df)
+        with pred_col:
+            # final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
+            # single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
+            # st.dataframe(single_point_df)
+            final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
+            single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
+            
+            # Format the prices with dollar signs and commas
+            formatted_df = single_point_df.copy()
+            formatted_df['Predicted Price'] = formatted_df['Predicted Price'].apply(lambda x: f"${x:,}")
+            formatted_df['Actual Price'] = formatted_df['Actual Price'].apply(lambda x: f"${x:,}")
+            
+            st.dataframe(formatted_df, use_container_width=True)
+            
+            # Calculate difference and accuracy
+            pred_price = final_output[0][0]
+            actual_price = final_output[0][1]
+            diff = abs(pred_price - actual_price)
+            accuracy = (1 - (diff / actual_price)) * 100
+            
+            st.metric(
+                label="Prediction Accuracy", 
+                value=f"{accuracy:.1f}%",
+                delta=f"${diff:,} difference"
+            )
 
 
         # Predicted Range
@@ -173,16 +240,15 @@ if "trained_model" in st.session_state:
         # Display in Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
-        # log_distance_to_nearest_school
         # Rename the column in X_test
         X_test = X_test.rename(columns={'log_distance_to_nearest_school': 'Proximity to School'})
-        # Define the suffixes to remove
+        
         suffixes_to_remove = ['driveway_parking',
                             'basement_type', 'lot_features', 'exterior_feature',
                             'waterfront_features', 'appliances_included']
 
         # # Rename columns in X_test
-        # X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
+        X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
         colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
         badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
     
@@ -210,7 +276,6 @@ if "trained_model" in st.session_state:
             # Sort features by percentage contribution in descending order
             sorted_features = sorted(list(zip(column_order, percentages)), key=lambda x: x[1], reverse=True)
 
-        # List of words to drop columns containing them
         words_to_drop = md.words_to_drop
 
         # Filter sorted_features to remove any feature names containing the words in words_to_drop
