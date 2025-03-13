@@ -85,57 +85,38 @@ if "trained_model" in st.session_state:
 
     with col2:
         st.markdown("<h3 style='text-align: center;'>Property Map</h3>", unsafe_allow_html=True)
-        school_df = pd.read_csv('data/good_data/schools.csv')
 
         # Define House Layer (Blue Circles)
         house_layer = pdk.Layer(
             "ScatterplotLayer",
             data=filtered_df,
             get_position=["longitude", "latitude"],
-            get_radius=50,  # Adjust size
-            get_fill_color=[0, 0, 255, 180],  # Blue for houses
-            pickable=True,
-            opacity=0.8,
-        )
-
-        # Define School Layer (Red Triangles)
-        school_layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=school_df,
-            get_position=["longitude", "latitude"],
-            get_radius=80,  # Bigger size for schools
-            get_fill_color=[255, 0, 0, 200],  # Red for schools
+            get_radius=25,  # Adjust size
+            get_fill_color=[255, 0, 0, 255],  # Blue for houses [0, 0, 255, 180]
             pickable=True,
             opacity=0.9,
         )
+
 
         # Set the Map View
         view_state = pdk.ViewState(
             latitude=filtered_df["latitude"].mean(),
             longitude=filtered_df["longitude"].mean(),
-            zoom=14,  # Adjust zoom for visibility
+            zoom=15,  # Adjust zoom for visibility
             pitch=5,  # Adds slight tilt for better visualization
         )
 
         # Display the Map with Mapbox Style
         r = pdk.Deck(
-            layers=[house_layer, school_layer],
+            layers=[house_layer],
             initial_view_state=view_state,
-            tooltip={"text": "{listing}\n{school_name}"},
-            map_style="mapbox://styles/mapbox/satellite-streets-v12"
+            tooltip={"text": "{listing}"},
+            map_style="mapbox://styles/mapbox/streets-v12"
+
         )
         map_placeholder = st.pydeck_chart(r)
 
-        # # Display the Map with Mapbox Style (Hybrid with Amenities)
-        # st.pydeck_chart(pdk.Deck(
-        #     layers=[house_layer, school_layer],
-        #     initial_view_state=view_state,
-        #     tooltip={"text": "{listing}\n{school_name}"},
-        #     map_style="mapbox://styles/mapbox/satellite-streets-v12"  # Hybrid map with schools/amenities
-        #     # map_style="pdk.map_styles.ROAD"
-        # ))
 
-        # st.map(filtered_df[["latitude", "longitude"]])
     with col1:
         st.markdown(
             """
