@@ -52,6 +52,7 @@ def remove_suffixes(col_name, suffixes):
             return col_name[:-len(suffix)-1]
     return col_name
 
+# Still caching school
 @st.cache_data
 def render_school_map():
     school_df = pd.read_csv('data/good_data/schools.csv')
