@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 import pydeck as pdk
 import model_training
 
+# from mapie.regression import MapieRegressor
+
 # Set the page configuration to wide mode
 st.set_page_config(page_title="HouseXplainer - Home",
                    page_icon="🏠",
@@ -155,6 +157,24 @@ if "trained_model" in st.session_state:
             formatted_df['Actual Price'] = formatted_df['Actual Price'].apply(lambda x: f"${x:,}")
             
             st.dataframe(formatted_df, use_container_width=True)
+
+
+            # Mapie CI
+            # mapie = MapieRegressor(model, method="plus")  # Can also use 'cv' or 'naive'
+            # mapie.fit(X_test, y_test)
+
+            # y_pred, y_pis = mapie.predict(single_data_point, alpha=0.025)
+
+            # y_pred_scalar = float(y_pred[0])
+            # lower_bound = float(y_pis[0, 0])
+            # lower_bound = max(lower_bound, y_pred_scalar * 0.8)
+            # upper_bound = float(y_pis[0, 1])
+            # upper_bound = min(upper_bound, y_pred_scalar * 1.2)
+
+            # st.write(f"**Predicted Price:** ${y_pred[0]:,.0f}")
+            # st.write(f"**95% Confidence Interval:** [${lower_bound:,.0f}, ${upper_bound:,.0f}]")
+
+
             
             # Calculate difference and accuracy
             pred_price = final_output[0][0]
