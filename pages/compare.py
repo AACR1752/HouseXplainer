@@ -251,7 +251,7 @@ if "trained_model" in st.session_state:
                     'listing': [property_1, property_2],
                     'latitude': [joined_df.loc[index_1, 'latitude'], joined_df.loc[index_2, 'latitude']],
                     'longitude': [joined_df.loc[index_1, 'longitude'], joined_df.loc[index_2, 'longitude']],
-                    'color': [10, 20]  # Different colors
+                    'color': ["Property 1", "Property 2"]  # Different colors
                 })
                 
                 fig = px.scatter_mapbox(map_data, 
@@ -259,10 +259,12 @@ if "trained_model" in st.session_state:
                                        lon="longitude", 
                                        hover_name="listing",
                                        color="color",
-                                       zoom=10,
+                                       color_discrete_map={"Property 1": "red", "Property 2": "blue"},
+                                       zoom=12,
                                        height=500)
                 
-                fig.update_layout(mapbox_style="open-street-map")
+                # fig.update_layout(mapbox_style="open-street-map")
+                fig.update_layout(mapbox_style="carto-positron")
                 fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
                 
                 st.plotly_chart(fig, use_container_width=True)
