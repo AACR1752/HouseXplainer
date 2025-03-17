@@ -87,18 +87,27 @@ if "trained_model" in st.session_state:
 
     with col2:
         st.markdown("<h3 style='text-align: center;'>Property Map</h3>", unsafe_allow_html=True)
-
+        selected_house = filtered_df[filtered_df['listing'] == datapoint]
         # Define House Layer (Blue Circles)
         house_layer = pdk.Layer(
             "ScatterplotLayer",
-            data=filtered_df,
+            data=filtered_df[filtered_df['listing'] != datapoint],
+            get_position=["longitude", "latitude"],
+            get_radius=25,  # Adjust size
+            get_fill_color=[0, 0, 255, 255],  # Blue for houses [0, 0, 255, 180]
+            pickable=True,
+            opacity=0.9,
+        )
+
+        selected_house_layer = pdk.Layer(
+            "ScatterplotLayer",
+            data=selected_house,
             get_position=["longitude", "latitude"],
             get_radius=25,  # Adjust size
             get_fill_color=[255, 0, 0, 255],  # Blue for houses [0, 0, 255, 180]
             pickable=True,
             opacity=0.9,
         )
-
 
         # Set the Map View
         view_state = pdk.ViewState(
@@ -110,7 +119,7 @@ if "trained_model" in st.session_state:
 
         # Display the Map with Mapbox Style
         r = pdk.Deck(
-            layers=[house_layer],
+            layers=[house_layer, selected_house_layer],
             initial_view_state=view_state,
             tooltip={"text": "{listing}"},
             map_style="mapbox://styles/mapbox/streets-v12"
