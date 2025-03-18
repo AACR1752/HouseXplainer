@@ -479,10 +479,10 @@ if "trained_model" in st.session_state:
             )
             st.plotly_chart(fig, use_container_width=True, key="macro")
         
-        tab1, tab2 = st.tabs(["Macro Featurs", "Micro Features"])
+        tab1, tab2 = st.tabs(["Macro Features", "Micro Features"])
 
         with tab1:
-            st.header("Macro Featurs")
+            st.header("Macro Features")
             plot_macro()
             
         with tab2:
