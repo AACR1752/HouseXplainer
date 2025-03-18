@@ -473,9 +473,15 @@ if "trained_model" in st.session_state:
             )
             st.plotly_chart(fig, use_container_width=True, key="macro")
         
-        plot_micro()
-        plot_macro()
-        
+        tab1, tab2 = st.tabs(["Macro Featurs", "Micro Features"])
+
+        with tab1:
+            st.header("Macro Featurs")
+            plot_macro()
+            
+        with tab2:
+            st.header("Micro Features")
+            plot_micro()
 
 else:
     st.error("No trained model or test data found! Please train the model first.")
