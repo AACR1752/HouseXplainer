@@ -175,8 +175,8 @@ if "trained_model" in st.session_state:
             
             # Remove suffixes for cleaner display
             suffixes_to_remove = [
-                # 'driveway_parking', 'basement_type', 'lot_features', 
-                #                   'exterior_feature', 'waterfront_features', 'appliances_included'
+                                'driveway_parking', 'basement_type', 'lot_features', 
+                                  'exterior_feature', 'waterfront_features', 'appliances_included'
                                   ]
             
             display_data_1.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in display_data_1.columns]
@@ -209,21 +209,6 @@ if "trained_model" in st.session_state:
                 # Get top 10 features for each property
                 top_features_1 = filtered_importance_1[:10]
                 top_features_2 = filtered_importance_2[:10]
-                
-                ######       SCALING       ######
-                
-                # Normalize feature values for both properties
-                scaler = MinMaxScaler()
-                
-                # Combine data for normalization
-                combined_data = pd.concat([display_data_1, display_data_2], axis=0)
-                normalized_data = pd.DataFrame(scaler.fit_transform(combined_data), columns=combined_data.columns)
-
-                # Split normalized data back into two properties
-                normalized_data_1 = normalized_data.iloc[:1]  # First property
-                normalized_data_2 = normalized_data.iloc[1:]  # Second property
-
-                ######              ######
                 
                 # Create a set of unique top features from both properties
                 unique_top_features = set([f[0] for f in top_features_1]).union(set([f[0] for f in top_features_2]))
