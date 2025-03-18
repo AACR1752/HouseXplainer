@@ -15,18 +15,18 @@ st.set_page_config(page_title="HouseXplainer",
                    initial_sidebar_state="collapsed")
 
 md.initialize_shared_state()
-# page = st_navbar(
-#     st.session_state["pgs"], 
-#     styles=st.session_state["styles"], 
-#     logo_path="./picture/HE_icon_W.svg",
-#     options={"show_sidebar": False, 
-#              "hide_nav":True}, 
-#     selected=page_name)
-# md.apply_sidebar_minimization()
-# if page != page_name and page != 'Learn More':
-#     st.switch_page(f"./pages/{page}.py")
-# elif page == 'Learn More':
-#     st.switch_page(f"./pages/learn_more.py")
+page = st_navbar(
+    st.session_state["pgs"], 
+    styles=st.session_state["styles"], 
+    logo_path="./picture/HE_icon_W.svg",
+    options={"show_sidebar": False, 
+             "hide_nav":True}, 
+    selected=page_name)
+md.apply_sidebar_minimization()
+if page != page_name and page != 'Learn More':
+    st.switch_page(f"./pages/{page}.py")
+elif page == 'Learn More':
+    st.switch_page(f"./pages/learn_more.py")
 
 model_choice = "Random Forest" #We are fixing on random as the winner!
 
