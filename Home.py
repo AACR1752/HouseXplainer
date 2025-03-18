@@ -5,7 +5,6 @@ import os
 import base64
 from streamlit_navigation_bar import st_navbar
 import modules as md
-import time
 
 page_name = "Home"
 # Set the page configuration to wide mode
@@ -17,8 +16,13 @@ st.set_page_config(page_title="HouseXplainer",
 
 
 md.initialize_shared_state()
-
-page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"], options={"show_sidebar": False, "hide_nav":True}, selected=page_name)
+page = st_navbar(
+    st.session_state["pgs"], 
+    styles=st.session_state["styles"], 
+    logo_path="./picture/HE_icon_W.svg",
+    options={"show_sidebar": False, 
+             "hide_nav":True}, 
+    selected=page_name)
 # md.apply_sidebar_minimization()
 if page != page_name and page != 'Learn More':
     st.switch_page(f"./pages/{page}.py")
@@ -161,7 +165,7 @@ def main():
     <style>
     div.stButton > button {
         background-color: #75c44b;
-        color: black;
+        color: white;
         font-size: 1.2rem;
         padding: 0.5rem 2rem;
         display: block;
@@ -196,11 +200,24 @@ def main():
     #     <!-- This area will be white and ready for additional content -->
     # </div>
     # """, unsafe_allow_html=True)
-    
-    # Additional content in the white section
-    # This will appear in the white background section
-    st.markdown("### Future content will go here")
-    st.write("This section has a white background and can be populated with charts, tables, or other information.")
+
+    st.write("")
+    st.write("")
+    st.write("")
+    st.markdown(
+    """
+    <div style="display: flex; justify-content: center;">
+        <h3>About HouseXplainer</h3>
+    </div>
+    """,
+    unsafe_allow_html=True,
+    )
+    st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+
+    st.write("""Home prices can seem a mystery, leaving buyers and investors uncertain about what drives value. 
+             HouseXplainer is an AI-driven tool that predicts home sale prices and explains the why behind the numbers. 
+             Using historical data, our tool uncovers the factors that shape home prices—market shifts, property features, and buyer demand—enabling users to make smarter investment decisions. 
+             With HouseXplainer’s engaging visuals and in-depth insights, buyers and sellers can better understand current property worth and potential growth in value.""")
 
 if __name__ == "__main__":
     main()

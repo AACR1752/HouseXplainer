@@ -6,24 +6,26 @@ import pandas as pd
 def initialize_shared_state():
     if "styles" not in st.session_state:
         st.session_state["styles"] = {
-        "nav": {
-            "background-color": "#8BC34A",
-            "justify-content": "left",
-        },
-        "img": {
-            "padding-right": "14px",
-        },
-        "span": {
-            "color": "white",
-            "padding": "14px",
-        },
-        "active": {
-            "background-color": "white",
-            "color": "var(--text-color)",
-            "font-weight": "normal",
-            "padding": "14px",
+            "nav": {
+                "background-color": "#8BC34A",
+                "justify-content": "left",
+            },
+            "div": {
+                "max-width": "32rem",
+            },
+            "span": {
+                "border-radius": "0.5rem",
+                "color": "white",
+                "margin": "0 0.125rem",
+                "padding": "0.4375rem 0.625rem",
+            },
+            "active": {
+                "background-color": "rgba(255, 255, 255, 0.25)",
+            },
+            "hover": {
+                "background-color": "rgba(255, 255, 255, 0.35)",
+            },
         }
-    }
     if "pgs" not in st.session_state:
         st.session_state["pgs"] = ["Home", "Explainer", "Compare", "FAQ", "Learn More"]
 
