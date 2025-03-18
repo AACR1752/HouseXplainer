@@ -134,7 +134,8 @@ if "trained_model" in st.session_state:
                     "Bedrooms": joined_df.loc[index_1, 'bedrooms'],
                     "Bathrooms": joined_df.loc[index_1, 'bathrooms'],
                     "Property Type": joined_df.loc[index_1, 'property_type'],
-                    "Neighbourhood": joined_df.loc[index_1, 'neighbourhood']
+                    "Neighbourhood": joined_df.loc[index_1, 'neighbourhood'],
+                    "amenities_count_1km": joined_df.loc[index_2, 'amenities_count_1km']
                 }
                 
                 st.write("Property Details:")
@@ -153,7 +154,8 @@ if "trained_model" in st.session_state:
                     "Bedrooms": joined_df.loc[index_2, 'bedrooms'],
                     "Bathrooms": joined_df.loc[index_2, 'bathrooms'],
                     "Property Type": joined_df.loc[index_2, 'property_type'],
-                    "Neighbourhood": joined_df.loc[index_2, 'neighbourhood']
+                    "Neighbourhood": joined_df.loc[index_2, 'neighbourhood'],
+                    "amenities_count_1km": joined_df.loc[index_2, 'amenities_count_1km']
                 }
                 
                 st.write("Property Details:")
@@ -172,8 +174,10 @@ if "trained_model" in st.session_state:
                 display_data_2 = display_data_2.rename(columns={'log_distance_to_nearest_school': 'School Proximity'})
             
             # Remove suffixes for cleaner display
-            suffixes_to_remove = ['driveway_parking', 'basement_type', 'lot_features', 
-                                  'exterior_feature', 'waterfront_features', 'appliances_included']
+            suffixes_to_remove = [
+                # 'driveway_parking', 'basement_type', 'lot_features', 
+                #                   'exterior_feature', 'waterfront_features', 'appliances_included'
+                                  ]
             
             display_data_1.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in display_data_1.columns]
             display_data_2.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in display_data_2.columns]
@@ -206,6 +210,21 @@ if "trained_model" in st.session_state:
                 top_features_1 = filtered_importance_1[:10]
                 top_features_2 = filtered_importance_2[:10]
                 
+                ######       SCALING       ######
+                
+                # Normalize feature values for both properties
+                scaler = MinMaxScaler()
+                
+                # Combine data for normalization
+                combined_data = pd.concat([display_data_1, display_data_2], axis=0)
+                normalized_data = pd.DataFrame(scaler.fit_transform(combined_data), columns=combined_data.columns)
+
+                # Split normalized data back into two properties
+                normalized_data_1 = normalized_data.iloc[:1]  # First property
+                normalized_data_2 = normalized_data.iloc[1:]  # Second property
+
+                ######              ######
+                
                 # Create a set of unique top features from both properties
                 unique_top_features = set([f[0] for f in top_features_1]).union(set([f[0] for f in top_features_2]))
                 
@@ -214,21 +233,78 @@ if "trained_model" in st.session_state:
                 
                 for feature in unique_top_features:
                     if feature in display_data_1.columns and feature in display_data_2.columns:
-                        feature_data.append({
-                            "Feature": feature.replace('_', ' '),
-                            "Property 1": float(display_data_1[feature].values[0]),
-                            "Property 2": float(display_data_2[feature].values[0])
-                        })
+                        try:
+                            # Try to convert to float, but handle categorical features
+                            val1 = display_data_1[feature].values[0]
+                            val2 = display_data_2[feature].values[0]
+                            
+                            # Check if values are numeric or can be converted to numeric
+                            try:
+                                val1 = float(val1)
+                                val2 = float(val2)
+                            except (ValueError, TypeError):
+                                # For categorical features, keep as is but note they're categorical
+                                pass
+                                
+                            feature_data.append({
+                                "Feature": feature.replace('_', ' '),
+                                "Property 1": val1,
+                                "Property 2": val2,
+                                "Is_Categorical": not (isinstance(val1, (int, float)) and isinstance(val2, (int, float)))
+                            })
+                        except Exception as e:
+                            st.warning(f"Skipping feature {feature} due to error: {e}")
                 
                 feature_df = pd.DataFrame(feature_data)
                 
-                # Create comparison chart
-                fig = px.bar(feature_df, x="Feature", y=["Property 1", "Property 2"], 
-                            barmode="group", title="Feature Value Comparison",
-                            labels={"value": "Feature Value", "variable": "Property"})
-                
-                fig.update_layout(xaxis_tickangle=-45)
-                st.plotly_chart(fig, use_container_width=True)
+                # MODIFIED: Handle empty feature data
+                if feature_df.empty:
+                    st.warning("No valid features found for comparison after filtering.")
+                else:
+                    # Separate numerical and categorical features
+                    numerical_features = feature_df[~feature_df['Is_Categorical']].drop(columns=['Is_Categorical'])
+                    categorical_features = feature_df[feature_df['Is_Categorical']].drop(columns=['Is_Categorical'])
+                    
+                    # Display numerical features
+                    if not numerical_features.empty:
+                        st.subheader("Numerical Features Comparison")
+                        # Sort features by absolute difference between properties
+                        numerical_features['Abs_Diff'] = abs(numerical_features['Property 1'] - numerical_features['Property 2'])
+                        
+                        # Add a new filter to remove features where both values are effectively zero or very small
+                        numerical_features['Sum_Values'] = numerical_features['Property 1'] + numerical_features['Property 2']
+                        numerical_features_filtered = numerical_features[numerical_features['Sum_Values'] > 0.01]
+                        
+                        # If after filtering we still have features to display
+                        if not numerical_features_filtered.empty:
+                            numerical_features_sorted = numerical_features_filtered.sort_values('Abs_Diff', ascending=False).drop(columns=['Abs_Diff', 'Sum_Values'])
+                            
+                            fig = px.bar(numerical_features_sorted, x="Feature", y=["Property 1", "Property 2"], 
+                                       barmode="group", title="Feature Value Comparison",
+                                       labels={"value": "Feature Value", "variable": "Property"})
+                            
+                            fig.update_layout(xaxis_tickangle=-45)
+                            st.plotly_chart(fig, use_container_width=True)
+                        else:
+                            st.info("No significant numerical differences found between the properties.")
+                    
+                    # Display categorical features
+                    if not categorical_features.empty:
+                        st.subheader("Categorical Features Comparison")
+                        st.write("These features are categorical or binary:")
+                        
+                        # Create a more readable format for categorical features
+                        for _, row in categorical_features.iterrows():
+                            feature = row['Feature']
+                            val1 = row['Property 1']
+                            val2 = row['Property 2']
+                            
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.write(f"Property 1 {feature}: {val1}")
+                            with col2:
+                                st.write(f"Property 2 {feature}: {val2}")
+                            st.markdown("---")
                 
                 # Create a price breakdown visualization
                 st.subheader("Price Contribution Breakdown")
