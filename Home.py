@@ -12,7 +12,7 @@ page_name = "Home"
 
 st.set_page_config(page_title="HouseXplainer",
                    page_icon="picture/HE_icon_B.png",
-                   layout="wide"),
+                   layout="wide",
                    initial_sidebar_state="collapsed")
 
 
