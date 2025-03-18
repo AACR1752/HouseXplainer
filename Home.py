@@ -9,10 +9,12 @@ import time
 
 page_name = "Home"
 # Set the page configuration to wide mode
-st.set_page_config(page_title="HouseXplainer - Home",
-                   page_icon="🏠",
-                   layout="wide",
+
+st.set_page_config(page_title="HouseXplainer",
+                   page_icon="picture/HE_icon_B.png",
+                   layout="wide"),
                    initial_sidebar_state="collapsed")
+
 
 md.initialize_shared_state()
 

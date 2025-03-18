@@ -7,11 +7,11 @@ import plotly.graph_objects as go
 import pydeck as pdk
 # import model_training
 from streamlit_navigation_bar import st_navbar
-
+import copy
 
 page_name = "Explainer"
-st.set_page_config(page_title=page_name,
-                   page_icon="🏠",
+st.set_page_config(page_title="HouseXplainer - Explains",
+                   page_icon="picture/HE_icon_B.png",
                    layout="wide")
 
 md.initialize_shared_state()
@@ -298,6 +298,9 @@ if "trained_model" in st.session_state:
             # Sort features by percentage contribution in descending order
             sorted_features = sorted(list(zip(column_order, percentages)), key=lambda x: x[1], reverse=True)
 
+            #Create a copy of the sorted features
+            s_features = copy.deepcopy(sorted_features)
+
         words_to_drop = md.words_to_drop
 
         # Filter sorted_features to remove any feature names containing the words in words_to_drop
@@ -333,8 +336,146 @@ if "trained_model" in st.session_state:
                 )
         
         st.write("")
-        md.display_graph(top_feature_names=top_feature_names_y,
-                         top_percentages=top_percentages_y)
+        #Old bar graph
+        #md.display_graph(top_feature_names=top_feature_names_y,
+        #                 top_percentages=top_percentages_y)
+        
+
+
+        ### Testing Zone
+
+        #For getting the feature catalogue
+        import ast
+
+        # Read the catalogue in
+        def read_feature_list(file_path):
+            try:
+                with open(file_path, 'r') as file:
+                    content = file.read()
+                    # Use ast.literal_eval() instead of eval() for safety
+                    feature_list = ast.literal_eval(content.strip())
+                return feature_list
+            except FileNotFoundError:
+                st.error("The file 'feature_catalog.txt' was not found!")
+                return []
+            except (SyntaxError, ValueError) as e:
+                st.error(f"Error reading the file: {e}")
+                return []
+
+        # Path to the catalogue
+        file_path = 'feature_catalog.txt'
+
+        # Read the neigbourhood feature list from the backend file
+        feature_list = read_feature_list(file_path)
+
+        # Zip !
+        top_feature_names_y, top_percentages_y = zip(*s_features)
+
+        # Convert the feature_list to a set for faster membership checking
+        feature_set = set(feature_list)
+
+        # Separate the top features into those within and not within feature_list
+        features_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature in feature_set]
+        features_not_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature not in feature_set]
+
+        # Limit the lists to the top 20 features each
+        features_within = features_within[:20]
+        features_not_within = features_not_within[:20]
+
+        # Sort the lists in ascending order based on the percentage (second element of the tuple)
+        features_within.sort(key=lambda x: x[1])  # Sorting based on percentage
+        features_not_within.sort(key=lambda x: x[1])  # Sorting based on percentage
+
+        # Separate the names and percentages for features within the feature list
+        top_feature_names_within, top_percentages_within = zip(*features_within) if features_within else ([], [])
+        # Separate the names and percentages for features not within the feature list
+        top_feature_names_not_within, top_percentages_not_within = zip(*features_not_within) if features_not_within else ([], [])
+
+        # Create the alternating color scheme for the micro bars
+        g_colors = ['#6AA84F', '#93C47D'] * (len(top_feature_names_not_within) // 2 + 1)
+        g_colors = g_colors[:len(top_feature_names_not_within)]
+
+        # Create the alternating color scheme for the macro bars
+        o_colors = ['#FF9849', '#D8813E'] * (len(top_feature_names_within) // 2 + 1)
+        o_colors = o_colors[:len(top_feature_names_within)]
+
+        # Create the Micro graph (more detailed, smaller scale chart)
+        def plot_micro():
+            # Create the horizontal bar chart using Plotly
+            fig = go.Figure(data=[
+                go.Bar(
+                    x=top_percentages_not_within,  # Use percentages for the horizontal bar length
+                    y=top_feature_names_not_within,  # Feature names go on the Y-axis
+                    orientation='h',  # Change the orientation to horizontal
+                    marker_color=g_colors,  # Apply the alternating colors
+                    width=0.8,  # Increase the width of the bars (this will make the bars bigger)
+                    marker=dict(line=dict(width=0))  # Remove the border on the bars
+                )
+            ])
+
+            # Update the layout to make the chart bigger and adjust bar spacing
+            fig.update_layout(
+                height=900,  # Increase the height of the chart
+                width=900,   # Increase the width of the chart
+                bargap=0.3,  # Decrease the gap between bars
+                title="Top Micro Features",  # Set the title of the chart
+                xaxis_title="Percentage Contribution (%)",  # X-axis label
+                template="plotly_dark",  # Optional: Use a dark theme for the chart
+                xaxis=dict(
+                    showgrid=True,  # Show gridlines on the X-axis
+                    minor=dict(
+                        showgrid=True,  # Enable minor gridlines
+                        gridwidth=0.5,  # Thinner minor gridlines
+                    ),
+                ),
+                yaxis=dict(
+                    showgrid=False,  # Hide gridlines on the Y-axis (optional)
+                    title_font=dict(size=20),  # Increase the Y-axis title font size
+                    tickfont=dict(size=16),  # Increase the font size of Y-axis ticks
+                )
+            )
+            st.plotly_chart(fig, use_container_width=True, key="micro")
+
+    # Create the Macro graph (more detailed, smaller scale chart)
+        def plot_macro():
+            # Create the horizontal bar chart using Plotly
+            fig = go.Figure(data=[
+                go.Bar(
+                    x=top_percentages_within,  # Use percentages for the horizontal bar length
+                    y=top_feature_names_within,  # Feature names go on the Y-axis
+                    orientation='h',  # Change the orientation to horizontal
+                    marker_color=o_colors,  # Apply the alternating colors
+                    width=0.8,  # Increase the width of the bars (this will make the bars bigger)
+                    marker=dict(line=dict(width=0))  # Remove the border on the bars
+                )
+            ])
+
+            # Update the layout to make the chart bigger and adjust bar spacing
+            fig.update_layout(
+                height=900,  # Increase the height of the chart
+                width=900,   # Increase the width of the chart
+                bargap=0.3,  # Decrease the gap between bars
+                title="Top Macro Features",  # Set the title of the chart
+                xaxis_title="Percentage Contribution (%)",  # X-axis label
+                template="plotly_dark",  # Optional: Use a dark theme for the chart
+                xaxis=dict(
+                    showgrid=True,  # Show gridlines on the X-axis
+                    minor=dict(
+                        showgrid=True,  # Enable minor gridlines
+                        gridwidth=0.5,  # Thinner minor gridlines
+                    ),
+                ),
+                yaxis=dict(
+                    showgrid=False,  # Hide gridlines on the Y-axis (optional)
+                    title_font=dict(size=20),  # Increase the Y-axis title font size
+                    tickfont=dict(size=16),  # Increase the font size of Y-axis ticks
+                )
+            )
+            st.plotly_chart(fig, use_container_width=True, key="macro")
+        
+        plot_micro()
+        plot_macro()
+        
 
 else:
     st.error("No trained model or test data found! Please train the model first.")
