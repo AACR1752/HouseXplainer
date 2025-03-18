@@ -1,7 +1,8 @@
 import streamlit as st
 import altair as alt
 import pandas as pd
-
+import re
+from nltk.stem import PorterStemmer
 
 def initialize_shared_state():
     if "styles" not in st.session_state:
@@ -104,3 +105,52 @@ def render_school_map():
         "anchorY": 128
     } for _ in range(len(school_df_with_icon))]
     return school_df_with_icon
+
+@st.cache_data
+def render_features():
+    features = pd.read_csv('data/features.csv')
+    return features
+
+def highlight_keywords(text, feature_df):
+    """Highlights keywords in text based on DataFrame features with stemming and color-coded highlights."""
+    highlighted_text = text
+    found_features = []
+    stemmer = PorterStemmer()
+
+    for feature, feature_type in feature_df[['feature', 'type']].drop_duplicates().values:
+        stemmed_feature = stemmer.stem(feature)
+
+        def highlight_match(match):
+            """Highlights matched words with color based on type."""
+            if feature_type == 'exterior':
+                color = 'lightblue'
+            elif feature_type == 'interior':
+                color = 'yellow'
+            else:
+                color = 'lightgreen'  # Default color if type is unknown
+
+            return f'<span style="background-color: {color};">{match.group(0)}</span>'
+
+        # Check for exact matches and stemmed matches
+        for word in re.findall(r'\b\w+\b', text, re.IGNORECASE):
+            stemmed_word = stemmer.stem(word)
+            if stemmed_word == stemmed_feature:
+                highlighted_text = re.sub(
+                    r'\b' + re.escape(word) + r'\b',
+                    highlight_match,
+                    highlighted_text,
+                    flags=re.IGNORECASE,
+                )
+                found_features.append(feature)
+                break #prevent double highlighting if the original word and stemmed word exist.
+            elif re.search(r'\b' + re.escape(feature) + r'\b', text, re.IGNORECASE):
+                highlighted_text = re.sub(
+                    r'\b' + re.escape(feature) + r'\b',
+                    highlight_match,
+                    highlighted_text,
+                    flags=re.IGNORECASE,
+                )
+                found_features.append(feature)
+                break #prevent double highlighting if the original word and stemmed word exist.
+
+    return highlighted_text, list(set(found_features)) #remove duplicates from found_features.

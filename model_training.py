@@ -169,7 +169,7 @@ def main(model_choice):
     # Single Data Point Prediction
     joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
     joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood',
-                                        'latitude','longitude', 'bedrooms',
+                                        'latitude','longitude', 'bedrooms', 'description',
                                         'bathrooms', 'property_type']], on='listing_id', how='inner')
 
     # Store the trained model and other variables in session state

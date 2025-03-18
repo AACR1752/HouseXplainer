@@ -8,3 +8,4 @@ plotly
 shap
 geopandas
 streamlit-navigation-bar==3.3.0
+nltk==3.9.1
