@@ -14,14 +14,15 @@ st.set_page_config(page_title=page_name,
                    page_icon="🏠",
                    layout="wide")
 
-# md.initialize_shared_state()
-# page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"])
-# md.apply_sidebar_minimization()
-
-# if page != "Home" and page != 'Learn More':
-#     st.switch_page(f"./pages/{page}.py")
-# elif page == 'Learn More':
-#     st.switch_page(f"./pages/learn_more.py")
+md.initialize_shared_state()
+page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"], options={"show_sidebar": False, "hide_nav":True}, selected=page_name)
+md.apply_sidebar_minimization()
+if page != "Home" and page!=page_name and page != 'Learn More':
+    st.switch_page(f"./pages/{page}.py")
+elif page == 'Learn More':
+    st.switch_page(f"./pages/learn_more.py")
+elif page == "Home" and page != page_name:
+    st.switch_page(f"./Home.py")
 
 if "trained_model" in st.session_state:
     model = st.session_state["trained_model"]
