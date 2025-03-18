@@ -15,7 +15,7 @@ st.set_page_config(page_title="HouseXplainer - Home",
 
 md.initialize_shared_state()
 
-page = st_navbar(st.session_state["pgs"])
+page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"])
 
 if page != page_name and page != 'Learn More':
     st.switch_page(f"./pages/{page}.py")
