@@ -1,5 +1,6 @@
 import streamlit as st
-
+import modules as md
+from streamlit_navigation_bar import st_navbar
 
 # Set page configuration
 st.set_page_config(
@@ -7,6 +8,15 @@ st.set_page_config(
     page_icon="❓",
     layout="centered"
 )
+
+page_name = "FAQ"
+# md.initialize_shared_state()
+# page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"])
+# if page != "Home" and page != 'Learn More':
+#     st.switch_page(f"./pages/{page}.py")
+# elif page == 'Learn More':
+#     st.switch_page(f"./pages/learn_more.py")
+# md.apply_sidebar_minimization()
     
 # App title and description
 st.title("Interactive Q&A Page")
