@@ -2,6 +2,43 @@ import streamlit as st
 import altair as alt
 import pandas as pd
 
+
+def initialize_shared_state():
+    if "styles" not in st.session_state:
+        st.session_state["styles"] = {
+        "nav": {
+            "background-color": "#8BC34A",
+            "justify-content": "left",
+        },
+        "img": {
+            "padding-right": "14px",
+        },
+        "span": {
+            "color": "white",
+            "padding": "14px",
+        },
+        "active": {
+            "background-color": "white",
+            "color": "var(--text-color)",
+            "font-weight": "normal",
+            "padding": "14px",
+        }
+    }
+    if "pgs" not in st.session_state:
+        st.session_state["pgs"] = ["Home", "Explainer", "Compare", "FAQ", "Learn More"]
+
+def apply_sidebar_minimization():
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                display: none;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 words_to_drop = ["schedule", "attachments", "airport",
                     "seller", "garage", "frontage", "microwave",
                     "other", "locati", "multi", "is", "building",

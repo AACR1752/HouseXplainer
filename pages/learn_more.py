@@ -1,6 +1,7 @@
 import streamlit as st
 import modules as md
 import model_training
+from streamlit_navigation_bar import st_navbar
 
 # Set page configuration
 st.set_page_config(
@@ -8,6 +9,15 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
+
+page_name = "Learn More"
+# md.initialize_shared_state()
+# page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"])
+# if page != 'Home' and page != 'Learn More':
+#     st.switch_page(f"./pages/{page}.py")
+# elif page == 'Learn More':
+#     st.switch_page(f"./pages/learn_more.py")
+# md.apply_sidebar_minimization()
 
 st.title("Learn about the market")
 
