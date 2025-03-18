@@ -191,24 +191,6 @@ if "trained_model" in st.session_state:
             
             st.dataframe(formatted_df, use_container_width=True)
 
-
-            # Mapie CI
-            # mapie = MapieRegressor(model, method="plus")  # Can also use 'cv' or 'naive'
-            # mapie.fit(X_test, y_test)
-
-            # y_pred, y_pis = mapie.predict(single_data_point, alpha=0.025)
-
-            # y_pred_scalar = float(y_pred[0])
-            # lower_bound = float(y_pis[0, 0])
-            # lower_bound = max(lower_bound, y_pred_scalar * 0.8)
-            # upper_bound = float(y_pis[0, 1])
-            # upper_bound = min(upper_bound, y_pred_scalar * 1.2)
-
-            # st.write(f"**Predicted Price:** ${y_pred[0]:,.0f}")
-            # st.write(f"**95% Confidence Interval:** [${lower_bound:,.0f}, ${upper_bound:,.0f}]")
-
-
-            
             # Calculate difference and accuracy
             pred_price = final_output[0][0]
             actual_price = final_output[0][1]
@@ -220,7 +202,7 @@ if "trained_model" in st.session_state:
                 value=f"{accuracy:.1f}%",
                 delta=f"${diff:,} difference"
             )
-
+        
         # Predicted Range
         rmse = int(round(st.session_state["rmse"],0))
         predicted_price = final_output[0][0]
@@ -321,6 +303,22 @@ if "trained_model" in st.session_state:
         # Convert tuple to list and extract strings
         top_names = [str(name) for name in top_feature_names_y]
         top_scores = [float(score) for score in top_percentages_y]
+
+        st.markdown("---")
+        st.title("🏠 Property Description")
+
+        description = joined_df.loc[index[0], 'description']
+
+        feature_df = md.render_features()
+
+        with st.spinner('Explaining Time.....'):
+            highlighted_text, found_features = md.highlight_keywords(description, feature_df)
+
+        st.markdown(highlighted_text, unsafe_allow_html=True)
+        # if found_features:
+        #     st.write("Highlighted Features:")
+        #     for feature in found_features:
+        #         st.write(feature)
 
         # Title with divider
         st.markdown("---")

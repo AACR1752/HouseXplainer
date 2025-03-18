@@ -1,0 +1,378 @@
+feature,score,type
+Pool,10,exterior
+Swimming Pool,10,exterior
+Inground Pool,10,exterior
+Outdoor Pool,10,exterior
+Water Feature,10,exterior
+Private Pool,10,exterior
+Hot tub,10,exterior
+Spa,10,exterior
+Jacuzzi,10,exterior
+Whirlpool,10,exterior
+Outdoor Spa,10,exterior
+Hot Tub,10,exterior
+Professional hardscaping,10,exterior
+Custom Hardscape,10,exterior
+Paver Patio,10,exterior
+Stone Patio,10,exterior
+Hardscape Design,10,exterior
+Landscape Hardscaping,10,exterior
+Professional landscaping,10,exterior
+Landscape Design,10,exterior
+Custom Landscaping,10,exterior
+Mature Landscaping,10,exterior
+Lush Landscaping,10,exterior
+Gardener Designed,10,exterior
+Corner lot,4,exterior
+Double Frontage Lot,4,exterior
+Corner Property,4,exterior
+Intersection Lot,4,exterior
+Wraparound Lot,4,exterior
+Dual Access Lot,4,exterior
+Lot facing an intersection,2,exterior
+Intersection Facing,2,exterior
+Traffic Corner,2,exterior
+Street Junction Lot,2,exterior
+Road Intersection,2,exterior
+Junction Lot,2,exterior
+Fencing,8,exterior
+Privacy Fence,8,exterior
+Perimeter Fence,8,exterior
+Enclosed Yard,8,exterior
+Fenced Yard,8,exterior
+Boundary Fence,8,exterior
+Privacy,10,exterior
+Secluded,10,exterior
+Private Setting,10,exterior
+Exclusive,10,exterior
+Hidden,10,exterior
+Tranquil,10,exterior
+Exposure,7,exterior
+Sun Exposure,7,exterior
+Solar Aspect,7,exterior
+Natural Light,7,exterior
+Orientation,7,exterior
+Light Exposure,7,exterior
+Auspicious numbered address,7,exterior
+Lucky Address,7,exterior
+Favorable Number,7,exterior
+Propitious Address,7,exterior
+Significant Number,7,exterior
+Numerologically Favorable,7,exterior
+Modern Exterior,6,exterior
+Contemporary Facade,6,exterior
+Modern Architecture,6,exterior
+Sleek Exterior,6,exterior
+New Construction Look,6,exterior
+Modern Curb Appeal,6,exterior
+Custom Build,8,exterior
+Bespoke Home,8,exterior
+Custom Designed,8,exterior
+Architect Designed,8,exterior
+One of a Kind,8,exterior
+Unique Build,8,exterior
+Subdivision,4,exterior
+Planned Community,4,exterior
+Housing Development,4,exterior
+Tract Housing,4,exterior
+Residential Development,4,exterior
+Neighborhood Setting,4,exterior
+Classic Exterior,7,exterior
+Traditional Architecture,7,exterior
+Period Home,7,exterior
+Vintage Style,7,exterior
+Historical Design,7,exterior
+Classic Curb Appeal,7,exterior
+Mutual Drive,3,exterior
+Shared Driveway,3,exterior
+Common Drive,3,exterior
+Joint Access,3,exterior
+Party Drive,3,exterior
+Shared Access Drive,3,exterior
+Attached Garage with Interior Entrance,7,exterior
+Direct Access Garage,7,exterior
+Integrated Garage,7,exterior
+Attached Two Car,7,exterior
+Interior Entry Garage,7,exterior
+House Attached Garage,7,exterior
+Detached Garage,8,exterior
+Separate Garage,8,exterior
+Stand Alone Garage,8,exterior
+Carriage House Garage,8,exterior
+Detached Two Car,8,exterior
+Rear Detached Garage,8,exterior
+Pool/Coach House,9,exterior
+Poolside Guest House,9,exterior
+Cabana,9,exterior
+Pool House,9,exterior
+Accessory Dwelling Unit (ADU) Poolside,9,exterior
+Poolside Cottage,9,exterior
+"Backs on to Recreational Space, Parkland",5,exterior
+Park Adjacent,5,exterior
+Greenbelt Access,5,exterior
+Backs to Park,5,exterior
+Open Space View,5,exterior
+Recreational Space Access,5,exterior
+Garden Irrigation,7,exterior
+Sprinkler System,7,exterior
+Automated Irrigation,7,exterior
+In-Ground Irrigation,7,exterior
+Drip Irrigation,7,exterior
+Lawn Irrigation,7,exterior
+Lightscaping,8,exterior
+Landscape Lighting,8,exterior
+Outdoor Illumination,8,exterior
+Accent Lighting,8,exterior
+Exterior Lighting Design,8,exterior
+Architectural Lighting,8,exterior
+Verandah,8,exterior
+Covered Porch,8,exterior
+Wrap Around Porch,8,exterior
+Front Porch,8,exterior
+Covered Patio,8,exterior
+Lanai,8,exterior
+Enclosed Porch,6,exterior
+Screened Porch,6,exterior
+Sunroom,6,exterior
+Three Season Porch,6,exterior
+Glass Enclosed Porch,6,exterior
+Florida Room,6,exterior
+Firepit,6,exterior
+Outdoor Fireplace,6,exterior
+Fire Pit Area,6,exterior
+Patio Fire Pit,6,exterior
+Backyard Fire Feature,6,exterior
+Outdoor Gathering Space,6,exterior
+Outdoor Kitchen,6,exterior
+Grilling Station,6,exterior
+Alfresco Dining,6,exterior
+Outdoor Cooking Area,6,exterior
+BBQ Area,6,exterior
+Outdoor Entertaining,6,exterior
+Split layout for bedrooms,8,interior
+Split Bedroom Plan,8,interior
+Separated Bedrooms,8,interior
+Zoned Bedrooms,8,interior
+Private Bedroom Wing,8,interior
+Dual Master Layout,8,interior
+Master Ensuite,10,interior
+Master Bathroom,10,interior
+Primary Bath,10,interior
+Ensuite Bath,10,interior
+Private Master Bath,10,interior
+Master Suite Bath,10,interior
+Main floor powder room,10,interior
+First Floor Half Bath,10,interior
+Guest Powder Room,10,interior
+Main Level Powder Room,10,interior
+Downstairs Powder Room,10,interior
+Main Floor WC,10,interior
+Master Bedroom on a different level than other bedrooms,2,interior
+Separate Master Suite,2,interior
+Isolated Master,2,interior
+Private Master Level,2,interior
+Upstairs Master,2,interior
+Secluded Master,2,interior
+Modern Interior,8,interior
+Contemporary Interior,8,interior
+Updated Interior,8,interior
+Modern Finishes,8,interior
+Designer Interior,8,interior
+Renovated Interior,8,interior
+Needing Renovation,2,interior
+Fixer Upper,2,interior
+Needs TLC,2,interior
+Renovation Project,2,interior
+Dated Interior,2,interior
+In Need of Updating,2,interior
+Second floor or main floor laundry,8,interior
+Upstairs Laundry,8,interior
+Main Level Laundry,8,interior
+Laundry Room Location,8,interior
+Convenient Laundry,8,interior
+Level Laundry,8,interior
+Mudroom,9,interior
+Entryway,9,interior
+Drop Zone,9,interior
+Transition Space,9,interior
+Utility Room,9,interior
+Boot Room,9,interior
+Fireplace,5,interior
+Hearth,5,interior
+Living Room Fireplace,5,interior
+Family Room Fireplace,5,interior
+Wood Burning Fireplace,5,interior
+Gas Fireplace,5,interior
+Feng shui,4,interior
+Harmonious Layout,4,interior
+Balanced Design,4,interior
+Flowing Floor Plan,4,interior
+Positive Energy,4,interior
+Auspicious Placement,4,interior
+Renovated,8,interior
+Updated,8,interior
+Modernized,8,interior
+Renovated Interior,8,interior
+Remodeled,8,interior
+Renovation,8,interior
+Finished,8,interior
+Finished Basement,8,interior
+Lower Level Finished,8,interior
+Basement Renovated,8,interior
+Lower Level Renovated,8,interior
+Basement Living Space,8,interior
+Lower Level Living Space,8,interior
+Basement Unfinished,2,interior
+Lower Level Unfinished,2,interior
+Basement Ready,2,interior
+Unfinished Basement,2,interior
+Lower Level Ready,2,interior
+Basement Potential,2,interior
+High Ceilings,8,interior
+Tall Ceilings,8,interior
+Vaulted Ceilings,8,interior
+Cathedral Ceilings,8,interior
+Soaring Ceilings,8,interior
+High Ceilings,8,interior
+Low Ceilings,2,interior
+Short Ceilings,2,interior
+Low Ceilings,2,interior
+Low Headroom,2,interior
+Low Ceiling Height,2,interior
+Low Ceiling,2,interior
+Hardwood Floors,8,interior
+Wood Floors,8,interior
+Hardwood Flooring,8,interior
+Solid Wood Floors,8,interior
+Real Wood Floors,8,interior
+Natural Wood Floors,8,interior
+Carpeted Floors,8,interior
+Wall-to-Wall Carpet,8,interior
+Carpet Flooring,8,interior
+Soft Flooring,8,interior
+Plush Carpet,8,interior
+Carpeted Floors,8,interior
+Tile Floors,8,interior
+Ceramic Tile,8,interior
+Porcelain Tile,8,interior
+Stone Tile,8,interior
+Marble Tile,8,interior
+Tile Flooring,8,interior
+Open Concept,8,interior
+Open Floor Plan,8,interior
+Open Layout,8,interior
+Open Living Space,8,interior
+Open Design,8,interior
+Open Concept Living,8,interior
+Custom Build,8,interior
+Bespoke Home,8,interior
+Custom Designed,8,interior
+Architect Designed,8,interior
+One of a Kind,8,interior
+Unique Build,8,interior
+Classic Interior,7,interior
+Traditional Interior,7,interior
+Period Home Interior,7,interior
+Vintage Style Interior,7,interior
+Historical Design Interior,7,interior
+Classic Interior Design,7,interior
+Smart Home,7,interior
+Automated Home,7,interior
+Connected Home,7,interior
+Smart Technology,7,interior
+Smart Home Features,7,interior
+Tech Savvy Home,7,interior
+Home Office,8,interior
+Office Space,8,interior
+Work From Home Space,8,interior
+Study,8,interior
+Home Workspace,8,interior
+Home Office Design,8,interior
+Home Gym,7,interior
+Exercise Room,7,interior
+Fitness Room,7,interior
+Workout Space,7,interior
+Home Fitness,7,interior
+Home Gym Design,7,interior
+Home Theatre,7,interior
+Media Room,7,interior
+Entertainment Space,7,interior
+Home Cinema,7,interior
+Theatre Room,7,interior
+Movie Room,7,interior
+Wine Cellar,6,interior
+Wine Room,6,interior
+Wine Storage,6,interior
+Wine Collection,6,interior
+Wine Tasting Room,6,interior
+Wine Enthusiast,6,interior
+Walk-in Closet,10,interior
+Walk-in Wardrobe,10,interior
+Dressing Room,10,interior
+Walk-in Robe,10,interior
+Walk-in Storage,10,interior
+Walk-in Organizer,10,interior
+Built-in Closets,8,interior
+Custom Closets,8,interior
+Built-in Wardrobes,8,interior
+Fitted Closets,8,interior
+Closet Organizers,8,interior
+Closet Systems,8,interior
+Custom Kitchen,8,interior
+Bespoke Kitchen,8,interior
+Custom Designed Kitchen,8,interior
+Architect Designed Kitchen,8,interior
+One of a Kind Kitchen,8,interior
+Unique Kitchen,8,interior
+Granite Countertops,8,interior
+Granite Kitchen,8,interior
+Granite Surfaces,8,interior
+Granite Counters,8,interior
+Granite Worktops,8,interior
+Granite Kitchen Island,8,interior
+Marble Countertops,8,interior
+Marble Kitchen,8,interior
+Marble Surfaces,8,interior
+Marble Counters,8,interior
+Marble Worktops,8,interior
+Marble Kitchen Island,8,interior
+Quartz Countertops,8,interior
+Quartz Kitchen,8,interior
+Quartz Surfaces,8,interior
+Quartz Counters,8,interior
+Quartz Worktops,8,interior
+Quartz Kitchen Island,8,interior
+Stainless Steel Appliances,8,interior
+Stainless Steel Kitchen,8,interior
+Stainless Steel Surfaces,8,interior
+Stainless Steel Counters,8,interior
+Stainless Steel Worktops,8,interior
+Stainless Steel Kitchen Island,8,interior
+Gas Stove,8,interior
+Gas Cooktop,8,interior
+Gas Range,8,interior
+Gas Oven,8,interior
+Gas Burners,8,interior
+Gas Kitchen,8,interior
+Double Oven,8,interior
+Dual Oven,8,interior
+Two Ovens,8,interior
+Double Stove,8,interior
+Double Range,8,interior
+Double Cooktop,8,interior
+Kitchen Island,8,interior
+Island Kitchen,8,interior
+Kitchen Centerpiece,8,interior
+Kitchen Workstation,8,interior
+Kitchen Gathering Space,8,interior
+Kitchen Prep Area,8,interior
+Pantry,8,interior
+Walk-in Pantry,8,interior
+Butler Pantry,8,interior
+Food Storage,8,interior
+Kitchen Storage,8,interior
+Pantry Organization,8,interior
+Eat-in Kitchen,8,interior
+Breakfast Nook,8,interior
+Kitchen Dining,8,interior
+Casual Dining,8,interior
