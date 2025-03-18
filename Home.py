@@ -9,8 +9,8 @@ import modules as md
 
 page_name = "Home"
 # Set the page configuration to wide mode
-st.set_page_config(page_title="HouseXplainer - Home",
-                   page_icon="🏠",
+st.set_page_config(page_title="HouseXplainer",
+                   page_icon="picture/HE_icon_B.png",
                    layout="wide")
 
 md.initialize_shared_state()

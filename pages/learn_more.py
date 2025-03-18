@@ -6,7 +6,7 @@ from streamlit_navigation_bar import st_navbar
 # Set page configuration
 st.set_page_config(
     page_title="Predict House Prices",
-    page_icon="📊",
+    page_icon="picture/HE_icon_B.png",
     layout="wide"
 )
 
