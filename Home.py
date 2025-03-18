@@ -5,29 +5,29 @@ import os
 import base64
 from streamlit_navigation_bar import st_navbar
 import modules as md
-
+import time
 
 page_name = "Home"
 # Set the page configuration to wide mode
 st.set_page_config(page_title="HouseXplainer - Home",
                    page_icon="🏠",
-                   layout="wide")
+                   layout="wide",
+                   initial_sidebar_state="collapsed")
 
 md.initialize_shared_state()
 
-page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"])
-
+page = st_navbar(st.session_state["pgs"], styles=st.session_state["styles"], options={"show_sidebar": False, "hide_nav":True}, selected=page_name)
+# md.apply_sidebar_minimization()
 if page != page_name and page != 'Learn More':
     st.switch_page(f"./pages/{page}.py")
 elif page == 'Learn More':
     st.switch_page(f"./pages/learn_more.py")
 
-md.apply_sidebar_minimization()
-
 model_choice = "Random Forest" #We are fixing on random as the winner!
 
 if not "trained_model" in st.session_state:
-    model_training.main(model_choice=model_choice)
+    with st.spinner('Training model... please wait'):
+        model_training.main(model_choice=model_choice)
 
 if "trained_model" in st.session_state:
     model = st.session_state["trained_model"]
