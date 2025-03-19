@@ -1,0 +1,553 @@
+type_objectid,name
+pworship_1,Waterloo North Mennonite Church
+pworship_2,Jehovah's Witnesses
+pworship_3,Waterloo North Presbyterian Church
+pworship_4,Messiah Lutheran Church
+pworship_5,KW Islamic Assoc
+pworship_6,Christian Fellowship Church
+pworship_7,Trinity Evangelical Missionary Church
+pworship_8,The Cedars / Temple Shalom / Westminster United Church
+pworship_9,Chinese Alliance Church K-W
+pworship_10,St. Paul's Evangelical
+pworship_11,Church of The Holy Saviour
+pworship_12,Parkminster United Church
+pworship_13,Glen Acres Baptist Church
+pworship_14,German Gospel Church
+pworship_15,Christ Lutheran Church
+pworship_16,St. George Serbian Orthodox Church
+pworship_17,St. John's Lutheran Church
+pworship_18,W-K United Mennonite Church
+pworship_19,New Apostolic Church of Canada
+pworship_20,First United Church
+pworship_21,Redeemer Lutheran Church
+pworship_22,Bethel Chapel
+pworship_23,Emmanuel United Church of Canada
+pworship_24,Knox Presbyterian Church
+pworship_25,Waterloo Pentecostal Assembly
+pworship_26,Christ The Saviour Antiochian Orthodox Church (English)
+pworship_27,Erb Street Mennonite Church
+pworship_28,Our Lady Of Lourdes Roman Catholic Church
+pworship_29,St. Michael's Roman Catholic Church
+pworship_30,Mount Zion Lutheran Church
+pworship_31,First Baptist Church
+pworship_32,Lincoln Road Chapel
+pworship_33,Creekside Church (formerly Community Fellowship Baptist Church)
+pworship_34,Muslim Society of Waterloo and Wellington Counties
+pworship_35,St. Louis Roman Catholic Church
+pworship_36,Rohr Chabad Centre for Jewish Life
+pworship_37,Grace Mennonite Brethren Church 
+pworship_38,St. Agnes Roman Catholic Church
+pworship_39,Waterloo Christian Reformed Church
+pworship_40,Lincoln Heights Evangelical Missionary Church
+pworship_41,Ukranian Orthodox Church Of St. Sophia
+pworship_42,Church Of God (German)
+pworship_43,All Saints Anglican Church
+pworship_44,Waterloo Mennonite Brethren Church
+pworship_45,Church of Christ
+pworship_46,St. Columba's Anglican Church
+playgrounds_1,Atlantic Park
+playgrounds_2,Lausanne Park
+playgrounds_3,Columbia Forest Court Park
+playgrounds_4,Waterloo Park Zoo
+playgrounds_5,Heasley Park
+playgrounds_6,Rim Ball 456
+playgrounds_7,Dunvegan Park
+playgrounds_8,Klosters Park
+playgrounds_9,Exmoor Park
+playgrounds_10,Bluestream Park
+playgrounds_11,Autumn Willow Park
+playgrounds_12,Conservation Meadows Park
+playgrounds_13,Cornerbrook Park
+playgrounds_14,Angler Way Park
+playgrounds_15,Woolgrass Park
+playgrounds_16,Jacob Green
+playgrounds_17,Bechtel Park
+playgrounds_18,Rock Elm Park
+playgrounds_19,Westwind Park
+playgrounds_20,Bolingbrooke Park
+playgrounds_21,Blue Beech Park
+playgrounds_22,Sundew Park
+playgrounds_23,Bonn # 3 (Karlsfeld)
+playgrounds_24,Forwell Creek Park
+playgrounds_25,Royal Fern Park
+playgrounds_26,Mountain Maple Park
+playgrounds_27,Eastbridge Green 
+playgrounds_28,Rim Artificial Fields
+playgrounds_29,Laurelwood Park
+playgrounds_30,Bluenose Park
+playgrounds_31,Interlaken Park
+playgrounds_32,Lakeshore Optimist Park
+playgrounds_33,Alexandra Park
+playgrounds_34,Butternut Park
+playgrounds_35,Waterloo Park West
+playgrounds_36,Creekside Park
+playgrounds_37,Carriage Way Park
+playgrounds_38,Werni Park
+playgrounds_39,Waterloo Park Lagoon
+playgrounds_40,Pinebrook Park
+playgrounds_41,Anndale Park
+playgrounds_42,Culpepper Park
+playgrounds_43,Clair Lake Park
+playgrounds_44,Pinerow Park
+playgrounds_45,Old Oak Park
+playgrounds_46,Lucerne Park
+playgrounds_47,Rummelhardt Park
+playgrounds_48,Old Post Park
+playgrounds_49,Bonn # 5 (Brandenburg)
+playgrounds_50,Rideau River Park
+playgrounds_51,Basswood Park
+playgrounds_52,Salzburg Park
+playgrounds_53,Wasaga Park
+playgrounds_54,Royal Beech Park 
+playgrounds_55,University Downs Park
+playgrounds_56,Westvale Park
+playgrounds_57,Mary Allen Park
+playgrounds_58,Wintermeyer Park
+playgrounds_59,Maverick Park
+playgrounds_60,Starflower Park
+playgrounds_61,Deer Run Park
+playgrounds_62,Whitecap Park
+playgrounds_63,Haida Park
+playgrounds_64,Chesapeake Park
+playgrounds_65,Moses Springer Park
+playgrounds_66,Blue Beech Link
+playgrounds_67,Black Cherry Park
+playgrounds_68,Canewood Park
+playgrounds_69,Glen Acres Park
+playgrounds_70,Goldthread Park
+playgrounds_71,Rim Park Diamond 123
+playgrounds_72,Kingscourt Park
+playgrounds_73,Regency Park
+playgrounds_74,Waterloo Park East
+playgrounds_75,Auburn Park
+playgrounds_76,Brighton park
+playgrounds_77,White Elm Park
+playgrounds_78,Westmount Sports Park
+playgrounds_79,Birchmount Park
+playgrounds_80,Winterberry Park
+playgrounds_81,Sandowne Park
+playgrounds_82,Bordeaux Park
+playgrounds_83,Thorndale Park
+poi_1,Sunlife Centre
+poi_2,Blackberry
+poi_3,University of Waterloo Master of Public Service Program
+poi_4,UW School of Optometry
+poi_5,Conrad Grebel University College
+poi_6,St. Paul's University College
+poi_7,Renison University College
+poi_8,St. Jerome's University College
+poi_9,K W Granite Club
+poi_10,Perimeter Institute for Theoretical Physics
+poi_11,Waterloo Fire Department (Station 1)
+poi_12,Waterloo Fire Department Headquarters (Station 2)
+poi_13,Waterloo Fire Department (Station 3)
+poi_14,Manulife Clock Tower
+poi_15,Gazebo (East)
+poi_16,Picnic Shelter
+poi_17,Delta Waterloo
+poi_18,Schoolhouse
+poi_19,Cricket Oval
+poi_20,Gazebo (West)
+poi_21,Waterloo Skatepark
+poi_22,Park Inn Concession
+poi_23,Bechtel Dog Park
+poi_24,Grand River Hospital
+poi_25,Waterloo Regional Police
+poi_26,Emergency Medical Services
+poi_27,Elam Martin Farmstead
+poi_28,Visitor and Heritage Information Centre
+poi_29,Erbsville Centre
+poi_30,Mount Hope Cemetery
+poi_31,Waterloo Service Centre
+poi_32,City of Waterloo Museum at Conestoga Mall
+poi_33,Grey Silo Golf Course
+poi_34,Public Square
+poi_35,Button Factory (Community Arts Centre)
+poi_36,Waterloo City Hall (City Centre)
+poi_37,Waterloo Memorial Recreation Complex
+poi_38,Waterloo Park
+poi_39,Moses Springer Community Centre
+poi_40,Albert McCormick Community Centre
+poi_41,Bechtel Park and Stadium
+poi_42,Wing 404 RCAFA Rotary Adult Centre
+poi_43,Adult Recreation Centre
+poi_44,Hillside Park
+poi_45,Manulife Financial Soccer and Sports Centre
+poi_46,RIM Park Manulife Financial Sportsplex
+poi_47,Parkview Cemetery
+poi_48,Lion's Lagoon Splash Pad
+poi_49,Centennial Bandshell
+poi_50,Abraham Erb Grist Mill
+poi_51,Eby Farmstead Animal Farm
+poi_52,Victorian Gardens
+poi_53,Canadian Clay and Glass Gallery
+poi_54,University of Waterloo
+poi_55,Wilfrid Laurier University
+poi_56,Conestoga College
+poi_57,Conestoga Mall
+poi_58,Centre for International Governance Innovation
+poi_59,Balsillie School of International Affairs
+poi_60,Westmount Golf and Country Club
+poi_61,Green Acre Park
+poi_62,Laurel Creek Conservation Area
+poi_63,Comfort Inn
+poi_64,Waterloo Hotel
+poi_65,The Waterloo Inn
+poi_66,Destination Inn
+poi_67,Dearborn Business Park
+poi_68,The Boardwalk
+poi_69,Waterloo Commons
+poi_70,David Johnston Research & Technology Park
+poi_71,Waterloo Public Library (Eastside Branch)
+poi_72,Waterloo Public Library (Harper Branch)
+poi_73,Waterloo Public Library (McCormick Branch)
+poi_74,Waterloo Public Library (Main)
+poi_75,Waterloo Fire Department (Station 4)
+poi_76,"ION Operations, Maintenance and Storage Facility"
+poi_77,
+recreation_1,Waterloo Park
+recreation_2,Waterloo Memorial Recreation Complex
+recreation_3,Moses Springer Community Centre
+recreation_4,Manulife Financial Soccer and Sports Centre
+recreation_5,RIM Park Manulife Financial Sportsplex
+recreation_6,Albert McCormick Community Centre
+recreation_7,Heasley Park
+recreation_8,Hillside Park
+recreation_9,Forwell Park
+recreation_10,Kingscourt Park
+recreation_11,Dunvegan Park
+recreation_12,Auburn Park
+recreation_13,University Downs Park
+recreation_14,Exmoor Park
+recreation_15,Carriage Way Park
+recreation_16,Wintermeyer Park
+recreation_17,Maverick Park
+recreation_18,Eastbridge Green
+recreation_19,Chesapeake Park
+recreation_20,Bluenose Park
+recreation_21,Whitecap Park
+recreation_22,Angler Way Park
+recreation_23,Atlantic Park
+recreation_24,Haida Park
+recreation_25,Deer Run Park
+recreation_26,Bluestream Park
+recreation_27,Anndale Park
+recreation_28,Lexington Park
+recreation_29,Sandowne Park
+recreation_30,Brighton Park
+recreation_31,Glen Acres Park
+recreation_32,Mary Allen Park
+recreation_33,Alexandra Park
+recreation_34,Culpepper Park
+recreation_35,Thorndale Park
+recreation_36,Red River Park
+recreation_37,Westvale Park
+recreation_38,Bolingbrooke Park
+recreation_39,Warrington Park
+recreation_40,West Wind Park
+recreation_41,Rummelhardt Park
+recreation_42,McCrae Park
+recreation_43,Royal Beech Park
+recreation_44,Lausanne Park
+recreation_45,Bordeaux Park
+recreation_46,Pinerow Park
+recreation_47,Bonn Park
+recreation_48,Interlaken Park
+recreation_49,Klosters Park
+recreation_50,Laurelwood Park
+recreation_51,Basswood Park
+recreation_52,Star Flower Park
+recreation_53,Butternut Park
+recreation_54,White Elm Park
+recreation_55,Royal Fern Park
+recreation_56,Mountain Maple Park
+recreation_57,Black Cherry Park
+recreation_58,Salzburg Park
+recreation_59,Columbia Forest Court Park
+recreation_60,Blue Beech Park
+recreation_61,Creekside Park
+recreation_62,Winterberry Park
+recreation_63,Old Oak Park
+recreation_64,Birchmount Park
+recreation_65,Goldthread Park
+recreation_66,Woolgrass Park
+recreation_67,Autumn Willow Park
+recreation_68,Regency Park
+recreation_69,Old Post Park
+recreation_70,Westmount Sports Park
+recreation_71,Northfield Park
+recreation_72,Canewood Park
+recreation_73,Cornerbrook Park
+recreation_74,Wasaga Park
+recreation_75,Conservation Meadows Park
+recreation_76,Pinebrook Park
+recreation_77,Jacob Green
+recreation_78,Lakeshore Optimist Park
+recreation_79,Abraham Erb School
+recreation_80,Sir John A. MacDonald School
+recreation_81,Bluevale Collegiate Institute
+recreation_82,Cedarbrae Public School
+recreation_83,Creekside Church
+recreation_84,Lexington Public School
+recreation_85,Lincoln Heights Public School
+recreation_86,Northfield Pond Park
+recreation_87,St. Nicholas School
+recreation_88,St. Luke Catholic School
+recreation_89,Waterloo Collegiate Institute
+recreation_90,Laurel Creek Conservation Area
+recreation_91,Albert Green
+recreation_92,Amberwood Park
+recreation_93,Auburn Green
+recreation_94,Barrel Warehouse Park
+recreation_95,Bearinger Park
+recreation_96,Bechtel Park Reserve
+recreation_97,Benjamin Park
+recreation_98,Blue Beech Square
+recreation_99,Blue Springs Park
+recreation_100,Brewmeister Green
+recreation_101,Camelot Park
+recreation_102,Carnegie Green
+recreation_103,Cavendish Park
+recreation_104,Churchill Park
+recreation_105,Clair Lake Park
+recreation_106,Clair Woods
+recreation_107,CN Green
+recreation_108,Columbia Forest Green
+recreation_109,Columbia st Buffer
+recreation_110,Conestoga Green
+recreation_111,Craigleith Park
+recreation_112,Deerfoot Park
+recreation_113,Forest Hill Park
+recreation_114,Heritage Green
+recreation_115,Holbeach Green
+recreation_116,Hollyview Park
+recreation_117,Karen Walk Parkette
+recreation_118,Kaufman Flats
+recreation_119,Keats Way Woods
+recreation_120,Keatsway Green
+recreation_121,Labatts Parkette
+recreation_122,Laurel Creek Forest
+recreation_123,Leighland Park
+recreation_124,Lookout Park
+recreation_125,Lucerne Park
+recreation_126,Melitzer Woodlot
+recreation_127,Memorial Park
+recreation_128,Millen Woodlot
+recreation_129,New Hampshire Park
+recreation_130,Old Albert Park
+recreation_131,Orchard Park
+recreation_132,Poets' Green
+recreation_133,Public Square
+recreation_134,Quiet Place Park
+recreation_135,Red Osier Park
+recreation_136,Rhinefall Green
+recreation_137,Rideau River Park
+recreation_138,Roselea Park
+recreation_139,Rosewood Green
+recreation_140,Roxton Park
+recreation_141,Shadowood Parkette
+recreation_142,St. Moritz Park
+recreation_143,Sugarbush Park
+recreation_144,Trillium Valley Park
+recreation_145,Twin Oaks Park
+recreation_146,Vermont Park
+recreation_147,Veterans' Green
+recreation_148,Vista Hills Park
+recreation_149,White Cedar Forest
+recreation_150,Willowdale Park
+recreation_151,Windward Park
+recreation_152,Winterburg Park
+recreation_153,Sir Edgar Bauer Catholic School
+recreation_154,N.A. MacEachern Public School
+recreation_155,Northlake Woods Public School
+recreation_156,Winston Churchill Public School
+recreation_157,St. David Catholic Secondary School
+recreation_158,St. Agnes Catholic School
+recreation_159,Elizabeth Ziegler Public School
+recreation_160,Our Lady of Lourdes Catholic School
+recreation_161,Empire Public School
+recreation_162,Keatsway Public School
+recreation_163,Centennial Public School
+recreation_164,Mary Johnston Public School
+recreation_165,Westvale Public School
+recreation_166,Holy Rosary Catholic School
+recreation_167,Edna Staebler Public School
+recreation_168,Laurelwood Public School
+recreation_169,Sandowne Public School
+recreation_170,St. Matthew Catholic School
+recreation_171,Lester B. Pearson Public School
+recreation_172,Millen Woods Public School
+recreation_173,Vista Hills Public School
+orinks_1,Waterloo Park
+orinks_2,Waterloo Memorial Recreation Complex
+orinks_3,Moses Springer Community Centre
+orinks_4,Manulife Financial Soccer and Sports Centre
+orinks_5,RIM Park Manulife Financial Sportsplex
+orinks_6,Albert McCormick Community Centre
+orinks_7,Heasley Park
+orinks_8,Hillside Park
+orinks_9,Forwell Park
+orinks_10,Kingscourt Park
+orinks_11,Dunvegan Park
+orinks_12,Auburn Park
+orinks_13,University Downs Park
+orinks_14,Exmoor Park
+orinks_15,Carriage Way Park
+orinks_16,Wintermeyer Park
+orinks_17,Maverick Park
+orinks_18,Eastbridge Green
+orinks_19,Chesapeake Park
+orinks_20,Bluenose Park
+orinks_21,Whitecap Park
+orinks_22,Angler Way Park
+orinks_23,Atlantic Park
+orinks_24,Haida Park
+orinks_25,Deer Run Park
+orinks_26,Bluestream Park
+orinks_27,Anndale Park
+orinks_28,Lexington Park
+orinks_29,Sandowne Park
+orinks_30,Brighton Park
+orinks_31,Glen Acres Park
+orinks_32,Mary Allen Park
+orinks_33,Alexandra Park
+orinks_34,Culpepper Park
+orinks_35,Thorndale Park
+orinks_36,Red River Park
+orinks_37,Westvale Park
+orinks_38,Bolingbrooke Park
+orinks_39,Warrington Park
+orinks_40,West Wind Park
+orinks_41,Rummelhardt Park
+orinks_42,McCrae Park
+orinks_43,Royal Beech Park
+orinks_44,Lausanne Park
+orinks_45,Bordeaux Park
+orinks_46,Pinerow Park
+orinks_47,Bonn Park
+orinks_48,Interlaken Park
+orinks_49,Klosters Park
+orinks_50,Laurelwood Park
+orinks_51,Basswood Park
+orinks_52,Star Flower Park
+orinks_53,Butternut Park
+orinks_54,White Elm Park
+orinks_55,Royal Fern Park
+orinks_56,Mountain Maple Park
+orinks_57,Black Cherry Park
+orinks_58,Salzburg Park
+orinks_59,Columbia Forest Court Park
+orinks_60,Blue Beech Park
+orinks_61,Creekside Park
+orinks_62,Winterberry Park
+orinks_63,Old Oak Park
+orinks_64,Birchmount Park
+orinks_65,Goldthread Park
+orinks_66,Woolgrass Park
+orinks_67,Autumn Willow Park
+orinks_68,Regency Park
+orinks_69,Old Post Park
+orinks_70,Westmount Sports Park
+orinks_71,Northfield Park
+orinks_72,Canewood Park
+orinks_73,Cornerbrook Park
+orinks_74,Wasaga Park
+orinks_75,Conservation Meadows Park
+orinks_76,Pinebrook Park
+orinks_77,Jacob Green
+orinks_78,Lakeshore Optimist Park
+orinks_79,Abraham Erb School
+orinks_80,Sir John A. MacDonald School
+orinks_81,Bluevale Collegiate Institute
+orinks_82,Cedarbrae Public School
+orinks_83,Creekside Church
+orinks_84,Lexington Public School
+orinks_85,Lincoln Heights Public School
+orinks_86,Northfield Pond Park
+orinks_87,St. Nicholas School
+orinks_88,St. Luke Catholic School
+orinks_89,Waterloo Collegiate Institute
+orinks_90,Laurel Creek Conservation Area
+orinks_91,Albert Green
+orinks_92,Amberwood Park
+orinks_93,Auburn Green
+orinks_94,Barrel Warehouse Park
+orinks_95,Bearinger Park
+orinks_96,Bechtel Park Reserve
+orinks_97,Benjamin Park
+orinks_98,Blue Beech Square
+orinks_99,Blue Springs Park
+orinks_100,Brewmeister Green
+orinks_101,Camelot Park
+orinks_102,Carnegie Green
+orinks_103,Cavendish Park
+orinks_104,Churchill Park
+orinks_105,Clair Lake Park
+orinks_106,Clair Woods
+orinks_107,CN Green
+orinks_108,Columbia Forest Green
+orinks_109,Columbia st Buffer
+orinks_110,Conestoga Green
+orinks_111,Craigleith Park
+orinks_112,Deerfoot Park
+orinks_113,Forest Hill Park
+orinks_114,Heritage Green
+orinks_115,Holbeach Green
+orinks_116,Hollyview Park
+orinks_117,Karen Walk Parkette
+orinks_118,Kaufman Flats
+orinks_119,Keats Way Woods
+orinks_120,Keatsway Green
+orinks_121,Labatts Parkette
+orinks_122,Laurel Creek Forest
+orinks_123,Leighland Park
+orinks_124,Lookout Park
+orinks_125,Lucerne Park
+orinks_126,Melitzer Woodlot
+orinks_127,Memorial Park
+orinks_128,Millen Woodlot
+orinks_129,New Hampshire Park
+orinks_130,Old Albert Park
+orinks_131,Orchard Park
+orinks_132,Poets' Green
+orinks_133,Public Square
+orinks_134,Quiet Place Park
+orinks_135,Red Osier Park
+orinks_136,Rhinefall Green
+orinks_137,Rideau River Park
+orinks_138,Roselea Park
+orinks_139,Rosewood Green
+orinks_140,Roxton Park
+orinks_141,Shadowood Parkette
+orinks_142,St. Moritz Park
+orinks_143,Sugarbush Park
+orinks_144,Trillium Valley Park
+orinks_145,Twin Oaks Park
+orinks_146,Vermont Park
+orinks_147,Veterans' Green
+orinks_148,Vista Hills Park
+orinks_149,White Cedar Forest
+orinks_150,Willowdale Park
+orinks_151,Windward Park
+orinks_152,Winterburg Park
+orinks_153,Sir Edgar Bauer Catholic School
+orinks_154,N.A. MacEachern Public School
+orinks_155,Northlake Woods Public School
+orinks_156,Winston Churchill Public School
+orinks_157,St. David Catholic Secondary School
+orinks_158,St. Agnes Catholic School
+orinks_159,Elizabeth Ziegler Public School
+orinks_160,Our Lady of Lourdes Catholic School
+orinks_161,Empire Public School
+orinks_162,Keatsway Public School
+orinks_163,Centennial Public School
+orinks_164,Mary Johnston Public School
+orinks_165,Westvale Public School
+orinks_166,Holy Rosary Catholic School
+orinks_167,Edna Staebler Public School
+orinks_168,Laurelwood Public School
+orinks_169,Sandowne Public School
+orinks_170,St. Matthew Catholic School
+orinks_171,Lester B. Pearson Public School
+orinks_172,Millen Woods Public School
+orinks_173,Vista Hills Public School

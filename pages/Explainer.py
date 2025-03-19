@@ -182,26 +182,60 @@ if "trained_model" in st.session_state:
 
         with pred_col:
             final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
-            single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
-            
-            # Format the prices with dollar signs and commas
-            formatted_df = single_point_df.copy()
-            formatted_df['Predicted Price'] = formatted_df['Predicted Price'].apply(lambda x: f"${x:,}")
-            formatted_df['Actual Price'] = formatted_df['Actual Price'].apply(lambda x: f"${x:,}")
-            
-            st.dataframe(formatted_df, use_container_width=True)
 
-            # Calculate difference and accuracy
-            pred_price = final_output[0][0]
-            actual_price = final_output[0][1]
-            diff = abs(pred_price - actual_price)
-            accuracy = (1 - (diff / actual_price)) * 100
+            school_name = joined_df.loc[index[0], 'nearest_school']
+
+            amenities = md.get_amenities()
+            string_data = joined_df.loc[index[0], 'amenities_objectids_1km']
+            amenity_objectids = string_data.split(",")
+            amen_name = md.process_amenities(amenities, amenity_objectids)
+
+            st.subheader("Key Property Details")
+            st.write(f"🏠 Architechture Style: {joined_df.loc[index[0], 'architecture_style']}")
+            st.write(f"🎓 Nearest School: {school_name}")
+            def display_amenities_columns(amen_name):
+                """Displays amenities in two columns."""
+                col1, col2 = st.columns(2)  # Create two columns
+
+                for i, name in enumerate(amen_name):
+                    if "school" in name.lower():
+                        display_text = f"🏫 {name} facilities"
+                    elif "church" in name.lower():
+                        display_text = f"⛪ {name}"
+                    elif "park" in name.lower():
+                        display_text = f"🍁 {name}"
+                    else:
+                        display_text = f"🏛️ {name}"
+
+                    if i % 2 == 0:  # Even index, display in the first column
+                        col1.write(display_text)
+                    else:  # Odd index, display in the second column
+                        col2.write(display_text)
             
-            st.metric(
-                label="Prediction Accuracy", 
-                value=f"{accuracy:.1f}%",
-                delta=f"${diff:,} difference"
-            )
+            st.markdown("#### Amenities")
+            display_amenities_columns(amen_name)
+
+            # TO BE REMOVED
+            # single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
+            
+            # # Format the prices with dollar signs and commas
+            # formatted_df = single_point_df.copy()
+            # formatted_df['Predicted Price'] = formatted_df['Predicted Price'].apply(lambda x: f"${x:,}")
+            # formatted_df['Actual Price'] = formatted_df['Actual Price'].apply(lambda x: f"${x:,}")
+            
+            # st.dataframe(formatted_df, use_container_width=True)
+
+            # # Calculate difference and accuracy
+            # pred_price = final_output[0][0]
+            # actual_price = final_output[0][1]
+            # diff = abs(pred_price - actual_price)
+            # accuracy = (1 - (diff / actual_price)) * 100
+            
+            # st.metric(
+            #     label="Prediction Accuracy", 
+            #     value=f"{accuracy:.1f}%",
+            #     delta=f"${diff:,} difference"
+            # )
         
         # Predicted Range
         rmse = int(round(st.session_state["rmse"],0))

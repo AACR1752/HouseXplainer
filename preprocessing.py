@@ -134,6 +134,7 @@ def add_school_details(final_filled_df, df_schools):
     # Add distance column to housing DataFrame
     final_filled_df['distance_to_nearest_school'] = distances
     final_filled_df['log_distance_to_nearest_school'] = np.log1p(distances)
+    final_filled_df['nearest_school'] = df_schools.iloc[indices.flatten()]['school name'].values
 
     # Map nearest school type to each house
     final_filled_df['nearest_school_type'] = df_schools.iloc[indices.flatten()]['school_type_label'].values
