@@ -79,8 +79,10 @@ if "trained_model" in st.session_state:
                                      key="prop1")
             index_1 = filtered_df_1[filtered_df_1['listing'] == property_1].index.tolist()[0]
             data_point_1 = X_test.iloc[[index_1]]
+            property_1_selected = True
         except:
             st.write("No available listings with current selection for Property 1!")
+            property_1_selected = False
             
     with col2:
         # Second property selection
@@ -103,63 +105,117 @@ if "trained_model" in st.session_state:
                                      key="prop2")
             index_2 = filtered_df_2[filtered_df_2['listing'] == property_2].index.tolist()[0]
             data_point_2 = X_test.iloc[[index_2]]
+            property_2_selected = True
         except:
             st.write("No available listings with current selection for Property 2!")
+            property_2_selected = False
+    
+        # Button styling with custom CSS
+        st.markdown(
+        """
+        <style>
+        div.stButton > button {
+            padding: 0.5rem 2rem;
+            display: block;
+            margin: 0 auto;
+            border: "black";
+            border-radius: 5px;
+            font-weight: bold;
+            transition: box-shadow 0.3s ease;
+        }
+
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
     
     # Compare button
-    compare = st.button("Compare Properties", use_container_width=True)
+    compare = st.button("Compare Properties", use_container_width=False)
     
     if compare:
-        try:
+        # Check if both properties are selected
+        if not property_1_selected or not property_2_selected:
+            st.error("Please select valid properties for comparison!")
+        # Check if the same property is selected twice
+        elif property_1 == property_2 and neighbourhood_1 == neighbourhood_2 and property_type_1 == property_type_2:
+            st.error("Please select different properties for comparison!")
+        else:
+
             # Get predictions
             prediction_1 = model.predict(data_point_1)[0]
             prediction_2 = model.predict(data_point_2)[0]
             
             actual_1 = y_test.iloc[index_1]
             actual_2 = y_test.iloc[index_2]
-            
-            # Display property images and predictions
-            col1, col2 = st.columns(2)
-            
+
+            # Property comparison section using native Streamlit components
+            col1, col2 = st.columns(2, gap="large")
+
             with col1:
                 st.subheader(f"Property 1: {property_1}")
                 st.image(joined_df.loc[index_1, 'image-src'])
                 
-                # Property 1 details
-                st.metric("Predicted Price", f"${round(prediction_1):,}")
-                st.metric("Actual Price", f"${round(actual_1):,}")
+                # Price metrics using st.metric
+                price_cols = st.columns(2)
+                with price_cols[0]:
+                    st.metric("Predicted Price", f"${round(prediction_1):,}")
                 
-                # Property details
-                prop_details = {
-                    "Bedrooms": joined_df.loc[index_1, 'bedrooms'],
-                    "Bathrooms": joined_df.loc[index_1, 'bathrooms'],
-                    "Property Type": joined_df.loc[index_1, 'property_type'],
-                    "Neighbourhood": joined_df.loc[index_1, 'neighbourhood'],
-                    "amenities_count_1km": joined_df.loc[index_2, 'amenities_count_1km']
-                }
-                
-                st.write("Property Details:")
-                st.json(prop_details)
-                
+                # Property details using expandable container
+                with st.expander("Property Details", expanded=True):
+                    detail_cols = st.columns(2)
+                    
+                    with detail_cols[0]:
+                        st.markdown("**Bedrooms**")
+                        st.markdown(f"{int(joined_df.loc[index_1, 'bedrooms'])}")
+                        
+                        st.markdown("**Property Type**")
+                        st.markdown(f"{joined_df.loc[index_1, 'property_type']}")
+                        
+                        st.markdown("**Amenities within 1km**")
+                        st.markdown(f"{joined_df.loc[index_1, 'amenities_count_1km']}")
+                        
+                    with detail_cols[1]:
+                        st.markdown("**Bathrooms**")
+                        st.markdown(f"{int(joined_df.loc[index_1, 'bathrooms'])}")
+
+                        st.markdown("**Architectural Style**")
+                        st.markdown(f"{joined_df.loc[index_2, 'architecture_style']}")
+
+                        st.markdown("**Neighbourhood**")
+                        st.markdown(f"{joined_df.loc[index_1, 'neighbourhood']}")
+
             with col2:
                 st.subheader(f"Property 2: {property_2}")
                 st.image(joined_df.loc[index_2, 'image-src'])
                 
-                # Property 2 details
-                st.metric("Predicted Price", f"${round(prediction_2):,}")
-                st.metric("Actual Price", f"${round(actual_2):,}")
-                
-                # Property details
-                prop_details = {
-                    "Bedrooms": joined_df.loc[index_2, 'bedrooms'],
-                    "Bathrooms": joined_df.loc[index_2, 'bathrooms'],
-                    "Property Type": joined_df.loc[index_2, 'property_type'],
-                    "Neighbourhood": joined_df.loc[index_2, 'neighbourhood'],
-                    "amenities_count_1km": joined_df.loc[index_2, 'amenities_count_1km']
-                }
-                
-                st.write("Property Details:")
-                st.json(prop_details)
+                # Price metrics using st.metric
+                price_cols = st.columns(2)
+                with price_cols[0]:
+                    st.metric("Predicted Price", f"${round(prediction_2):,}")
+
+                # Property details using expandable container
+                with st.expander("Property Details", expanded=True):
+                    detail_cols = st.columns(2)
+                    
+                    with detail_cols[0]:
+                        st.markdown("**Bedrooms**")
+                        st.markdown(f"{int(joined_df.loc[index_2, 'bedrooms'])}")
+                        
+                        st.markdown("**Property Type**")
+                        st.markdown(f"{joined_df.loc[index_2, 'property_type']}")
+                        
+                        st.markdown("**Amenities within 1km**")
+                        st.markdown(f"{joined_df.loc[index_2, 'amenities_count_1km']}")
+                        
+                    with detail_cols[1]:
+                        st.markdown("**Bathrooms**")
+                        st.markdown(f"{int(joined_df.loc[index_2, 'bathrooms'])}")
+                        
+                        st.markdown("**Architectural Style**")
+                        st.markdown(f"{joined_df.loc[index_2, 'architecture_style']}")
+                        
+                        st.markdown("**Neighbourhood**")
+                        st.markdown(f"{joined_df.loc[index_2, 'neighbourhood']}")
             
             # Feature comparison section
             st.markdown("---")
@@ -246,50 +302,44 @@ if "trained_model" in st.session_state:
                 if feature_df.empty:
                     st.warning("No valid features found for comparison after filtering.")
                 else:
-                    # Separate numerical and categorical features
-                    numerical_features = feature_df[~feature_df['Is_Categorical']].drop(columns=['Is_Categorical'])
-                    categorical_features = feature_df[feature_df['Is_Categorical']].drop(columns=['Is_Categorical'])
+        
+                    # Convert all values to strings for uniform display
+                    feature_df_display = feature_df.copy()
+                    feature_df_display['Property 1'] = feature_df_display['Property 1'].astype(str)
+                    feature_df_display['Property 2'] = feature_df_display['Property 2'].astype(str)
                     
-                    # Display numerical features
-                    if not numerical_features.empty:
-                        st.subheader("Numerical Features Comparison")
-                        # Sort features by absolute difference between properties
-                        numerical_features['Abs_Diff'] = abs(numerical_features['Property 1'] - numerical_features['Property 2'])
+                    # Create a bar chart for all features that can be converted to numeric
+                    numeric_features = []
+                    for idx, row in feature_df.iterrows():
+                        try:
+                            float(row['Property 1'])
+                            float(row['Property 2'])
+                            numeric_features.append(idx)
+                        except (ValueError, TypeError):
+                            pass
+                    
+                    if numeric_features:
+                        numeric_df = feature_df.iloc[numeric_features].copy()
                         
-                        # Add a new filter to remove features where both values are effectively zero or very small
-                        numerical_features['Sum_Values'] = numerical_features['Property 1'] + numerical_features['Property 2']
-                        numerical_features_filtered = numerical_features[numerical_features['Sum_Values'] > 0.01]
+                        # Filter out features where both values are nearly zero
+                        numeric_df['Sum_Values'] = numeric_df['Property 1'] + numeric_df['Property 2']
+                        numeric_df_filtered = numeric_df[numeric_df['Sum_Values'] > 0.01]
                         
-                        # If after filtering we still have features to display
-                        if not numerical_features_filtered.empty:
-                            numerical_features_sorted = numerical_features_filtered.sort_values('Abs_Diff', ascending=False).drop(columns=['Abs_Diff', 'Sum_Values'])
+                        if not numeric_df_filtered.empty:
+                            # Calculate absolute difference for sorting
+                            numeric_df_filtered['Abs_Diff'] = abs(numeric_df_filtered['Property 1'] - numeric_df_filtered['Property 2'])
+                            numeric_df_sorted = numeric_df_filtered.sort_values('Abs_Diff', ascending=False).drop(columns=['Abs_Diff', 'Sum_Values'])
                             
-                            fig = px.bar(numerical_features_sorted, x="Feature", y=["Property 1", "Property 2"], 
-                                       barmode="group", title="Feature Value Comparison",
-                                       labels={"value": "Feature Value", "variable": "Property"})
+                            fig = px.bar(numeric_df_sorted, x="Feature", y=["Property 1", "Property 2"], 
+                                    barmode="group", title="Feature Value Comparison",
+                                    labels={"value": "Feature Value", "variable": "Property"})
                             
                             fig.update_layout(xaxis_tickangle=-45)
                             st.plotly_chart(fig, use_container_width=True)
+                        
                         else:
                             st.info("No significant numerical differences found between the properties.")
-                    
-                    # Display categorical features
-                    if not categorical_features.empty:
-                        st.subheader("Categorical Features Comparison")
-                        st.write("These features are categorical or binary:")
-                        
-                        # Create a more readable format for categorical features
-                        for _, row in categorical_features.iterrows():
-                            feature = row['Feature']
-                            val1 = row['Property 1']
-                            val2 = row['Property 2']
-                            
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                st.write(f"Property 1 {feature}: {val1}")
-                            with col2:
-                                st.write(f"Property 2 {feature}: {val2}")
-                            st.markdown("---")
+
                 
                 # Create a price breakdown visualization
                 st.subheader("Price Contribution Breakdown")
@@ -348,8 +398,5 @@ if "trained_model" in st.session_state:
                 
                 st.plotly_chart(fig, use_container_width=True)
                 
-        except Exception as e:
-            st.error(f"Error comparing properties: {e}")
-            st.error("Please make sure you've selected valid properties for comparison.")
 else:
     st.error("No trained model or test data found! Please train the model first.")
