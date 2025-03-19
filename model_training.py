@@ -71,7 +71,7 @@ def main(model_choice):
     if model_choice == "Random Forest":
         houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
         houses['roof'] = pd.Categorical(houses['roof']).codes
-        houses['architecture_style_coded'] = pd.Categorical(houses['architecture_style']).codes
+        houses['architecture_style_type'] = pd.Categorical(houses['architecture_style']).codes
         houses['frontage_type'] = pd.Categorical(houses['frontage_type']).codes
 
     houses = houses.dropna(subset=['sold']) #these are removed events
