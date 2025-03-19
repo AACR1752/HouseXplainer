@@ -214,34 +214,13 @@ if "trained_model" in st.session_state:
             
             st.markdown("#### Amenities")
             display_amenities_columns(amen_name)
-
-            # TO BE REMOVED
-            # single_point_df = pd.DataFrame(final_output, columns=['Predicted Price','Actual Price'])
-            
-            # # Format the prices with dollar signs and commas
-            # formatted_df = single_point_df.copy()
-            # formatted_df['Predicted Price'] = formatted_df['Predicted Price'].apply(lambda x: f"${x:,}")
-            # formatted_df['Actual Price'] = formatted_df['Actual Price'].apply(lambda x: f"${x:,}")
-            
-            # st.dataframe(formatted_df, use_container_width=True)
-
-            # # Calculate difference and accuracy
-            # pred_price = final_output[0][0]
-            # actual_price = final_output[0][1]
-            # diff = abs(pred_price - actual_price)
-            # accuracy = (1 - (diff / actual_price)) * 100
-            
-            # st.metric(
-            #     label="Prediction Accuracy", 
-            #     value=f"{accuracy:.1f}%",
-            #     delta=f"${diff:,} difference"
-            # )
         
         # Predicted Range
+        k = 0.5  # Adjust based on confidence needs
         rmse = int(round(st.session_state["rmse"],0))
         predicted_price = final_output[0][0]
-        min_price = predicted_price - rmse  
-        max_price = predicted_price + rmse
+        min_price = predicted_price - (k * rmse)
+        max_price = predicted_price + (k * rmse)
 
         # Normalize the predicted price for plotting
         normalized_price = (predicted_price - min_price) / (max_price - min_price)
@@ -280,6 +259,8 @@ if "trained_model" in st.session_state:
             height=150,
             plot_bgcolor="rgba(0,0,0,0)",
         )
+
+        st.subheader("Predicted Price Range:")
 
         # Display in Streamlit
         st.plotly_chart(fig, use_container_width=True)
@@ -321,12 +302,15 @@ if "trained_model" in st.session_state:
             sorted_features = sorted(list(zip(column_order, percentages)), key=lambda x: x[1], reverse=True)
 
             #Create a copy of the sorted features
-            s_features = copy.deepcopy(sorted_features)
+            # s_features = copy.deepcopy(sorted_features)
 
         words_to_drop = md.words_to_drop
 
         # Filter sorted_features to remove any feature names containing the words in words_to_drop
         filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
+
+        #For the Micro/Macro Features
+        s_features = copy.deepcopy(filtered_sorted_features)
 
         # Select the top 20 features
         top_features_y = filtered_sorted_features[:20]
@@ -356,7 +340,7 @@ if "trained_model" in st.session_state:
 
         # Title with divider
         st.markdown("---")
-        st.title("🏆 Top 5 features")
+        st.title("🏆 The five dominant factors")
 
         # Create a row of columns for the top 5 features
         feature_cols = st.columns(5)
@@ -409,6 +393,8 @@ if "trained_model" in st.session_state:
         # Zip !
         top_feature_names_y, top_percentages_y = zip(*s_features)
 
+        top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
+
         # Convert the feature_list to a set for faster membership checking
         feature_set = set(feature_list)
 
@@ -456,7 +442,7 @@ if "trained_model" in st.session_state:
                 height=900,  # Increase the height of the chart
                 width=900,   # Increase the width of the chart
                 bargap=0.3,  # Decrease the gap between bars
-                title="Top Micro Features",  # Set the title of the chart
+                title="Top Internal Features",  # Set the title of the chart
                 xaxis_title="Percentage Contribution (%)",  # X-axis label
                 template="plotly_dark",  # Optional: Use a dark theme for the chart
                 xaxis=dict(
@@ -493,7 +479,7 @@ if "trained_model" in st.session_state:
                 height=900,  # Increase the height of the chart
                 width=900,   # Increase the width of the chart
                 bargap=0.3,  # Decrease the gap between bars
-                title="Top Macro Features",  # Set the title of the chart
+                title="Top External Features",  # Set the title of the chart
                 xaxis_title="Percentage Contribution (%)",  # X-axis label
                 template="plotly_dark",  # Optional: Use a dark theme for the chart
                 xaxis=dict(
@@ -511,14 +497,14 @@ if "trained_model" in st.session_state:
             )
             st.plotly_chart(fig, use_container_width=True, key="macro")
         
-        tab1, tab2 = st.tabs(["Macro Features", "Micro Features"])
+        tab1, tab2 = st.tabs(["External Features", "Internal Features"])
 
         with tab1:
-            st.header("Macro Features")
+            st.subheader("External Features")
             plot_macro()
             
         with tab2:
-            st.header("Micro Features")
+            st.subheader("Internal Features")
             plot_micro()
 
 else:

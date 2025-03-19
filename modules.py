@@ -43,7 +43,7 @@ def apply_sidebar_minimization():
         unsafe_allow_html=True,
     )
 
-words_to_drop = ["schedule", "attachments", "airport",
+words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
                     "seller", "garage", "frontage", "microwave",
                     "other", "locati", "multi", "is", "building",
                     'laundry room',
