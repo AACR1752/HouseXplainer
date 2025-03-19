@@ -131,6 +131,12 @@ Wrap Around Porch,8,exterior
 Front Porch,8,exterior
 Covered Patio,8,exterior
 Lanai,8,exterior
+Rent,8,exterior
+Student,8,exterior
+Rental,8,exterior
+Investment,8,exterior
+Income,8,exterior
+Potential,8,exterior
 Enclosed Porch,6,exterior
 Screened Porch,6,exterior
 Sunroom,6,exterior
@@ -216,7 +222,7 @@ Renovated Interior,8,interior
 Remodeled,8,interior
 Renovation,8,interior
 Finished,8,interior
-Finished Basement,8,interior
+Basement Finished,8,interior
 Lower Level Finished,8,interior
 Basement Renovated,8,interior
 Lower Level Renovated,8,interior
