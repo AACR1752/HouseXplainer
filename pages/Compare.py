@@ -5,6 +5,7 @@ import modules as md
 import model_training
 import plotly.express as px
 import plotly.graph_objects as go
+import shap
 from plotly.subplots import make_subplots
 from streamlit_navigation_bar import st_navbar
 
@@ -240,7 +241,7 @@ if "trained_model" in st.session_state:
             
             # Get model feature importances
             if "Random Forest" == st.session_state["model_choice"]:
-                import shap
+                
                 explainer = shap.TreeExplainer(model)
                 shap_values_1 = explainer.shap_values(data_point_1)
                 shap_values_2 = explainer.shap_values(data_point_2)
@@ -270,17 +271,33 @@ if "trained_model" in st.session_state:
                 unique_top_features = set([f[0] for f in top_features_1]).union(set([f[0] for f in top_features_2]))
                 
                 # Create a bar chart to compare feature values
+                processed_features = set()
                 feature_data = []
                 
                 for feature in unique_top_features:
+                    feature_display = feature.replace('_', ' ')
+                    if feature_display.lower() in processed_features:
+                        continue
+                        
                     if feature in display_data_1.columns and feature in display_data_2.columns:
-                        feature_data.append({
-                            "Feature": feature.replace('_', ' '),
-                            "Property 1": float(display_data_1[feature].values[0]),
-                            "Property 2": float(display_data_2[feature].values[0])
-                        })
+                        value_1 = float(display_data_1[feature].values.flatten()[0])
+                        value_2 = float(display_data_2[feature].values.flatten()[0])
+                        
+                        # Only include if the feature has meaningful values (not near zero)
+                        if abs(value_1) > 0.01 or abs(value_2) > 0.01:
+                            feature_data.append({
+                                "Feature": feature_display,
+                                "Property 1": value_1,
+                                "Property 2": value_2
+                            })
+                            processed_features.add(feature_display.lower())
                 
                 feature_df = pd.DataFrame(feature_data)
+                # After creating feature_df
+                feature_df['Total'] = feature_df['Property 1'] + feature_df['Property 2']
+                feature_df['Difference'] = abs(feature_df['Property 1'] - feature_df['Property 2'])
+                feature_df = feature_df.sort_values('Difference', ascending=False).drop(columns=['Total', 'Difference'])
+
                 
                 # Create comparison chart
                 fig = px.bar(feature_df, x="Feature", y=["Property 1", "Property 2"], 
