@@ -158,7 +158,7 @@ if "trained_model" in st.session_state:
                 # Price metrics using st.metric
                 price_cols = st.columns(2)
                 with price_cols[0]:
-                    st.metric("Predicted Price", f"${round(prediction_1):,}")
+                    st.metric("Expectcted Market Value", f"${round(prediction_1):,}")
                 
                 # Property details using expandable container
                 with st.expander("Property Details", expanded=True):
@@ -191,7 +191,7 @@ if "trained_model" in st.session_state:
                 # Price metrics using st.metric
                 price_cols = st.columns(2)
                 with price_cols[0]:
-                    st.metric("Predicted Price", f"${round(prediction_2):,}")
+                    st.metric("Expectcted Market Value", f"${round(prediction_2):,}")
 
                 # Property details using expandable container
                 with st.expander("Property Details", expanded=True):

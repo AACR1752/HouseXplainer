@@ -219,8 +219,8 @@ if "trained_model" in st.session_state:
         k = 0.5  # Adjust based on confidence needs
         rmse = int(round(st.session_state["rmse"],0))
         predicted_price = final_output[0][0]
-        min_price = predicted_price - (k * rmse)
-        max_price = predicted_price + (k * rmse)
+        min_price = int(round(predicted_price - (k * rmse),0))
+        max_price = int(round(predicted_price + (k * rmse),0))
 
         # Normalize the predicted price for plotting
         normalized_price = (predicted_price - min_price) / (max_price - min_price)
@@ -244,12 +244,12 @@ if "trained_model" in st.session_state:
         fig.update_layout(
             # title="Predicted Price Indicator",
             xaxis=dict(
-                title="Price Range",
+                title="Expected Market Value",
                 range=[min_price - 100000, max_price + 100000],  # Extend range slightly
                 tickvals=[min_price, predicted_price, max_price],
                 ticktext=[f"${min_price:,}", f"${predicted_price:,}", f"${max_price:,}"],
                 tickfont=dict(
-                    size=14,  # Increase font size
+                    size=22,  # Increase font size
                     color="black",  # Change font color if needed
                     family="Arial, sans-serif"  # Change font family if needed
         ),
@@ -400,11 +400,14 @@ if "trained_model" in st.session_state:
 
         # Separate the top features into those within and not within feature_list
         features_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature in feature_set]
+        # features_within = sorted(features_within, key=lambda x: x[1], reverse=True)
+
         features_not_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature not in feature_set]
+        # features_not_within = sorted(features_not_within, key=lambda x: x[1], reverse=True)
 
         # Limit the lists to the top 20 features each
-        features_within = features_within[:20]
-        features_not_within = features_not_within[:20]
+        features_within = features_within[:10]
+        features_not_within = features_not_within[:10]
 
         # Sort the lists in ascending order based on the percentage (second element of the tuple)
         features_within.sort(key=lambda x: x[1])  # Sorting based on percentage
