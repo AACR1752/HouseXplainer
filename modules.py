@@ -3,6 +3,7 @@ import altair as alt
 import pandas as pd
 import re
 from nltk.stem import PorterStemmer
+import random
 
 def initialize_shared_state():
     if "styles" not in st.session_state:
@@ -94,22 +95,24 @@ def remove_suffixes(col_name, suffixes):
 
 # Still caching school
 @st.cache_data
-def render_school_map():
+def render_school():
     school_df = pd.read_csv('data/good_data/schools.csv')
-    # Prepare data with icon column for schools
-    school_df_with_icon = school_df.copy()
-    school_df_with_icon['icon_data'] = [{
-        "url": "https://img.icons8.com/color/48/000000/school.png",
-        "width": 128,
-        "height": 128,
-        "anchorY": 128
-    } for _ in range(len(school_df_with_icon))]
-    return school_df_with_icon
+    return school_df
+
+@st.cache_data
+def render_amenities():
+    amenities = pd.read_csv('data/good_data/amenities.csv')
+    return amenities
 
 @st.cache_data
 def render_features():
     features = pd.read_csv('data/features.csv')
     return features
+
+@st.cache_data
+def get_amenities():
+    amenities = pd.read_csv('data/amenity_dict.csv')
+    return amenities
 
 def highlight_keywords(text, feature_df):
     """Highlights keywords in text based on DataFrame features with stemming and color-coded highlights."""
@@ -154,3 +157,21 @@ def highlight_keywords(text, feature_df):
                 break #prevent double highlighting if the original word and stemmed word exist.
 
     return highlighted_text, list(set(found_features)) #remove duplicates from found_features.
+
+def process_amenities(amenities, amenity_objectids):
+    """
+    Processes amenities data, randomly selects 10 object IDs,
+    creates a subset of the amenities DataFrame, and prints names.
+    """
+    amenity_objectids = set(amenity_objectids)
+    
+    if len(amenity_objectids) <= 10:
+        selected_objectids = list(amenity_objectids) # Convert back to list for random.sample
+    else:
+        random.seed(42)
+        selected_objectids = random.sample(list(amenity_objectids), 10) # Convert back to list for random.sample
+
+    subset_amenities = amenities[amenities['type_objectid'].astype(str).isin(selected_objectids)]
+
+    return list(set(subset_amenities['name'].tolist())) #return unique names using set
+   

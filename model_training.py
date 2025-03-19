@@ -51,8 +51,8 @@ def initial_data():
     combined_df['address'] = combined_df['address'].str.replace(' - Waterloo', '')
     output = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
     output = pd.DataFrame(output)
-    df_schools = pd.read_csv('data/good_data/schools.csv')
-    amenities = pd.read_csv('data/good_data/amenities.csv')
+    df_schools = md.render_school()
+    amenities = md.render_amenities()
     result_df = pp.process_housing(df_house_sigma=combined_df, output=output)
     final_filled_df = pp.predict_missing_neighbourhoods(result_df)
     final_filled_df = pp.add_school_details(final_filled_df, df_schools)
@@ -71,7 +71,7 @@ def main(model_choice):
     if model_choice == "Random Forest":
         houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
         houses['roof'] = pd.Categorical(houses['roof']).codes
-        houses['architecture_style'] = pd.Categorical(houses['architecture_style']).codes
+        houses['architecture_style_coded'] = pd.Categorical(houses['architecture_style']).codes
         houses['frontage_type'] = pd.Categorical(houses['frontage_type']).codes
 
     houses = houses.dropna(subset=['sold']) #these are removed events
@@ -170,6 +170,7 @@ def main(model_choice):
     joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
     joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood',
                                         'latitude','longitude', 'bedrooms', 'description',
+                                        'amenities_objectids_1km', 'nearest_school', 'architecture_style',
                                         'bathrooms', 'property_type']], on='listing_id', how='inner')
 
     # Store the trained model and other variables in session state
