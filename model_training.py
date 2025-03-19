@@ -77,11 +77,12 @@ def main(model_choice):
     houses = houses.dropna(subset=['sold']) #these are removed events
     ml_houses = fe.feature_refining(houses)
 
-    columns_to_encode = [
+    columns_to_encode = [        
                         # 'property_type',
+                        'features',
                         'driveway_parking',
                         'basement_type',
-                        #  'bathrooms_detail', 'sewer', 'topography',
+                         'bathrooms_detail', 'sewer', 'topography',
                         'lot_features',
                         'exterior_feature',
                         'waterfront_features', 

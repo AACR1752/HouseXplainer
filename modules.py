@@ -44,9 +44,10 @@ def apply_sidebar_minimization():
     )
 
 words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
+                 'bathrooms_detail', 'sewer', 'topography',
                     "seller", "garage", "frontage", "microwave",
                     "other", "locati", "multi", "is", "building",
-                    'laundry room',
+                    'laundry room', "Wine Cooler", "Greenbelt",
                     "negoti", "condition"]
 
 def display_graph(top_feature_names, top_percentages):
