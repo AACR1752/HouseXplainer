@@ -306,77 +306,7 @@ if "trained_model" in st.session_state:
                 
                 fig.update_layout(xaxis_tickangle=-45)
                 st.plotly_chart(fig, use_container_width=True)
-                
-                
-                # for feature in unique_top_features:
-                #     if feature in display_data_1.columns and feature in display_data_2.columns:
-                #         try:
-                #             # Try to convert to float, but handle categorical features
-                #             val1 = display_data_1[feature].values[0]
-                #             val2 = display_data_2[feature].values[0]
-                            
-                #             # Check if values are numeric or can be converted to numeric
-                #             try:
-                #                 val1 = float(val1)
-                #                 val2 = float(val2)
-                #             except (ValueError, TypeError):
-                #                 # For categorical features, keep as is but note they're categorical
-                #                 pass
-                                
-                #             feature_data.append({
-                #                 "Feature": feature.replace('_', ' '),
-                #                 "Property 1": val1,
-                #                 "Property 2": val2,
-                #                 "Is_Categorical": not (isinstance(val1, (int, float)) and isinstance(val2, (int, float)))
-                #             })
-                #         except Exception as e:
-                #             st.warning(f"Skipping feature {feature} due to error: {e}")
-                
-                # feature_df = pd.DataFrame(feature_data)
-                
-                # # MODIFIED: Handle empty feature data
-                # if feature_df.empty:
-                #     st.warning("No valid features found for comparison after filtering.")
-                # else:
-        
-                #     # Convert all values to strings for uniform display
-                #     feature_df_display = feature_df.copy()
-                #     feature_df_display['Property 1'] = feature_df_display['Property 1'].astype(str)
-                #     feature_df_display['Property 2'] = feature_df_display['Property 2'].astype(str)
-                    
-                #     # Create a bar chart for all features that can be converted to numeric
-                #     numeric_features = []
-                #     for idx, row in feature_df.iterrows():
-                #         try:
-                #             float(row['Property 1'])
-                #             float(row['Property 2'])
-                #             numeric_features.append(idx)
-                #         except (ValueError, TypeError):
-                #             pass
-                    
-                #     if numeric_features:
-                #         numeric_df = feature_df.iloc[numeric_features].copy()
-                        
-                #         # Filter out features where both values are nearly zero
-                #         numeric_df['Sum_Values'] = numeric_df['Property 1'] + numeric_df['Property 2']
-                #         numeric_df_filtered = numeric_df[numeric_df['Sum_Values'] > 0.01]
-                        
-                #         if not numeric_df_filtered.empty:
-                #             # Calculate absolute difference for sorting
-                #             numeric_df_filtered['Abs_Diff'] = abs(numeric_df_filtered['Property 1'] - numeric_df_filtered['Property 2'])
-                #             numeric_df_sorted = numeric_df_filtered.sort_values('Abs_Diff', ascending=False).drop(columns=['Abs_Diff', 'Sum_Values'])
-                            
-                #             fig = px.bar(numeric_df_sorted, x="Feature", y=["Property 1", "Property 2"], 
-                #                     barmode="group", title="Feature Value Comparison",
-                #                     labels={"value": "Feature Value", "variable": "Property"})
-                            
-                #             fig.update_layout(xaxis_tickangle=-45)
-                #             st.plotly_chart(fig, use_container_width=True)
-                        
-                #         else:
-                #             st.info("No significant numerical differences found between the properties.")
-
-                
+               
                 # Create a price breakdown visualization
                 st.subheader("Price Contribution Breakdown")
                 
