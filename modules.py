@@ -75,7 +75,7 @@ def display_graph(top_feature_names, top_percentages):
     st.altair_chart(bars, use_container_width=True)
 
 def display_df(results):
-    results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared'])
+    results_df = pd.DataFrame(results, columns=['MSE','RMSE', 'R-squared', 'median error (%)'])
     st.dataframe(results_df)
 
 # Define a function to drop columns containing any of the specified words (case insensitive)
