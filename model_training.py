@@ -144,9 +144,15 @@ def main(model_choice):
     mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
-    results = [[mse, rmse, r2]]
+
+    # Median Error Calculation
+    percentage_errors = np.abs((y_test - y_pred) / y_test) * 100
+    median_error = np.median(percentage_errors)
+
+    results = [[mse, rmse, r2, median_error]]
     st.session_state["evaluation"] = results
     st.session_state["rmse"] = rmse
+    st.session_state["median_error"] = median_error
     # md.display_df(results)
 
     # Feature Importance
