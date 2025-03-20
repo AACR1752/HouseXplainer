@@ -262,14 +262,8 @@ if "trained_model" in st.session_state:
                 display_data_1 = display_data_1.rename(columns={'log_distance_to_nearest_school': 'School Proximity'})
                 display_data_2 = display_data_2.rename(columns={'log_distance_to_nearest_school': 'School Proximity'})
             
-            # Remove suffixes for cleaner display
-            suffixes_to_remove = [
-                                'driveway_parking', 'basement_type', 'lot_features', 
-                                  'exterior_feature', 'waterfront_features', 'appliances_included'
-                                  ]
-            
-            display_data_1.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in display_data_1.columns]
-            display_data_2.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in display_data_2.columns]
+            display_data_1.columns = [md.remove_suffixes(col) for col in display_data_1.columns]
+            display_data_2.columns = [md.remove_suffixes(col) for col in display_data_2.columns]
             
             # Get model feature importances
             if "Random Forest" == st.session_state["model_choice"]:
