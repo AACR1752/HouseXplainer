@@ -5,57 +5,28 @@ import re
 from nltk.stem import PorterStemmer
 import random
 
-def initialize_shared_state():
-    if "styles" not in st.session_state:
-        st.session_state["styles"] = {
-            "nav": {
-                "background-color": "#8BC34A",
-                "justify-content": "left",
-            },
-            "div": {
-                "max-width": "32rem",
-            },
-            "span": {
-                "border-radius": "0.5rem",
-                "color": "white",
-                "margin": "0 0.125rem",
-                "padding": "0.4375rem 0.625rem",
-            },
-            "active": {
-                "background-color": "rgba(255, 255, 255, 0.25)",
-            },
-            "hover": {
-                "background-color": "rgba(255, 255, 255, 0.35)",
-            },
-        }
-    if "pgs" not in st.session_state:
-        st.session_state["pgs"] = ["Home", "Explainer", "Compare", "FAQ", "Learn More"]
-
-def apply_sidebar_minimization():
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebar"] {
-                display: none;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
 words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
                  'bathrooms_detail', 'sewer', 'topography',
-                    "seller", "garage", "frontage", "microwave",
+                    "seller", "frontage", "microwave",
                     "other", "locati", "multi", "is", "building",
-                    'laundry room', "Wine Cooler", "Greenbelt",
                     "negoti", "condition"]
+
+# def manual_adjustments():
+#     return {"log_distance_to_nearest_school": "Proximity to School"}
+
+# Function to remove suffixes from column names
+def remove_suffixes(col_name):
+    suffixes = [
+                # 'driveway_parking',
+                'basement_type', 'lot_features', 'exterior_feature',
+                'waterfront_features', 'appliances_included']
+    for suffix in suffixes:
+        if col_name.endswith(suffix):
+            return col_name[:-len(suffix)-1]
+    return col_name
 
 def display_graph(top_feature_names, top_percentages):
     top_feature_names = [name.replace('_', ' ') for name in top_feature_names]
-
-    # Streamlit bar chart
-
-    # Plot using Streamlit's altair_chart
     source = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
 
     # Create the Altair bar chart
@@ -87,12 +58,20 @@ def drop_columns_containing_words(df, words):
 def should_drop(feature_name, words):
         return any(word.lower() in feature_name.lower() for word in words)
 
-# Function to remove suffixes from column names
-def remove_suffixes(col_name, suffixes):
-    for suffix in suffixes:
-        if col_name.endswith(suffix):
-            return col_name[:-len(suffix)-1]
-    return col_name
+def remove_overlapping_features(features):
+    # Convert all features to lowercase for case-insensitive comparison
+    features_lower = [feature.lower() for feature in features]
+    # Sort features by length in descending order to prioritize longer phrases
+    features_lower = sorted(features_lower, key=len, reverse=True)
+    unique_features = []
+
+    for feature in features_lower:
+        # Check if the feature is already part of any existing unique feature
+        if not any(feature in uf for uf in unique_features):
+            unique_features.append(feature)
+
+    # Map back to original case-sensitive features
+    return [feature for feature in features if feature.lower() in unique_features]
 
 # Still caching school
 @st.cache_data
@@ -175,4 +154,42 @@ def process_amenities(amenities, amenity_objectids):
     subset_amenities = amenities[amenities['type_objectid'].astype(str).isin(selected_objectids)]
 
     return list(set(subset_amenities['name'].tolist())) #return unique names using set
-   
+
+
+def initialize_shared_state():
+    if "styles" not in st.session_state:
+        st.session_state["styles"] = {
+            "nav": {
+                "background-color": "#8BC34A",
+                "justify-content": "left",
+            },
+            "div": {
+                "max-width": "32rem",
+            },
+            "span": {
+                "border-radius": "0.5rem",
+                "color": "white",
+                "margin": "0 0.125rem",
+                "padding": "0.4375rem 0.625rem",
+            },
+            "active": {
+                "background-color": "rgba(255, 255, 255, 0.25)",
+            },
+            "hover": {
+                "background-color": "rgba(255, 255, 255, 0.35)",
+            },
+        }
+    if "pgs" not in st.session_state:
+        st.session_state["pgs"] = ["Home", "Explainer", "Compare", "FAQ", "Learn More"]
+
+def apply_sidebar_minimization():
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                display: none;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )

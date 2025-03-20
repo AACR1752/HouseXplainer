@@ -73,6 +73,7 @@ def main(model_choice):
         houses['roof'] = pd.Categorical(houses['roof']).codes
         houses['architecture_style_type'] = pd.Categorical(houses['architecture_style']).codes
         houses['frontage_type'] = pd.Categorical(houses['frontage_type']).codes
+        houses['driveway_parking_type'] = pd.Categorical(houses['driveway_parking']).codes
 
     houses = houses.dropna(subset=['sold']) #these are removed events
     ml_houses = fe.feature_refining(houses)
@@ -80,7 +81,7 @@ def main(model_choice):
     columns_to_encode = [        
                         # 'property_type',
                         'features',
-                        'driveway_parking',
+                        # 'driveway_parking',
                         'basement_type',
                          'bathrooms_detail', 'sewer', 'topography',
                         'lot_features',
@@ -176,7 +177,7 @@ def main(model_choice):
     # Single Data Point Prediction
     joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
     joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood',
-                                        'latitude','longitude', 'bedrooms', 'description',
+                                        'latitude','longitude', 'bedrooms', 'description', 'driveway_parking',
                                         'amenities_objectids_1km', 'nearest_school', 'architecture_style',
                                         'bathrooms', 'property_type']], on='listing_id', how='inner')
 
