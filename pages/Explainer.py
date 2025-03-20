@@ -73,16 +73,13 @@ if "trained_model" in st.session_state:
             """, unsafe_allow_html=True)
         
         
-        # neighbourhood_name = st.selectbox("Select Neighourhood", joined_df['neighbourhood'].unique().tolist())
         neighbourhood_name = st.selectbox(
             "🏡 Search for neighbourhood",
             joined_df['neighbourhood'].unique().tolist(),
             index=joined_df['neighbourhood'].unique().tolist().index(st.session_state["neighbourhood"]) if st.session_state["neighbourhood"] in joined_df['neighbourhood'].unique().tolist() else 0,
         )
 
-        # bathroom_selection = st.selectbox("Select Bathroom", joined_df['bathrooms'].tolist())
         small_df = joined_df[(joined_df['neighbourhood'] == neighbourhood_name)]
-        # property_type_selection = st.selectbox("Select Property Type", small_df['property_type'].unique().tolist())
         property_type_selection = st.selectbox(
             "🏠 Select property type",
             small_df['property_type'].unique().tolist(),
@@ -97,7 +94,6 @@ if "trained_model" in st.session_state:
         
         # Update the selectbox for the house listing based on the filtered DataFrame
         try: 
-            # datapoint = st.selectbox("Select House", filtered_df['listing'].tolist())
             datapoint = st.selectbox(
                 "🏡 Choose house",
                 filtered_df['listing'].tolist(),
@@ -168,14 +164,11 @@ if "trained_model" in st.session_state:
         predict = st.button("Predict", use_container_width=True)
 
     if predict:
-        # Celebration Effect (Optional)
-        # st.balloons()  # Adds a fun animation effect!
+        # Making a single prediction
         prediction = model.predict(single_data_point)
         st.subheader("Single Data Point Prediction")
 
-        # Create two columns for image and prediction results
         img_col, pred_col = st.columns([1, 1])
-
 
         with img_col:
             st.image(joined_df.loc[index[0], 'image-src'])
@@ -192,6 +185,7 @@ if "trained_model" in st.session_state:
 
             st.subheader("Key Property Details")
             st.write(f"🏠 Architechture Style: {joined_df.loc[index[0], 'architecture_style']}")
+            st.write(f"🚗 Driveway Parking: {joined_df.loc[index[0], 'driveway_parking']}")
             st.write(f"🎓 Nearest School: {school_name}")
             def display_amenities_columns(amen_name):
                 """Displays amenities in two columns."""
@@ -261,19 +255,9 @@ if "trained_model" in st.session_state:
         )
 
         st.subheader("Predicted Price Range:")
-
-        # Display in Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
-        # Rename the column in X_test
-        X_test = X_test.rename(columns={'log_distance_to_nearest_school': 'Proximity to School'})
-        
-        suffixes_to_remove = ['driveway_parking',
-                            'basement_type', 'lot_features', 'exterior_feature',
-                            'waterfront_features', 'appliances_included']
-
-        # # Rename columns in X_test
-        X_test.columns = [md.remove_suffixes(col, suffixes_to_remove) for col in X_test.columns]
+        # For showing the top 5 features
         colors = ["gold", "silver", "#cd7f32", "#DAA520", "#B22222"]
         badge = ["🥇", "🥈", "🥉", "🏅", "🎖️"]
     
@@ -291,52 +275,115 @@ if "trained_model" in st.session_state:
             # Combine feature names and percentages, then sort by percentages in descending order
             sorted_features = sorted(zip(column_order, percentages_y), key=lambda x: x[1], reverse=True)
         elif model_choice == "Random Forest":
+
+            # SHAP values for local prediction interpretability
             explainer = shap.TreeExplainer(model)
             shap_values = explainer.shap_values(single_data_point)
 
-            # Calculate absolute SHAP values and convert to percentages
-            absolute_shap_values = np.abs(shap_values[0]) # Extract SHAP values for this instance
-            percentages = (absolute_shap_values / np.sum(absolute_shap_values)) * 100
-  
-            # Sort features by percentage contribution in descending order
-            sorted_features = sorted(list(zip(column_order, percentages)), key=lambda x: x[1], reverse=True)
+            absolute_shap_values = np.abs(shap_values[0])
+            m_results = absolute_shap_values * single_data_point
+            temp_df = pd.DataFrame({
+                "Feature": single_data_point.columns.str.strip(),
+                "Feature Value": single_data_point.values.flatten(),
+                "SHAP Value": absolute_shap_values,
+                "Contribution": m_results.values.flatten()
+            })
 
-            #Create a copy of the sorted features
-            # s_features = copy.deepcopy(sorted_features)
+            # Split the DataFrame into two based on Contribution
+            zero_contribution_df = temp_df[temp_df["Contribution"] == 0].sort_values(by="SHAP Value", ascending=False)
+            positive_contribution_df = temp_df[temp_df["Contribution"] > 0].sort_values(by="SHAP Value", ascending=False)
 
-        words_to_drop = md.words_to_drop
-
-        # Filter sorted_features to remove any feature names containing the words in words_to_drop
-        filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
-
-        #For the Micro/Macro Features
-        s_features = copy.deepcopy(filtered_sorted_features)
-
-        # Select the top 20 features
-        top_features_y = filtered_sorted_features[:20]
-        top_feature_names_y, top_percentages_y = zip(*top_features_y)
-
-        top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
-
-        # Convert tuple to list and extract strings
-        top_names = [str(name) for name in top_feature_names_y]
-        top_scores = [float(score) for score in top_percentages_y]
-
+            terms_to_exclude = ["lot_features", "topo", "sewer", "waterfront_features", 
+                                "attachments", "laundry_features", "privacy", "negotiate",
+                                "pool", "other"]
+            zero_contribution_df = zero_contribution_df[
+                ~zero_contribution_df["Feature"].str.contains('|'.join(terms_to_exclude), case=False, na=False)
+            ]
+        
         st.markdown("---")
         st.title("🏠 Property Description")
 
         description = joined_df.loc[index[0], 'description']
-
         feature_df = md.render_features()
 
         with st.spinner('Explaining Time.....'):
             highlighted_text, found_features = md.highlight_keywords(description, feature_df)
 
         st.markdown(highlighted_text, unsafe_allow_html=True)
-        # if found_features:
-        #     st.write("Highlighted Features:")
-        #     for feature in found_features:
-        #         st.write(feature)
+
+        # Remove duplicates and overlapping elements from found_features
+        found_features_lower = {feature.lower(): feature for feature in found_features}  # Create a dictionary with lowercase keys
+        found_features = list(found_features_lower.values())  # Get the original case-sensitive values
+        found_features = md.remove_overlapping_features(found_features)  # Remove overlapping terms
+
+        for feature in found_features:
+            # Check if the feature is contained in the Feature column
+            mask = zero_contribution_df["Feature"].replace('_', ' ').str.contains(feature, case=False, na=False)
+            
+            # Select the first matching row (if any)
+            matching_row = zero_contribution_df[mask].sort_values(by="SHAP Value", ascending=False).head(1)
+            
+            if not matching_row.empty:
+                # Update SHAP Value to 1 for the selected row
+                zero_contribution_df.loc[matching_row.index, "SHAP Value"] = 1
+                zero_contribution_df.loc[matching_row.index, "Feature Value"] = 1
+                
+                # Move the selected row to positive_contribution_df
+                positive_contribution_df = pd.concat([positive_contribution_df, matching_row])
+                
+            # Remove all matching rows from zero_contribution_df
+            zero_contribution_df = zero_contribution_df[~mask]
+
+        # Display the resulting DataFrames in Streamlit
+        # st.write("Features with Zero Contribution:")
+        # st.dataframe(zero_contribution_df)
+        # st.dataframe(positive_contribution_df)
+
+
+        positive_contribution_df = positive_contribution_df.sort_values(by="SHAP Value", ascending=False)
+        total_shap_value = positive_contribution_df["SHAP Value"].sum()
+        # Add a new column for percentage contribution
+        positive_contribution_df["Percentage"] = (positive_contribution_df["SHAP Value"] / total_shap_value) * 100
+
+        positive_contribution_df["Feature"] = positive_contribution_df["Feature"].replace(
+                {"log_distance_to_nearest_school": "Proximity to School",
+                 "architecture_style_type": f"{joined_df.loc[index[0], 'architecture_style']} architecture style",
+                 "driveway_parking_type": f"{joined_df.loc[index[0], 'driveway_parking']} parking"
+                 }
+            )
+
+        # Convert the DataFrame into a list of tuples (Feature, Percentage)
+        sorted_features = list(zip(positive_contribution_df["Feature"], positive_contribution_df["Percentage"]))
+        words_to_drop = md.words_to_drop        
+        filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
+        filtered_sorted_features = [(md.remove_suffixes(feature[0]), feature[1]) for feature in filtered_sorted_features]
+
+        #For the Micro/Macro Features
+        s_features = copy.deepcopy(filtered_sorted_features)
+
+        top_feature_names_y, top_percentages_y = zip(*filtered_sorted_features[:5])
+        top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
+        top_names = [str(name) for name in top_feature_names_y]
+        # top_scores = [float(score) for score in top_percentages_y]
+
+        # Filter and split zero_contribution_df based on suffixes and SHAP Value > 100
+        appliances_included_df = zero_contribution_df[
+            zero_contribution_df["Feature"].str.endswith("appliances_included", na=False) & (zero_contribution_df["SHAP Value"] > 100)
+        ]
+        bathrooms_detail_df = zero_contribution_df[
+            zero_contribution_df["Feature"].str.endswith("bathrooms_detail", na=False) & (zero_contribution_df["SHAP Value"] > 100)
+        ]
+        exterior_feature_df = zero_contribution_df[
+            zero_contribution_df["Feature"].str.endswith("exterior_feature", na=False) & (zero_contribution_df["SHAP Value"] > 100)
+        ]
+
+        # Randomly sample the required number of features or fewer if not enough exist
+        appliances_included_sample = appliances_included_df.sample(n=min(5, len(appliances_included_df)), random_state=42)
+        bathrooms_detail_sample = bathrooms_detail_df.sample(n=min(2, len(bathrooms_detail_df)), random_state=42)
+        exterior_feature_sample = exterior_feature_df.sample(n=min(3, len(exterior_feature_df)), random_state=42)
+
+        # Concatenate the sampled features into a single DataFrame
+        suggested_features = pd.concat([appliances_included_sample, bathrooms_detail_sample, exterior_feature_sample])
 
         # Title with divider
         st.markdown("---")
@@ -362,8 +409,6 @@ if "trained_model" in st.session_state:
         #md.display_graph(top_feature_names=top_feature_names_y,
         #                 top_percentages=top_percentages_y)
         
-
-
         ### Testing Zone
 
         #For getting the feature catalogue
@@ -409,13 +454,11 @@ if "trained_model" in st.session_state:
         features_within = features_within[:10]
         features_not_within = features_not_within[:10]
 
-        # Sort the lists in ascending order based on the percentage (second element of the tuple)
         features_within.sort(key=lambda x: x[1])  # Sorting based on percentage
         features_not_within.sort(key=lambda x: x[1])  # Sorting based on percentage
 
         # Separate the names and percentages for features within the feature list
         top_feature_names_within, top_percentages_within = zip(*features_within) if features_within else ([], [])
-        # Separate the names and percentages for features not within the feature list
         top_feature_names_not_within, top_percentages_not_within = zip(*features_not_within) if features_not_within else ([], [])
 
         # Create the alternating color scheme for the micro bars
@@ -500,7 +543,7 @@ if "trained_model" in st.session_state:
             )
             st.plotly_chart(fig, use_container_width=True, key="macro")
         
-        tab1, tab2 = st.tabs(["Conventional Features", "Distinctive Features"])
+        tab1, tab2, tab3 = st.tabs(["Conventional Features", "Distinctive Features", "Suggested Features"])
 
         with tab1:
             st.subheader("Conventional Features")
@@ -509,6 +552,12 @@ if "trained_model" in st.session_state:
         with tab2:
             st.subheader("Distinctive Features")
             plot_micro()
+        
+        with tab3:
+            st.subheader("Suggested Features")
+            way_to_improve_value = suggested_features["Feature"].str.replace('_', ' ')
+            for feat in way_to_improve_value:
+                st.write(feat)
 
 else:
     st.error("No trained model or test data found! Please train the model first.")
