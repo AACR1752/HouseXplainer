@@ -42,23 +42,23 @@ qa_pairs = [
     },
     {
         "question": "Who is it for?",
-        "answer": "HouseXplainer is for anyone who wants to look at houses and know more about them.\n It provides a simple and easy to digest way to look at houses and their features."
+        "answer": "HouseXplainer is for anyone who wants to look at houses and know more about them.\n\n It provides a simple and easy to digest way to look at houses and their features."
     },
     {
         "question": "Where does HouseXplainer get the data from?",
-        "answer": "HouseExplainer scrapes the publicly available house listings from realtor platform HouseSigma."
+        "answer": "HouseExplainer scrapes the publicly available house listings from realtor platform HouseSigma®️."
     },
     {
         "question": "Does HouseExplainer factor in market changes?",
-        "answer": "Yes, HouseXplainer runs on overall listings provided as more house are sold,\n HouseXplainer reanalyzes market to provide upto date information."
+        "answer": "Yes, HouseXplainer runs on overall listings provided as more house are sold,\n\n HouseXplainer periodically reanalyzes market to provide upto date information."
     },
     {
         "question": "Is the website cross-platform compatible?",
-        "answer": "Yes, you can access through any device with a web browser.\n Please ensure you turn your phone to landscape mode for proper usability."
+        "answer": "Yes, you can access through any device with a web browser.\n\n Please ensure you turn your phone to landscape mode for proper usability."
     },
     {
         "question": "Can I trust the information for real estate decisions?",
-        "answer": "Any information provided is for educational purposes only.\n Please contact a real estate professional for any real estate decisions."
+        "answer": "Any information provided is for educational purposes only.\n\n Please contact a real estate professional for any real estate decisions."
     }
 ]
     

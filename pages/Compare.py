@@ -7,6 +7,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 import shap
 from plotly.subplots import make_subplots
+from PIL import Image
+import requests
+from io import BytesIO
 from streamlit_navigation_bar import st_navbar
 
 # Set page configuration
@@ -132,7 +135,24 @@ if "trained_model" in st.session_state:
     
     # Compare button
     compare = st.button("Compare Properties", use_container_width=False)
-    
+
+
+    def display_image_with_fixed_height(image_url, height):
+        """Displays an image with a fixed height using HTML and CSS."""
+        try:
+            response = requests.get(image_url)
+            response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+            img = Image.open(BytesIO(response.content))
+            st.markdown(f"""
+                <div style="text-align: center;"> 
+                    <img src="{image_url}" style="height: {height}px; max-width: 100%; object-fit: contain;">
+                </div>
+            """, unsafe_allow_html=True)
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error loading image: {e}")
+        except Exception as e:
+            st.error(f"An unexpected error occurred: {e}")
+        
     if compare:
         # Check if both properties are selected
         if not property_1_selected or not property_2_selected:
@@ -149,19 +169,34 @@ if "trained_model" in st.session_state:
             actual_1 = y_test.iloc[index_1]
             actual_2 = y_test.iloc[index_2]
 
+            p1_col, p2_col = st.columns([1, 1])
+
+            with p1_col:
+                
+                st.subheader(f"Property 1: {property_1}")
+                
+                image_container = st.container()
+                with image_container:                
+                    display_image_with_fixed_height(joined_df.loc[index_1, 'image-src'], 550)
+
+            with p2_col:
+
+                st.subheader(f"Property 2: {property_2}")
+
+                image_container = st.container()
+                with image_container:
+                    display_image_with_fixed_height(joined_df.loc[index_2, 'image-src'], 550)
+
             # Property comparison section using native Streamlit components
             col1, col2 = st.columns(2, gap="large")
 
-            with col1:
-                st.subheader(f"Property 1: {property_1}")
-                st.image(joined_df.loc[index_1, 'image-src'])
-                
-                # Price metrics using st.metric
+            with col1:                
+
                 price_cols = st.columns(2)
                 with price_cols[0]:
                     st.metric("Expectcted Market Value", f"${round(prediction_1):,}")
                 
-                # Property details using expandable container
+
                 with st.expander("Property Details", expanded=True):
                     detail_cols = st.columns(2)
                     
@@ -180,21 +215,18 @@ if "trained_model" in st.session_state:
                         st.markdown(f"{int(joined_df.loc[index_1, 'bathrooms'])}")
 
                         st.markdown("**Architectural Style**")
-                        st.markdown(f"{joined_df.loc[index_2, 'architecture_style']}")
+                        st.markdown(f"{joined_df.loc[index_1, 'architecture_style']}")
 
                         st.markdown("**Neighbourhood**")
                         st.markdown(f"{joined_df.loc[index_1, 'neighbourhood']}")
 
             with col2:
-                st.subheader(f"Property 2: {property_2}")
-                st.image(joined_df.loc[index_2, 'image-src'])
                 
-                # Price metrics using st.metric
                 price_cols = st.columns(2)
                 with price_cols[0]:
                     st.metric("Expectcted Market Value", f"${round(prediction_2):,}")
 
-                # Property details using expandable container
+
                 with st.expander("Property Details", expanded=True):
                     detail_cols = st.columns(2)
                     
@@ -340,29 +372,79 @@ if "trained_model" in st.session_state:
                 st.plotly_chart(fig, use_container_width=True)
                 
                 # Map view of both properties
+                # st.subheader("Location Comparison")
+                
+                # map_data = pd.DataFrame({
+                #     'listing': [property_1, property_2],
+                #     'latitude': [joined_df.loc[index_1, 'latitude'], joined_df.loc[index_2, 'latitude']],
+                #     'longitude': [joined_df.loc[index_1, 'longitude'], joined_df.loc[index_2, 'longitude']],
+                #     'color': ["Property 1", "Property 2"]  # Different colors
+                # })
+                
+                # fig = px.scatter_mapbox(map_data, 
+                #                        lat="latitude", 
+                #                        lon="longitude", 
+                #                        hover_name="listing",
+                #                        color="color",
+                #                        color_discrete_map={"Property 1": "red", "Property 2": "blue"},
+                #                        zoom=12,
+                #                        height=500)
+                
+                # # fig.update_layout(mapbox_style="open-street-map")
+                # fig.update_layout(mapbox_style="carto-positron")
+                # fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+                
+                # st.plotly_chart(fig, use_container_width=True)
+
+
                 st.subheader("Location Comparison")
-                
-                map_data = pd.DataFrame({
-                    'listing': [property_1, property_2],
-                    'latitude': [joined_df.loc[index_1, 'latitude'], joined_df.loc[index_2, 'latitude']],
-                    'longitude': [joined_df.loc[index_1, 'longitude'], joined_df.loc[index_2, 'longitude']],
-                    'color': ["Property 1", "Property 2"]  # Different colors
-                })
-                
-                fig = px.scatter_mapbox(map_data, 
-                                       lat="latitude", 
-                                       lon="longitude", 
-                                       hover_name="listing",
-                                       color="color",
-                                       color_discrete_map={"Property 1": "red", "Property 2": "blue"},
-                                       zoom=12,
-                                       height=500)
-                
-                # fig.update_layout(mapbox_style="open-street-map")
-                fig.update_layout(mapbox_style="carto-positron")
-                fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-                
-                st.plotly_chart(fig, use_container_width=True)
-                
+
+                m1, m2 = st.columns(2)
+
+                # Map for Property 1
+                with m1:
+                    st.subheader(property_1)
+                    map_data_1 = pd.DataFrame({
+                        'listing': [property_1],
+                        'latitude': [joined_df.loc[index_1, 'latitude']],
+                        'longitude': [joined_df.loc[index_1, 'longitude']]
+                    })
+
+                    fig1 = px.scatter_mapbox(map_data_1,
+                                                lat="latitude",
+                                                lon="longitude",
+                                                hover_name="listing",
+                                                zoom=16,
+                                                height=400,
+                                                color_discrete_sequence=["red"])
+
+                    fig1.update_layout(mapbox_style="open-street-map")
+                    fig1.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+                    st.plotly_chart(fig1, use_container_width=True)
+
+                # Map for Property 2
+                with m2:
+                    st.subheader(property_2)
+                    map_data_2 = pd.DataFrame({
+                        'listing': [property_2],
+                        'latitude': [joined_df.loc[index_2, 'latitude']],
+                        'longitude': [joined_df.loc[index_2, 'longitude']]
+                    })
+
+                    fig2 = px.scatter_mapbox(map_data_2,
+                                                lat="latitude",
+                                                lon="longitude",
+                                                hover_name="listing",
+                                                zoom=16,
+                                                height=400,
+                                                color_discrete_sequence=["red"])
+
+                    fig2.update_layout(mapbox_style="open-street-map")
+                    fig2.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+                    st.plotly_chart(fig2, use_container_width=True)
+
+
 else:
     st.error("No trained model or test data found! Please train the model first.")
