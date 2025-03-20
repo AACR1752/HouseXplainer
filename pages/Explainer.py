@@ -348,7 +348,9 @@ if "trained_model" in st.session_state:
         positive_contribution_df["Feature"] = positive_contribution_df["Feature"].replace(
                 {"log_distance_to_nearest_school": "Proximity to School",
                  "architecture_style_type": f"{joined_df.loc[index[0], 'architecture_style']} architecture style",
-                 "driveway_parking_type": f"{joined_df.loc[index[0], 'driveway_parking']} parking"
+                 "driveway_parking_type": f"{joined_df.loc[index[0], 'driveway_parking']} parking",
+                 "roof_type": f"{joined_df.loc[index[0], 'roof']} roof",
+                 "frontage_type_code": f"{joined_df.loc[index[0], 'frontage_type']} frontage",
                  }
             )
 
@@ -366,6 +368,8 @@ if "trained_model" in st.session_state:
         top_names = [str(name) for name in top_feature_names_y]
         # top_scores = [float(score) for score in top_percentages_y]
 
+        zero_contribution_df = zero_contribution_df[~zero_contribution_df["Feature"].apply(lambda feature: md.should_drop(feature, words_to_drop))]
+        
         # Filter and split zero_contribution_df based on suffixes and SHAP Value > 100
         appliances_included_df = zero_contribution_df[
             zero_contribution_df["Feature"].str.endswith("appliances_included", na=False) & (zero_contribution_df["SHAP Value"] > 100)
