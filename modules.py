@@ -7,7 +7,7 @@ import random
 
 words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
                  'bathrooms_detail', 'sewer', 'topography',
-                    "seller", "frontage", "microwave",
+                    "seller", "frontage", "microwave", 'garage',
                     "other", "locati", "multi", "is", "building",
                     "negoti", "condition"]
 

@@ -70,9 +70,9 @@ def main(model_choice):
 
     if model_choice == "Random Forest":
         houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
-        houses['roof'] = pd.Categorical(houses['roof']).codes
+        houses['roof_type'] = pd.Categorical(houses['roof']).codes
         houses['architecture_style_type'] = pd.Categorical(houses['architecture_style']).codes
-        houses['frontage_type'] = pd.Categorical(houses['frontage_type']).codes
+        houses['frontage_type_code'] = pd.Categorical(houses['frontage_type']).codes
         houses['driveway_parking_type'] = pd.Categorical(houses['driveway_parking']).codes
 
     houses = houses.dropna(subset=['sold']) #these are removed events
@@ -176,7 +176,7 @@ def main(model_choice):
 
     # Single Data Point Prediction
     joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
-    joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood',
+    joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood', 'roof', 'frontage_type',
                                         'latitude','longitude', 'bedrooms', 'description', 'driveway_parking',
                                         'amenities_objectids_1km', 'nearest_school', 'architecture_style',
                                         'bathrooms', 'property_type']], on='listing_id', how='inner')
