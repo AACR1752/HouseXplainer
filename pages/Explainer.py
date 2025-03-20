@@ -445,7 +445,7 @@ if "trained_model" in st.session_state:
                 height=900,  # Increase the height of the chart
                 width=900,   # Increase the width of the chart
                 bargap=0.3,  # Decrease the gap between bars
-                title="Top Internal Features",  # Set the title of the chart
+                title="Top Distinctive Features",  # Set the title of the chart
                 xaxis_title="Percentage Contribution (%)",  # X-axis label
                 template="plotly_dark",  # Optional: Use a dark theme for the chart
                 xaxis=dict(
@@ -482,7 +482,7 @@ if "trained_model" in st.session_state:
                 height=900,  # Increase the height of the chart
                 width=900,   # Increase the width of the chart
                 bargap=0.3,  # Decrease the gap between bars
-                title="Top External Features",  # Set the title of the chart
+                title="Top Conventional Features",  # Set the title of the chart
                 xaxis_title="Percentage Contribution (%)",  # X-axis label
                 template="plotly_dark",  # Optional: Use a dark theme for the chart
                 xaxis=dict(
@@ -500,14 +500,14 @@ if "trained_model" in st.session_state:
             )
             st.plotly_chart(fig, use_container_width=True, key="macro")
         
-        tab1, tab2 = st.tabs(["External Features", "Internal Features"])
+        tab1, tab2 = st.tabs(["Conventional Features", "Distinctive Features"])
 
         with tab1:
-            st.subheader("External Features")
+            st.subheader("Conventional Features")
             plot_macro()
             
         with tab2:
-            st.subheader("Internal Features")
+            st.subheader("Distinctive Features")
             plot_micro()
 
 else:
