@@ -370,32 +370,6 @@ if "trained_model" in st.session_state:
 
                 fig.update_layout(height=500)
                 st.plotly_chart(fig, use_container_width=True)
-                
-                # Map view of both properties
-                # st.subheader("Location Comparison")
-                
-                # map_data = pd.DataFrame({
-                #     'listing': [property_1, property_2],
-                #     'latitude': [joined_df.loc[index_1, 'latitude'], joined_df.loc[index_2, 'latitude']],
-                #     'longitude': [joined_df.loc[index_1, 'longitude'], joined_df.loc[index_2, 'longitude']],
-                #     'color': ["Property 1", "Property 2"]  # Different colors
-                # })
-                
-                # fig = px.scatter_mapbox(map_data, 
-                #                        lat="latitude", 
-                #                        lon="longitude", 
-                #                        hover_name="listing",
-                #                        color="color",
-                #                        color_discrete_map={"Property 1": "red", "Property 2": "blue"},
-                #                        zoom=12,
-                #                        height=500)
-                
-                # # fig.update_layout(mapbox_style="open-street-map")
-                # fig.update_layout(mapbox_style="carto-positron")
-                # fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-                
-                # st.plotly_chart(fig, use_container_width=True)
-
 
                 st.subheader("Location Comparison")
 
@@ -418,6 +392,7 @@ if "trained_model" in st.session_state:
                                                 height=400,
                                                 color_discrete_sequence=["red"])
 
+                    fig1.update_traces(marker=dict(size=18))
                     fig1.update_layout(mapbox_style="open-street-map")
                     fig1.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
@@ -440,6 +415,7 @@ if "trained_model" in st.session_state:
                                                 height=400,
                                                 color_discrete_sequence=["red"])
 
+                    fig2.update_traces(marker=dict(size=18))
                     fig2.update_layout(mapbox_style="open-street-map")
                     fig2.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 

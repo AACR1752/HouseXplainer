@@ -1,5 +1,6 @@
 import streamlit as st
 import modules as md
+import pandas as pd
 import model_training
 import json
 import pydeck as pdk
@@ -131,11 +132,34 @@ try:
     
     st.pydeck_chart(deck)
     
+    joined_df = pd.DataFrame(st.session_state["joined_df_values"], 
+                             columns=st.session_state["joined_df_columns"], 
+                             index=st.session_state["joined_df_index"])
+    
+    if 'neighbourhood' in joined_df.columns:
+            neighborhood_counts = joined_df['neighbourhood'].value_counts().sort_index()
+
+    count_df = pd.DataFrame({
+                        'Neighborhood': neighborhood_counts.index,
+                        'Number of Houses': neighborhood_counts.values
+                    })
+
+    count_df = count_df.sort_values(by='Number of Houses', ascending=False)
+    
     # TODO: Hassan's Reporting
     with st.expander("Neighborhood Statistics"):
         if geojson_data.get("features"):
             num_neighborhoods = len(geojson_data["features"])
             st.write(f"Total neighborhoods: {num_neighborhoods}")
+
+            st.dataframe(
+                        count_df,
+                        column_config={
+                            "Neighborhood": st.column_config.TextColumn("Neighborhood"),
+                            "Number of Houses": st.column_config.NumberColumn("Number of Houses", format="%d")
+                        },
+                        hide_index=True
+                    )
             
             # neighborhood names
             neighborhood_names = []
