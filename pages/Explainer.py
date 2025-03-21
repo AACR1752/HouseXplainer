@@ -396,7 +396,7 @@ if "trained_model" in st.session_state:
         # Create a row of columns for the top 5 features
         feature_cols = st.columns(5)
         
-        for i in range(0,5):
+        for i in range(0, min(len(top_names), 5)):
             # Display each feature in its own column
             with feature_cols[i]:
                 st.markdown(
