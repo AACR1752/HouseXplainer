@@ -226,7 +226,7 @@ if "trained_model" in st.session_state:
                 with price_cols[0]:
                     st.metric("Expectcted Market Value", f"${round(prediction_2):,}")
 
-
+                
                 with st.expander("Property Details", expanded=True):
                     detail_cols = st.columns(2)
                     
