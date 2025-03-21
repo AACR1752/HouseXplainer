@@ -131,7 +131,7 @@ def main(model_choice):
     
     X_train, X_test, y_train, y_test = split_dataset(features, price, images=True)
 
-    if model_choice == "Random Forest":
+    if model_choice == "Random Forest":  ## This is now XGBOOST
         # model = RandomForestRegressor(n_estimators=100, random_state=seed)
         model = XGBRegressor(objective='reg:squarederror', random_state=seed)
         model.fit(X_train, y_train)
