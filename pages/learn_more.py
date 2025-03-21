@@ -6,6 +6,7 @@ import json
 import pydeck as pdk
 import os
 from streamlit_navigation_bar import st_navbar
+import plotly.graph_objects as go
 
 # Set page configuration
 st.set_page_config(
@@ -55,7 +56,6 @@ st.subheader("Neighborhood Boundaries")
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
 
 parent_dir = os.path.dirname(current_dir)  
 default_geojson_path = os.path.join(parent_dir, "data", "areas", "neighbourhoods.geojson")
@@ -147,6 +147,9 @@ try:
     count_df = count_df.sort_values(by='Number of Houses', ascending=False)
     
     # TODO: Hassan's Reporting
+
+    st.subheader("Stats for Nerds - Model In-depth Analysis")
+
     with st.expander("Neighborhood Statistics"):
         if geojson_data.get("features"):
             num_neighborhoods = len(geojson_data["features"])
@@ -172,7 +175,6 @@ try:
             if neighborhood_names:
                 st.write("Neighborhoods:")
                 st.write(", ".join(sorted(neighborhood_names)))
-
 except FileNotFoundError:
     st.error(f"File not found: {default_geojson_path}")
     st.info("The GeoJSON file was not found. Please ensure the file exists at the specified path.")
@@ -184,3 +186,35 @@ except json.JSONDecodeError:
     st.error(f"Invalid GeoJSON format in file: {default_geojson_path}")
 except Exception as e:
     st.error(f"Error loading or displaying the map: {e}")
+
+with st.expander("Model Comparison"):
+    evaluation_df = pd.read_csv("data/statsfornerds/results.csv")
+    st.dataframe(evaluation_df)
+
+with st.expander("Model Error Distribution Comparison"):
+    all_percentage_errors = pd.read_csv("data/statsfornerds/percentage_errors.csv")
+    # st.dataframe(all_percentage_errors)
+
+    fig = go.Figure()
+
+    # Group the DataFrame by the 'Model' column
+    if 'Model' in all_percentage_errors.columns:
+        grouped = all_percentage_errors.groupby('Model')
+
+        for model_name, model_df in grouped:
+            fig.add_trace(go.Box(
+                y=model_df['Percentage Error'],
+                name=model_name,
+                boxpoints='outliers',  # Only show outliers
+            ))
+
+        fig.update_layout(
+            title_text="Error Distribution Comparison for All Models",
+            title_x=0.375,
+            xaxis_title='Model',
+            yaxis_title='Percentage Error',
+            showlegend=False
+        )
+        st.plotly_chart(fig)
+    else:
+        st.error("The 'Model' column is missing in the percentage errors data.")
