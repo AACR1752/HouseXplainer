@@ -16,7 +16,7 @@ from sklearn.pipeline import make_pipeline
 from xgboost import XGBRegressor
 
  # Train/Test Split
-seed = 1000
+seed = 100
 test_size = 0.2
 
 
