@@ -13,6 +13,8 @@ import geopandas as gpd
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 
+from xgboost import XGBRegressor
+
  # Train/Test Split
 seed = 1000
 test_size = 0.2
@@ -130,7 +132,8 @@ def main(model_choice):
     X_train, X_test, y_train, y_test = split_dataset(features, price, images=True)
 
     if model_choice == "Random Forest":
-        model = RandomForestRegressor(n_estimators=100, random_state=seed)
+        # model = RandomForestRegressor(n_estimators=100, random_state=seed)
+        model = XGBRegressor(objective='reg:squarederror', random_state=seed)
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         feature_importance = model.feature_importances_
