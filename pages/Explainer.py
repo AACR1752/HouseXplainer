@@ -498,14 +498,22 @@ if "trained_model" in st.session_state:
                              g_colors, title="Top Distinctive Features", key="distinctive")
         
         with tab3:
-            st.subheader("Ways To Improve Home Value")
+            st.subheader("Features To Improve Home Value")  # Ways To Improve Home Value
             suggested_features["Feature"] = suggested_features["Feature"].apply(md.remove_suffixes)
             way_to_improve_value = suggested_features["Feature"].str.replace('_', ' ')
-            for feat in way_to_improve_value:
-                st.markdown(
-                    f"<p style='font-size:18px;'>{feat}</p>",
-                    unsafe_allow_html=True
-                )
+          
+            cols = st.columns(4)
+
+            for i, feat in enumerate(way_to_improve_value):
+                with cols[i % 4]:
+                    st.markdown(
+                        f"""
+                        <div style="border: 1px solid #e0e0e0; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                            <h3 style="margin-top: 10px; margin-bottom: 5px;">{feat}</h3>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
 
 else:
     st.error("No trained model or test data found! Please train the model first.")
