@@ -131,18 +131,17 @@ def group_columns(df):
         key = clean_column_name(col)
         grouped_columns[key].append(col)
 
-    # Store merged columns in a dictionary first (avoids fragmentation)
+    # TODO: Avoid Fragmentation, so reverted back to using dictionary
     new_feature_dict = {}
 
     for key, cols in grouped_columns.items():
         if len(cols) > 1:
-            # If multiple columns match the same group, sum them
+            # sum
             new_feature_dict[cols[0]] = df[cols].sum(axis=1)
         else:
-            # If only one column matches, keep original name
+
             new_feature_dict[cols[0]] = df[cols[0]]
 
-    # Convert dictionary to DataFrame in one step to avoid fragmentation
     new_features = pd.concat(new_feature_dict, axis=1)
 
     return new_features.copy()  # Ensures the new DataFrame is contiguous
