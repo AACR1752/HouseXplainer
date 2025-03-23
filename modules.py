@@ -5,6 +5,7 @@ import re
 from nltk.stem import PorterStemmer
 import random
 import re
+import plotly.graph_objects as go
 from collections import defaultdict
 
 words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
@@ -12,9 +13,6 @@ words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
                     "seller", "frontage", "microwave", 'garage',
                     "other", "locati", "multi", "is", "building",
                     "negoti", "condition"]
-
-# def manual_adjustments():
-#     return {"log_distance_to_nearest_school": "Proximity to School"}
 
 # Function to remove suffixes from column names
 def remove_suffixes(col_name):
@@ -25,6 +23,42 @@ def remove_suffixes(col_name):
         if col_name.endswith(suffix):
             return col_name[:-len(suffix)-1]
     return col_name
+
+def plot_features(x_values, y_values, colors, title, key):
+    # Create the horizontal bar chart using Plotly
+    fig = go.Figure(data=[
+        go.Bar(
+            x=x_values,  # Use percentages for the horizontal bar length
+            y=y_values,  # Feature names go on the Y-axis
+            orientation='h',  # Change the orientation to horizontal
+            marker_color=colors,  # Apply the alternating colors
+            width=0.8,  # Increase the width of the bars (this will make the bars bigger)
+            marker=dict(line=dict(width=0))  # Remove the border on the bars
+        )
+    ])
+
+    # Update the layout to make the chart bigger and adjust bar spacing
+    fig.update_layout(
+        height=900,  # Increase the height of the chart
+        width=900,   # Increase the width of the chart
+        bargap=0.3,  # Decrease the gap between bars
+        title=title,  # Set the title of the chart
+        xaxis_title="Percentage Contribution (%)",  # X-axis label
+        template="plotly_dark",  # Optional: Use a dark theme for the chart
+        xaxis=dict(
+            showgrid=True,  # Show gridlines on the X-axis
+            minor=dict(
+                showgrid=True,  # Enable minor gridlines
+                gridwidth=0.5,  # Thinner minor gridlines
+            ),
+        ),
+        yaxis=dict(
+            showgrid=False,  # Hide gridlines on the Y-axis (optional)
+            title_font=dict(size=24),  # Increase the Y-axis title font size
+            tickfont=dict(size=18),  # Increase the font size of Y-axis ticks
+        )
+    )
+    st.plotly_chart(fig, use_container_width=True, key=key)
 
 def display_graph(top_feature_names, top_percentages):
     top_feature_names = [name.replace('_', ' ') for name in top_feature_names]

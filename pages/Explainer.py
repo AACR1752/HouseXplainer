@@ -146,6 +146,22 @@ if "trained_model" in st.session_state:
 
         )
         map_placeholder = st.pydeck_chart(r)
+        # Add a legend below the map
+        st.markdown(
+            """
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <div style="display: flex; align-items: center; margin-right: 20px;">
+                    <div style="width: 15px; height: 15px; background-color: red; margin-right: 5px; border: 1px solid black;"></div>
+                    <span>Selected House</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 15px; height: 15px; background-color: blue; margin-right: 5px; border: 1px solid black;"></div>
+                    <span>Other Houses In The Area</span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 
     with col1:
@@ -351,7 +367,8 @@ if "trained_model" in st.session_state:
                  "roof_type": f"{joined_df.loc[index[0], 'roof']} roof",
                  "frontage_type_code": f"{joined_df.loc[index[0], 'frontage_type']} frontage",
                  "amenities_count_1km": "Nearby Amenities",
-                 "neighbourhood_impact": "Neighborhood Prestige Contribution"
+                 "neighbourhood_impact": "Neighborhood Prestige Contribution",
+                 "2_piece_bathrooms": "powder room"
                  }
             )
 
@@ -366,7 +383,7 @@ if "trained_model" in st.session_state:
 
         top_feature_names_y, top_percentages_y = zip(*filtered_sorted_features[:5])
         top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
-        top_names = [str(name) for name in top_feature_names_y]
+        top_names = [str(name).lower() for name in top_feature_names_y]
         # top_scores = [float(score) for score in top_percentages_y]
 
         zero_contribution_df = zero_contribution_df[~zero_contribution_df["Feature"].apply(lambda feature: md.should_drop(feature, words_to_drop))]
@@ -410,12 +427,7 @@ if "trained_model" in st.session_state:
                 )
         
         st.write("")
-        #Old bar graph
-        #md.display_graph(top_feature_names=top_feature_names_y,
-        #                 top_percentages=top_percentages_y)
         
-        ### Testing Zone
-
         #For getting the feature catalogue
         import ast
 
@@ -441,9 +453,7 @@ if "trained_model" in st.session_state:
         feature_list = read_feature_list(file_path)
         feature_list = [feature.lower() for feature in feature_list]
 
-        # Zip !
         top_feature_names_y, top_percentages_y = zip(*s_features)
-
         top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
         top_feature_names_y = [name.lower() for name in top_feature_names_y]
 
@@ -452,11 +462,11 @@ if "trained_model" in st.session_state:
 
         # Separate the top features into those within and not within feature_list
         features_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature in feature_set]
-
+        features_within = list({feature[0]: feature for feature in features_within}.values())
         features_not_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature not in feature_set]
         features_not_within = list({feature[0]: feature for feature in features_not_within}.values())
 
-        # Limit the lists to the top 20 features each
+        # Limit the lists to the top 10 features each
         features_within = features_within[:10]
         features_not_within = features_not_within[:10]
 
@@ -475,96 +485,27 @@ if "trained_model" in st.session_state:
         o_colors = ['#FF9849', '#D8813E'] * (len(top_feature_names_within) // 2 + 1)
         o_colors = o_colors[:len(top_feature_names_within)]
 
-        # Create the Micro graph (more detailed, smaller scale chart)
-        def plot_micro():
-            # Create the horizontal bar chart using Plotly
-            fig = go.Figure(data=[
-                go.Bar(
-                    x=top_percentages_not_within,  # Use percentages for the horizontal bar length
-                    y=top_feature_names_not_within,  # Feature names go on the Y-axis
-                    orientation='h',  # Change the orientation to horizontal
-                    marker_color=g_colors,  # Apply the alternating colors
-                    width=0.8,  # Increase the width of the bars (this will make the bars bigger)
-                    marker=dict(line=dict(width=0))  # Remove the border on the bars
-                )
-            ])
-
-            # Update the layout to make the chart bigger and adjust bar spacing
-            fig.update_layout(
-                height=900,  # Increase the height of the chart
-                width=900,   # Increase the width of the chart
-                bargap=0.3,  # Decrease the gap between bars
-                title="Top Distinctive Features",  # Set the title of the chart
-                xaxis_title="Percentage Contribution (%)",  # X-axis label
-                template="plotly_dark",  # Optional: Use a dark theme for the chart
-                xaxis=dict(
-                    showgrid=True,  # Show gridlines on the X-axis
-                    minor=dict(
-                        showgrid=True,  # Enable minor gridlines
-                        gridwidth=0.5,  # Thinner minor gridlines
-                    ),
-                ),
-                yaxis=dict(
-                    showgrid=False,  # Hide gridlines on the Y-axis (optional)
-                    title_font=dict(size=20),  # Increase the Y-axis title font size
-                    tickfont=dict(size=16),  # Increase the font size of Y-axis ticks
-                )
-            )
-            st.plotly_chart(fig, use_container_width=True, key="micro")
-
-    # Create the Macro graph (more detailed, smaller scale chart)
-        def plot_macro():
-            # Create the horizontal bar chart using Plotly
-            fig = go.Figure(data=[
-                go.Bar(
-                    x=top_percentages_within,  # Use percentages for the horizontal bar length
-                    y=top_feature_names_within,  # Feature names go on the Y-axis
-                    orientation='h',  # Change the orientation to horizontal
-                    marker_color=o_colors,  # Apply the alternating colors
-                    width=0.8,  # Increase the width of the bars (this will make the bars bigger)
-                    marker=dict(line=dict(width=0))  # Remove the border on the bars
-                )
-            ])
-
-            # Update the layout to make the chart bigger and adjust bar spacing
-            fig.update_layout(
-                height=900,  # Increase the height of the chart
-                width=900,   # Increase the width of the chart
-                bargap=0.3,  # Decrease the gap between bars
-                title="Top Conventional Features",  # Set the title of the chart
-                xaxis_title="Percentage Contribution (%)",  # X-axis label
-                template="plotly_dark",  # Optional: Use a dark theme for the chart
-                xaxis=dict(
-                    showgrid=True,  # Show gridlines on the X-axis
-                    minor=dict(
-                        showgrid=True,  # Enable minor gridlines
-                        gridwidth=0.5,  # Thinner minor gridlines
-                    ),
-                ),
-                yaxis=dict(
-                    showgrid=False,  # Hide gridlines on the Y-axis (optional)
-                    title_font=dict(size=20),  # Increase the Y-axis title font size
-                    tickfont=dict(size=16),  # Increase the font size of Y-axis ticks
-                )
-            )
-            st.plotly_chart(fig, use_container_width=True, key="macro")
-        
         tab1, tab2, tab3 = st.tabs(["Conventional Features", "Distinctive Features", "Suggested Features"])
 
         with tab1:
             st.subheader("Conventional Features")
-            plot_macro()
+            md.plot_features(top_percentages_within, top_feature_names_within, 
+                             o_colors, title = "Top Conventional Features", key="conventional")
             
         with tab2:
             st.subheader("Distinctive Features")
-            plot_micro()
+            md.plot_features(top_percentages_not_within, top_feature_names_not_within, 
+                             g_colors, title="Top Distinctive Features", key="distinctive")
         
         with tab3:
-            st.subheader("Suggested Features")
+            st.subheader("Ways To Improve Home Value")
             suggested_features["Feature"] = suggested_features["Feature"].apply(md.remove_suffixes)
             way_to_improve_value = suggested_features["Feature"].str.replace('_', ' ')
             for feat in way_to_improve_value:
-                st.write(feat)
+                st.markdown(
+                    f"<p style='font-size:18px;'>{feat}</p>",
+                    unsafe_allow_html=True
+                )
 
 else:
     st.error("No trained model or test data found! Please train the model first.")
