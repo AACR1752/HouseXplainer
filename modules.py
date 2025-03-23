@@ -4,58 +4,64 @@ import pandas as pd
 import re
 from nltk.stem import PorterStemmer
 import random
-
-def initialize_shared_state():
-    if "styles" not in st.session_state:
-        st.session_state["styles"] = {
-            "nav": {
-                "background-color": "#8BC34A",
-                "justify-content": "left",
-            },
-            "div": {
-                "max-width": "32rem",
-            },
-            "span": {
-                "border-radius": "0.5rem",
-                "color": "white",
-                "margin": "0 0.125rem",
-                "padding": "0.4375rem 0.625rem",
-            },
-            "active": {
-                "background-color": "rgba(255, 255, 255, 0.25)",
-            },
-            "hover": {
-                "background-color": "rgba(255, 255, 255, 0.35)",
-            },
-        }
-    if "pgs" not in st.session_state:
-        st.session_state["pgs"] = ["Home", "Explainer", "Compare", "FAQ", "Learn More"]
-
-def apply_sidebar_minimization():
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebar"] {
-                display: none;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+import re
+import plotly.graph_objects as go
+from collections import defaultdict
 
 words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
                  'bathrooms_detail', 'sewer', 'topography',
-                    "seller", "garage", "frontage", "microwave",
+                    "seller", "frontage", "microwave", 'garage',
                     "other", "locati", "multi", "is", "building",
-                    'laundry room', "Wine Cooler", "Greenbelt",
                     "negoti", "condition"]
+
+# Function to remove suffixes from column names
+def remove_suffixes(col_name):
+    suffixes = [
+                'basement_type', 'lot_features', 'exterior_feature',
+                'waterfront_features', 'appliances_included']
+    for suffix in suffixes:
+        if col_name.endswith(suffix):
+            return col_name[:-len(suffix)-1]
+    return col_name
+
+def plot_features(x_values, y_values, colors, title, key):
+    # Create the horizontal bar chart using Plotly
+    fig = go.Figure(data=[
+        go.Bar(
+            x=x_values,  # Use percentages for the horizontal bar length
+            y=y_values,  # Feature names go on the Y-axis
+            orientation='h',  # Change the orientation to horizontal
+            marker_color=colors,  # Apply the alternating colors
+            width=0.8,  # Increase the width of the bars (this will make the bars bigger)
+            marker=dict(line=dict(width=0))  # Remove the border on the bars
+        )
+    ])
+
+    # Update the layout to make the chart bigger and adjust bar spacing
+    fig.update_layout(
+        height=900,  # Increase the height of the chart
+        width=900,   # Increase the width of the chart
+        bargap=0.3,  # Decrease the gap between bars
+        title=title,  # Set the title of the chart
+        xaxis_title="Percentage Contribution (%)",  # X-axis label
+        template="plotly_dark",  # Optional: Use a dark theme for the chart
+        xaxis=dict(
+            showgrid=True,  # Show gridlines on the X-axis
+            minor=dict(
+                showgrid=True,  # Enable minor gridlines
+                gridwidth=0.5,  # Thinner minor gridlines
+            ),
+        ),
+        yaxis=dict(
+            showgrid=False,  # Hide gridlines on the Y-axis (optional)
+            title_font=dict(size=24),  # Increase the Y-axis title font size
+            tickfont=dict(size=18),  # Increase the font size of Y-axis ticks
+        )
+    )
+    st.plotly_chart(fig, use_container_width=True, key=key)
 
 def display_graph(top_feature_names, top_percentages):
     top_feature_names = [name.replace('_', ' ') for name in top_feature_names]
-
-    # Streamlit bar chart
-
-    # Plot using Streamlit's altair_chart
     source = pd.DataFrame({"Feature": top_feature_names, "Contribution (%)": top_percentages})
 
     # Create the Altair bar chart
@@ -65,7 +71,7 @@ def display_graph(top_feature_names, top_percentages):
         .encode(
             x=alt.X("Contribution (%):Q", title="Contribution (%)"),
             y=alt.Y("Feature:N", title=None, sort="-x",
-                    axis=alt.Axis(labelFontSize=14, titleFontSize=16, labelLimit=300)),  # Sorting by Contribution
+                    axis=alt.Axis(labelFontSize=18, titleFontSize=18, labelLimit=300)),  # Sorting by Contribution
             color=alt.Color("Feature:N", legend=None),  # Optional: Color coding
         )
         .properties(width=800, height=800, title="Top 20 Features as per Importance")
@@ -87,12 +93,58 @@ def drop_columns_containing_words(df, words):
 def should_drop(feature_name, words):
         return any(word.lower() in feature_name.lower() for word in words)
 
-# Function to remove suffixes from column names
-def remove_suffixes(col_name, suffixes):
-    for suffix in suffixes:
-        if col_name.endswith(suffix):
-            return col_name[:-len(suffix)-1]
-    return col_name
+def remove_overlapping_features(features):
+    # Convert all features to lowercase for case-insensitive comparison
+    features_lower = [feature.lower() for feature in features]
+    # Sort features by length in descending order to prioritize longer phrases
+    features_lower = sorted(features_lower, key=len, reverse=True)
+    unique_features = []
+
+    for feature in features_lower:
+        # Check if the feature is already part of any existing unique feature
+        if not any(feature in uf for uf in unique_features):
+            unique_features.append(feature)
+
+    # Map back to original case-sensitive features
+    return [feature for feature in features if feature.lower() in unique_features]
+
+## This is where we merge
+
+def clean_column_name(column):
+    """Removes extra spaces, special characters, and extracts first three words for grouping.
+    Leaves specified columns (like 'image-src') untouched."""
+    
+    # Normalize for grouping logic (but don't modify output format)
+    normalized_col = column.strip()
+    # normalized_col = re.sub(r'[^a-zA-Z0-9\s]', '', normalized_col)  # Remove punctuation, commenting works
+    words = re.split(r'\s+', normalized_col)  # Split by whitespace
+    group_key = ' '.join(words[:4]).lower()  # Take first 3 words as key
+
+    return group_key if column not in {"image-src"} else column
+
+def group_columns(df):
+    """Groups similar columns dynamically based on first three words and merges them."""
+    grouped_columns = defaultdict(list)
+
+    # Identify grouped column names
+    for col in df.columns:
+        key = clean_column_name(col)
+        grouped_columns[key].append(col)
+
+    ## Avoid Fragmentation, so reverted back to using dictionary
+    new_feature_dict = {}
+
+    for key, cols in grouped_columns.items():
+        if len(cols) > 1:
+            # sum
+            new_feature_dict[cols[0]] = df[cols].sum(axis=1)
+        else:
+            new_feature_dict[cols[0]] = df[cols[0]]
+
+    new_features = pd.concat(new_feature_dict, axis=1)
+
+    return new_features.copy()  # Ensures the new DataFrame is contiguous
+
 
 # Still caching school
 @st.cache_data
@@ -175,4 +227,42 @@ def process_amenities(amenities, amenity_objectids):
     subset_amenities = amenities[amenities['type_objectid'].astype(str).isin(selected_objectids)]
 
     return list(set(subset_amenities['name'].tolist())) #return unique names using set
-   
+
+
+def initialize_shared_state():
+    if "styles" not in st.session_state:
+        st.session_state["styles"] = {
+            "nav": {
+                "background-color": "#8BC34A",
+                "justify-content": "left",
+            },
+            "div": {
+                "max-width": "32rem",
+            },
+            "span": {
+                "border-radius": "0.5rem",
+                "color": "white",
+                "margin": "0 0.125rem",
+                "padding": "0.4375rem 0.625rem",
+            },
+            "active": {
+                "background-color": "rgba(255, 255, 255, 0.25)",
+            },
+            "hover": {
+                "background-color": "rgba(255, 255, 255, 0.35)",
+            },
+        }
+    if "pgs" not in st.session_state:
+        st.session_state["pgs"] = ["Home", "Explainer", "Compare", "FAQ", "Learn More"]
+
+def apply_sidebar_minimization():
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                display: none;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )

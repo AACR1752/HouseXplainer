@@ -13,8 +13,10 @@ import geopandas as gpd
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 
+from xgboost import XGBRegressor
+
  # Train/Test Split
-seed = 1000
+seed = 100
 test_size = 0.2
 
 
@@ -46,9 +48,19 @@ def split_dataset(features,price, images=True):
 @st.cache_data
 def initial_data():
     path = "data/housesigmadata"
-    combined_df = pp.combine_dataframes(path)
-    combined_df = combined_df[combined_df['city'].str.contains('Waterloo', case=False, na=False)]
-    combined_df['address'] = combined_df['address'].str.replace(' - Waterloo', '')
+    historical = pp.combine_dataframes(path)
+    historical = historical[historical['city'].str.contains('Waterloo', case=False, na=False)]
+    historical['address'] = historical['address'].str.replace(' - Waterloo', '')
+    historical["historical"] = 1
+
+    path_listed = "data/listed"
+    listed = pp.combine_dataframes(path_listed)
+    listed = listed[listed['city'].str.contains('Waterloo', case=False, na=False)]
+    listed['address'] = listed['address'].str.replace(' - Waterloo', '')
+    listed['historical'] = 0
+
+    combined_df = pd.concat([historical, listed], ignore_index=True)
+
     output = gpd.read_file('data/good_data/address_dictionary_neighbourhoods.geojson')
     output = pd.DataFrame(output)
     df_schools = md.render_school()
@@ -70,17 +82,21 @@ def main(model_choice):
 
     if model_choice == "Random Forest":
         houses['neighbourhood_impact'] = pd.Categorical(houses['neighbourhood']).codes
-        houses['roof'] = pd.Categorical(houses['roof']).codes
+        houses['roof_type'] = pd.Categorical(houses['roof']).codes
         houses['architecture_style_type'] = pd.Categorical(houses['architecture_style']).codes
-        houses['frontage_type'] = pd.Categorical(houses['frontage_type']).codes
+        houses['frontage_type_code'] = pd.Categorical(houses['frontage_type']).codes
+        houses['driveway_parking_type'] = pd.Categorical(houses['driveway_parking']).codes
 
-    houses = houses.dropna(subset=['sold']) #these are removed events
+    # houses = houses.dropna(subset=['sold']) #these are removed events
+    temp_1 = houses[houses['historical'] == 1].dropna(subset=['sold'])
+    temp_2 = houses[houses['historical'] == 0]
+    houses = pd.concat([temp_1, temp_2], ignore_index=True)
     ml_houses = fe.feature_refining(houses)
 
     columns_to_encode = [        
                         # 'property_type',
                         'features',
-                        'driveway_parking',
+                        # 'driveway_parking',
                         'basement_type',
                          'bathrooms_detail', 'sewer', 'topography',
                         'lot_features',
@@ -109,8 +125,6 @@ def main(model_choice):
     # features == X and price == y
 
     features = ml_houses.drop(columns=['listing_id', 'listing'])
-    price = ml_houses['price']
-
     features = fe.correlation_analysis(features)
 
     # Drop 'kitchens', 'rooms', and 'bathrooms' columns if they exist
@@ -124,12 +138,18 @@ def main(model_choice):
                     'bedrooms', 'depth',]
     for col in columns_to_drop:
         if col in features.columns:
-            features = features.drop(columns=[col])  
-    
-    X_train, X_test, y_train, y_test = split_dataset(features, price, images=True)
+            features = features.drop(columns=[col])
 
-    if model_choice == "Random Forest":
-        model = RandomForestRegressor(n_estimators=100, random_state=seed)
+    features = md.group_columns(features)
+    listed_filter = True
+    
+    X_train, X_test, y_train, y_test = split_dataset(features[features['historical'] == 1].drop(columns=['historical']), 
+                                                     features[features['historical'] == 1]['price'], 
+                                                     images=True)
+
+    if model_choice == "Random Forest":  ## This is now XGBOOST
+        # model = RandomForestRegressor(n_estimators=200, random_state=seed)
+        model = XGBRegressor(objective='reg:squarederror', random_state=seed)
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         feature_importance = model.feature_importances_
@@ -166,6 +186,7 @@ def main(model_choice):
     filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
 
     top_features = filtered_sorted_features[:20]
+    top_features = [(md.remove_suffixes(feature[0]), feature[1]) for feature in top_features]
     top_feature_names, top_percentages = zip(*top_features)
 
     st.session_state["top_feature_names"] = top_feature_names
@@ -173,12 +194,28 @@ def main(model_choice):
 
     # md.display_graph(top_feature_names, top_percentages)
 
-    # Single Data Point Prediction
-    joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
-    joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood',
-                                        'latitude','longitude', 'bedrooms', 'description',
-                                        'amenities_objectids_1km', 'nearest_school', 'architecture_style',
-                                        'bathrooms', 'property_type']], on='listing_id', how='inner')
+    # This is the final model with all the historical data
+    if listed_filter == True:  ## This is now XGBOOST
+        # model = RandomForestRegressor(n_estimators=200, random_state=seed)
+        features_x = features[features['historical'] == 1].drop(columns=['price', 'image-src', 'historical'])
+        features_y = features[features['historical'] == 1]['price']
+        listed_df = features[features['historical'] == 0].drop(columns=['price', 'image-src', 'historical'])
+        # st.dataframe(listed_df)
+        # print(listed_df.shape)
+        model = XGBRegressor(objective='reg:squarederror', random_state=seed)
+        model.fit(features_x, features_y)
+        joined_df = listed_df.join(ml_houses[['listing_id', 'listing']], how='inner')
+        joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood', 'roof', 'frontage_type',
+                                            'latitude','longitude', 'bedrooms', 'description', 'driveway_parking',
+                                            'amenities_objectids_1km', 'nearest_school', 'architecture_style',
+                                            'bathrooms', 'property_type']], on='listing_id', how='inner')
+    else:
+        # Single Data Point Prediction
+        joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
+        joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood', 'roof', 'frontage_type',
+                                            'latitude','longitude', 'bedrooms', 'description', 'driveway_parking',
+                                            'amenities_objectids_1km', 'nearest_school', 'architecture_style',
+                                            'bathrooms', 'property_type']], on='listing_id', how='inner')
 
     # Store the trained model and other variables in session state
     st.session_state["trained_model"] = model
@@ -190,7 +227,13 @@ def main(model_choice):
     st.session_state["joined_df_columns"] = joined_df.columns.tolist()
     st.session_state["joined_df_index"] = joined_df.index.tolist()
 
-    # Store X_test values, columns, and index in session state
-    st.session_state["X_test_values"] = X_test.values  # Store only values
-    st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
-    st.session_state["X_test_index"] = X_test.index.tolist()  # Store index
+    if listed_filter == True:
+        # Store X_test values, columns, and index in session state
+        st.session_state["X_test_values"] = listed_df.values  # Store only values
+        st.session_state["X_test_columns"] = listed_df.columns.tolist()  # Store columns
+        st.session_state["X_test_index"] = listed_df.index.tolist()  # Store index
+    else:
+        # Store X_test values, columns, and index in session state
+        st.session_state["X_test_values"] = X_test.values  # Store only values
+        st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
+        st.session_state["X_test_index"] = X_test.index.tolist()  # Store index

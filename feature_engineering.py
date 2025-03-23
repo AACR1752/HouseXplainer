@@ -46,7 +46,10 @@ def feature_refining(houses):
     houses.dropna(axis=1, how='all', inplace=True)
 
     #drop rows where listed is missing
-    houses.dropna(subset=['listed'], inplace=True)
+    # houses.dropna(subset=['listed'], inplace=True)
+    temp_1 = houses[houses['historical'] == 1].dropna(subset=['listed'])
+    temp_2 = houses[houses['historical'] == 0].dropna(subset=['for_sale_price'])
+    houses = pd.concat([temp_1, temp_2], ignore_index=True)
 
     # Identify columns with less than 10 non-NaN values
     # value_counts = houses.count()
@@ -59,7 +62,7 @@ def feature_refining(houses):
     numeric_features = ['rooms', 'bedrooms', 'bedrooms_above_ground',
                     'bedrooms_below_ground', 'bathrooms', '2_piece_bathrooms',
                     '3_piece_bathrooms', '4_piece_bathrooms', 'garage',
-                    'frontage_length', 'depth']
+                    'frontage_length', 'depth', 'historical']
 
     for col in numeric_features:
         if col in houses.columns:
@@ -105,6 +108,8 @@ def correlation_analysis(features):
     # assuming img-src is not a feature
     img = features['image-src']
     price = features['price']
+    hist = features['historical']
+    features = features.drop(columns=['price'])
     features = features.select_dtypes(include=np.number)
     # features = features.drop(columns=['price'])
     correlation_matrix = features.corr()
@@ -130,4 +135,5 @@ def correlation_analysis(features):
 
     features['image-src'] = img
     features['price'] = price
+    features['historical'] = hist
     return features
