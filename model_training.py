@@ -92,7 +92,6 @@ def main(model_choice):
     temp_2 = houses[houses['historical'] == 0]
     houses = pd.concat([temp_1, temp_2], ignore_index=True)
     ml_houses = fe.feature_refining(houses)
-    st.dataframe(ml_houses)
 
     columns_to_encode = [        
                         # 'property_type',
@@ -126,8 +125,6 @@ def main(model_choice):
     # features == X and price == y
 
     features = ml_houses.drop(columns=['listing_id', 'listing'])
-    price = ml_houses['price']
-
     features = fe.correlation_analysis(features)
 
     # Drop 'kitchens', 'rooms', and 'bathrooms' columns if they exist
@@ -143,10 +140,12 @@ def main(model_choice):
         if col in features.columns:
             features = features.drop(columns=[col])
 
-    # features = md.group_columns(features)
+    features = md.group_columns(features)
     listed_filter = True
     
-    X_train, X_test, y_train, y_test = split_dataset(features[features['historical'] == 1].drop(columns=['historical']), price, images=True)
+    X_train, X_test, y_train, y_test = split_dataset(features[features['historical'] == 1].drop(columns=['historical']), 
+                                                     features[features['historical'] == 1]['price'], 
+                                                     images=True)
 
     if model_choice == "Random Forest":  ## This is now XGBOOST
         # model = RandomForestRegressor(n_estimators=200, random_state=seed)
@@ -201,7 +200,8 @@ def main(model_choice):
         features_x = features[features['historical'] == 1].drop(columns=['price', 'image-src', 'historical'])
         features_y = features[features['historical'] == 1]['price']
         listed_df = features[features['historical'] == 0].drop(columns=['price', 'image-src', 'historical'])
-        st.dataframe(features)
+        # st.dataframe(listed_df)
+        # print(listed_df.shape)
         model = XGBRegressor(objective='reg:squarederror', random_state=seed)
         model.fit(features_x, features_y)
         joined_df = listed_df.join(ml_houses[['listing_id', 'listing']], how='inner')

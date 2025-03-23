@@ -46,7 +46,10 @@ def feature_refining(houses):
     houses.dropna(axis=1, how='all', inplace=True)
 
     #drop rows where listed is missing
-    houses.dropna(subset=['listed'], inplace=True)
+    # houses.dropna(subset=['listed'], inplace=True)
+    temp_1 = houses[houses['historical'] == 1].dropna(subset=['listed'])
+    temp_2 = houses[houses['historical'] == 0].dropna(subset=['for_sale_price'])
+    houses = pd.concat([temp_1, temp_2], ignore_index=True)
 
     # Identify columns with less than 10 non-NaN values
     # value_counts = houses.count()
