@@ -19,7 +19,6 @@ words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
 # Function to remove suffixes from column names
 def remove_suffixes(col_name):
     suffixes = [
-                # 'driveway_parking',
                 'basement_type', 'lot_features', 'exterior_feature',
                 'waterfront_features', 'appliances_included']
     for suffix in suffixes:
@@ -81,17 +80,11 @@ def clean_column_name(column):
     """Removes extra spaces, special characters, and extracts first three words for grouping.
     Leaves specified columns (like 'image-src') untouched."""
     
-    # # List of columns to exclude from cleaning
-    # exclude_columns = {"image-src"}
-    
-    # if column in exclude_columns:
-    #     return column  # Return as is
-
     # Normalize for grouping logic (but don't modify output format)
     normalized_col = column.strip()
-    normalized_col = re.sub(r'[^a-zA-Z0-9\s]', '', normalized_col)  # Remove punctuation, commenting works but no split
+    # normalized_col = re.sub(r'[^a-zA-Z0-9\s]', '', normalized_col)  # Remove punctuation, commenting works but no split
     words = re.split(r'\s+', normalized_col)  # Split by whitespace
-    group_key = ' '.join(words[:3]).lower()  # Take first 3 words as key
+    group_key = ' '.join(words[:4]).lower()  # Take first 3 words as key
 
     return group_key if column not in {"image-src"} else column
 
