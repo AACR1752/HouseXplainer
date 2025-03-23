@@ -350,6 +350,8 @@ if "trained_model" in st.session_state:
                  "driveway_parking_type": f"{joined_df.loc[index[0], 'driveway_parking']} parking",
                  "roof_type": f"{joined_df.loc[index[0], 'roof']} roof",
                  "frontage_type_code": f"{joined_df.loc[index[0], 'frontage_type']} frontage",
+                 "amenities_count_1km": "Nearby Amenities",
+                 "neighbourhood_impact": "Neighborhood Prestige Contribution"
                  }
             )
 
