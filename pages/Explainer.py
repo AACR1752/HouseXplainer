@@ -327,6 +327,8 @@ if "trained_model" in st.session_state:
 
         description = joined_df.loc[index[0], 'description']
 
+        description = description.replace("\n", " ")
+
         feature_df = md.render_features()
 
         with st.spinner('Explaining Time.....'):
