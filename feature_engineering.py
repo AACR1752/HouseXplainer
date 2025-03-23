@@ -59,7 +59,7 @@ def feature_refining(houses):
     numeric_features = ['rooms', 'bedrooms', 'bedrooms_above_ground',
                     'bedrooms_below_ground', 'bathrooms', '2_piece_bathrooms',
                     '3_piece_bathrooms', '4_piece_bathrooms', 'garage',
-                    'frontage_length', 'depth']
+                    'frontage_length', 'depth', 'historical']
 
     for col in numeric_features:
         if col in houses.columns:
@@ -105,6 +105,7 @@ def correlation_analysis(features):
     # assuming img-src is not a feature
     img = features['image-src']
     price = features['price']
+    hist = features['historical']
     features = features.drop(columns=['price'])
     features = features.select_dtypes(include=np.number)
     # features = features.drop(columns=['price'])
@@ -131,4 +132,5 @@ def correlation_analysis(features):
 
     features['image-src'] = img
     features['price'] = price
+    features['historical'] = hist
     return features
