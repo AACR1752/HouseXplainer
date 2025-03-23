@@ -505,6 +505,7 @@ if "trained_model" in st.session_state:
             cols = st.columns(4)
 
             for i, feat in enumerate(way_to_improve_value):
+
                 with cols[i % 4]:
                     st.markdown(
                         f"""
