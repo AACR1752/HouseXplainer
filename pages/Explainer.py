@@ -339,7 +339,6 @@ if "trained_model" in st.session_state:
         # st.dataframe(zero_contribution_df)
         # st.dataframe(positive_contribution_df)
 
-
         positive_contribution_df = positive_contribution_df.sort_values(by="SHAP Value", ascending=False)
         total_shap_value = positive_contribution_df["SHAP Value"].sum()
         # Add a new column for percentage contribution
@@ -351,6 +350,8 @@ if "trained_model" in st.session_state:
                  "driveway_parking_type": f"{joined_df.loc[index[0], 'driveway_parking']} parking",
                  "roof_type": f"{joined_df.loc[index[0], 'roof']} roof",
                  "frontage_type_code": f"{joined_df.loc[index[0], 'frontage_type']} frontage",
+                 "amenities_count_1km": "Nearby Amenities",
+                 "neighbourhood_impact": "Neighborhood Prestige Contribution"
                  }
             )
 
@@ -438,21 +439,22 @@ if "trained_model" in st.session_state:
 
         # Read the neigbourhood feature list from the backend file
         feature_list = read_feature_list(file_path)
+        feature_list = [feature.lower() for feature in feature_list]
 
         # Zip !
         top_feature_names_y, top_percentages_y = zip(*s_features)
 
         top_feature_names_y = [name.replace('_', ' ') for name in top_feature_names_y]
+        top_feature_names_y = [name.lower() for name in top_feature_names_y]
 
         # Convert the feature_list to a set for faster membership checking
         feature_set = set(feature_list)
 
         # Separate the top features into those within and not within feature_list
         features_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature in feature_set]
-        # features_within = sorted(features_within, key=lambda x: x[1], reverse=True)
 
         features_not_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature not in feature_set]
-        # features_not_within = sorted(features_not_within, key=lambda x: x[1], reverse=True)
+        features_not_within = list({feature[0]: feature for feature in features_not_within}.values())
 
         # Limit the lists to the top 20 features each
         features_within = features_within[:10]
@@ -559,6 +561,7 @@ if "trained_model" in st.session_state:
         
         with tab3:
             st.subheader("Suggested Features")
+            suggested_features["Feature"] = suggested_features["Feature"].apply(md.remove_suffixes)
             way_to_improve_value = suggested_features["Feature"].str.replace('_', ' ')
             for feat in way_to_improve_value:
                 st.write(feat)

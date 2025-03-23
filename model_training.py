@@ -127,7 +127,9 @@ def main(model_choice):
                     'bedrooms', 'depth',]
     for col in columns_to_drop:
         if col in features.columns:
-            features = features.drop(columns=[col])  
+            features = features.drop(columns=[col])
+
+    features = md.group_columns(features)
     
     X_train, X_test, y_train, y_test = split_dataset(features, price, images=True)
 
@@ -170,6 +172,7 @@ def main(model_choice):
     filtered_sorted_features = [feature for feature in sorted_features if not md.should_drop(feature[0], words_to_drop)]
 
     top_features = filtered_sorted_features[:20]
+    top_features = [(md.remove_suffixes(feature[0]), feature[1]) for feature in top_features]
     top_feature_names, top_percentages = zip(*top_features)
 
     st.session_state["top_feature_names"] = top_feature_names
