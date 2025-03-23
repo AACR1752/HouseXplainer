@@ -450,10 +450,9 @@ if "trained_model" in st.session_state:
 
         # Separate the top features into those within and not within feature_list
         features_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature in feature_set]
-        # features_within = sorted(features_within, key=lambda x: x[1], reverse=True)
 
         features_not_within = [(feature, percentage) for feature, percentage in zip(top_feature_names_y, top_percentages_y) if feature not in feature_set]
-        # features_not_within = sorted(features_not_within, key=lambda x: x[1], reverse=True)
+        features_not_within = list({feature[0]: feature for feature in features_not_within}.values())
 
         # Limit the lists to the top 20 features each
         features_within = features_within[:10]

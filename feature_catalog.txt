@@ -13,7 +13,7 @@
     'Library',
     'Major Highway',
     'Public Transit',
-    'nearest_school_type',
+    'nearest school type',
     'Fishing',
     'Lake/Pond',
     'Place of Worship',
