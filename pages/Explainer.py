@@ -505,15 +505,17 @@ if "trained_model" in st.session_state:
             cols = st.columns(4)
 
             for i, feat in enumerate(way_to_improve_value):
-                with cols[i % 4]:
-                    st.markdown(
-                        f"""
-                        <div style="border: 1px solid #e0e0e0; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
-                            <h3 style="margin-top: 10px; margin-bottom: 5px;">{feat}</h3>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
+                    with cols[i % 4]:
+                        st.markdown(
+                            f"""
+                            <div style="border: 1px solid #e0e0e0; padding: 15px; border-radius: 5px; 
+                                        margin-bottom: 10px; height: 120px; display: flex; 
+                                        align-items: center; justify-content: center;">
+                                <h3 style="text-align: center; margin: 0;">{feat}</h3>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
 
 else:
     st.error("No trained model or test data found! Please train the model first.")

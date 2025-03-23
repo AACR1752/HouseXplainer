@@ -116,7 +116,7 @@ def clean_column_name(column):
     
     # Normalize for grouping logic (but don't modify output format)
     normalized_col = column.strip()
-    # normalized_col = re.sub(r'[^a-zA-Z0-9\s]', '', normalized_col)  # Remove punctuation, commenting works but no split
+    # normalized_col = re.sub(r'[^a-zA-Z0-9\s]', '', normalized_col)  # Remove punctuation, commenting works
     words = re.split(r'\s+', normalized_col)  # Split by whitespace
     group_key = ' '.join(words[:4]).lower()  # Take first 3 words as key
 
@@ -131,7 +131,7 @@ def group_columns(df):
         key = clean_column_name(col)
         grouped_columns[key].append(col)
 
-    # TODO: Avoid Fragmentation, so reverted back to using dictionary
+    ## Avoid Fragmentation, so reverted back to using dictionary
     new_feature_dict = {}
 
     for key, cols in grouped_columns.items():
@@ -139,7 +139,6 @@ def group_columns(df):
             # sum
             new_feature_dict[cols[0]] = df[cols].sum(axis=1)
         else:
-
             new_feature_dict[cols[0]] = df[cols[0]]
 
     new_features = pd.concat(new_feature_dict, axis=1)
