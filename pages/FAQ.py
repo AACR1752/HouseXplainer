@@ -49,8 +49,16 @@ qa_pairs = [
         "answer": "HouseExplainer scrapes the publicly available house listings from realtor platform HouseSigma®️."
     },
     {
+        "question": "What does these features mean?",
+        "answer": "Features are directly scraped from Housesigma and how it is stored in MLS.\n\n These features are directly related to the house listing.\n\n Except for some neighbourhood features that we gather open data and calculate ourselves."
+    },
+    {
         "question": "Does HouseExplainer factor in market changes?",
         "answer": "Yes, HouseXplainer runs on overall listings provided as more house are sold,\n\n HouseXplainer periodically reanalyzes market to provide upto date information."
+    },
+    {
+        "question": "Explain the Xplainer",
+        "answer": "HouseXplainer uses xgboost model to predict house prices based on features.\n\n The features weights and explanations utilizes Shapley Additive exPlanations (SHAP)."
     },
     {
         "question": "Is the website cross-platform compatible?",
