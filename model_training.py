@@ -127,7 +127,9 @@ def main(model_choice):
                     'bedrooms', 'depth',]
     for col in columns_to_drop:
         if col in features.columns:
-            features = features.drop(columns=[col])  
+            features = features.drop(columns=[col])
+
+    features = md.group_columns(features)
     
     X_train, X_test, y_train, y_test = split_dataset(features, price, images=True)
 

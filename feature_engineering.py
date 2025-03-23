@@ -105,6 +105,7 @@ def correlation_analysis(features):
     # assuming img-src is not a feature
     img = features['image-src']
     price = features['price']
+    features = features.drop(columns=['price'])
     features = features.select_dtypes(include=np.number)
     # features = features.drop(columns=['price'])
     correlation_matrix = features.corr()

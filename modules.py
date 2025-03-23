@@ -4,6 +4,8 @@ import pandas as pd
 import re
 from nltk.stem import PorterStemmer
 import random
+import re
+from collections import defaultdict
 
 words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
                  'bathrooms_detail', 'sewer', 'topography',
@@ -36,7 +38,7 @@ def display_graph(top_feature_names, top_percentages):
         .encode(
             x=alt.X("Contribution (%):Q", title="Contribution (%)"),
             y=alt.Y("Feature:N", title=None, sort="-x",
-                    axis=alt.Axis(labelFontSize=14, titleFontSize=16, labelLimit=300)),  # Sorting by Contribution
+                    axis=alt.Axis(labelFontSize=18, titleFontSize=18, labelLimit=300)),  # Sorting by Contribution
             color=alt.Color("Feature:N", legend=None),  # Optional: Color coding
         )
         .properties(width=800, height=800, title="Top 20 Features as per Importance")
@@ -72,6 +74,49 @@ def remove_overlapping_features(features):
 
     # Map back to original case-sensitive features
     return [feature for feature in features if feature.lower() in unique_features]
+
+## This is where we merge
+
+def clean_column_name(column):
+    """Removes extra spaces, special characters, and extracts first three words for grouping.
+    Leaves specified columns (like 'image-src') untouched."""
+    
+    # # List of columns to exclude from cleaning
+    # exclude_columns = {"image-src"}
+    
+    # if column in exclude_columns:
+    #     return column  # Return as is
+
+    # Normalize for grouping logic (but don't modify output format)
+    normalized_col = column.strip()
+    normalized_col = re.sub(r'[^a-zA-Z0-9\s]', '', normalized_col)  # Remove punctuation, commenting works but no split
+    words = re.split(r'\s+', normalized_col)  # Split by whitespace
+    group_key = ' '.join(words[:3]).lower()  # Take first 3 words as key
+
+    return group_key if column not in {"image-src"} else column
+
+def group_columns(df):
+    """Groups similar columns dynamically based on first three words and merges them."""
+    grouped_columns = defaultdict(list)
+
+    # Identify grouped column names
+    for col in df.columns:
+        key = clean_column_name(col)
+        grouped_columns[key].append(col)
+
+    # Create a new DataFrame with merged columns
+    new_features = pd.DataFrame()
+    
+    for key, cols in grouped_columns.items():
+        if len(cols) > 1:
+            # If multiple columns match the same group, sum them
+            new_features[key] = df[cols].sum(axis=1)
+        else:
+            # If only one column matches, keep it as is
+            new_features[key] = df[cols[0]]
+
+    return new_features
+
 
 # Still caching school
 @st.cache_data
