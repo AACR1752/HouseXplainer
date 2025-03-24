@@ -42,7 +42,8 @@ if "trained_model" in st.session_state:
                              columns=st.session_state["joined_df_columns"], 
                              index=st.session_state["joined_df_index"])
     
-    y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
+    # y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
+    y_test = 0
     model_choice = st.session_state["model_choice"]
 
     # Create two columns with balanced ratio
@@ -182,7 +183,9 @@ if "trained_model" in st.session_state:
     if predict:
         # Making a single prediction
         prediction = model.predict(single_data_point)
-        st.subheader("Single Data Point Prediction")
+        st.write("")
+        st.write("")
+        st.subheader("Individual Property Valuation")
 
         img_col, pred_col = st.columns([1, 1])
 
@@ -190,7 +193,10 @@ if "trained_model" in st.session_state:
             st.image(joined_df.loc[index[0], 'image-src'])
 
         with pred_col:
-            final_output = [[round(prediction[0]), round(y_test.iloc[index[0]])]]
+            final_output = [[round(prediction[0]), round(
+                # y_test.iloc[index[0]]
+                y_test
+                )]]
 
             school_name = joined_df.loc[index[0], 'nearest_school']
 
