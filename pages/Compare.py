@@ -55,7 +55,7 @@ if "trained_model" in st.session_state:
                             columns=st.session_state["joined_df_columns"], 
                             index=st.session_state["joined_df_index"])
     
-    y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
+    # y_test = pd.Series(st.session_state["y_test"], name="Price")  # Restores index
     
     # Filters for property selection
     st.subheader("Select Properties to Compare")
@@ -166,8 +166,8 @@ if "trained_model" in st.session_state:
             prediction_1 = model.predict(data_point_1)[0]
             prediction_2 = model.predict(data_point_2)[0]
             
-            actual_1 = y_test.iloc[index_1]
-            actual_2 = y_test.iloc[index_2]
+            # actual_1 = y_test.iloc[index_1]
+            # actual_2 = y_test.iloc[index_2]
 
             p1_col, p2_col = st.columns([1, 1])
 
