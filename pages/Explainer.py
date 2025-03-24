@@ -395,7 +395,9 @@ if "trained_model" in st.session_state:
         top_names = [str(name).lower() for name in top_feature_names_y]
         # top_scores = [float(score) for score in top_percentages_y]
 
-        zero_contribution_df = zero_contribution_df[~zero_contribution_df["Feature"].apply(lambda feature: md.should_drop(feature, words_to_drop))]
+        zero_contribution_df = zero_contribution_df[
+            ~zero_contribution_df["Feature"].apply(lambda feature: md.should_drop(feature, words_to_drop) 
+                                                   or len(feature.split()) > 5)]
         
         # Filter and split zero_contribution_df based on suffixes and SHAP Value > 100
         appliances_included_df = zero_contribution_df[
