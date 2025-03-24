@@ -9,10 +9,11 @@ import plotly.graph_objects as go
 from collections import defaultdict
 
 words_to_drop = ["schedule", "attachments", "airport", "bedrooms_above_ground",
-                 'bathrooms_detail', 'sewer', 'topography',
+                 'bathrooms_detail', 'sewer', 'topography', "monoxide",
                     "seller", "frontage", "microwave", 'garage',
                     "other", "locati", "multi", "is", "building",
-                    "negoti", "condition"]
+                    'greenbelt',
+                    "negoti", "condition", "not", "working"]
 
 # Function to remove suffixes from column names
 def remove_suffixes(col_name):
