@@ -43,7 +43,7 @@ precheck = ["trained_model", "evaluation"]
 if "trained_model" in st.session_state and model_choice == st.session_state["model_choice"]:
     model = st.session_state["trained_model"]
     st.subheader("Model Evaluation")
-    md.display_df(st.session_state["evaluation"])
+    # md.display_df(st.session_state["evaluation"])
     top_feature_names = st.session_state["top_feature_names"] 
     top_percentages = st.session_state["top_percentages"]
     md.display_graph(top_feature_names, top_percentages)

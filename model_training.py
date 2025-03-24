@@ -10,8 +10,8 @@ import bronze_to_silver_cleaning as btc
 import preprocessing as pp
 import feature_engineering as fe
 import geopandas as gpd
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import make_pipeline
+import pickle
+import base64
 
 from xgboost import XGBRegressor
 
@@ -143,36 +143,43 @@ def main(model_choice):
     features = md.group_columns(features)
     listed_filter = True
     
-    X_train, X_test, y_train, y_test = split_dataset(features[features['historical'] == 1].drop(columns=['historical']), 
-                                                     features[features['historical'] == 1]['price'], 
-                                                     images=True)
+    # X_train, X_test, y_train, y_test = split_dataset(features[features['historical'] == 1].drop(columns=['historical']), 
+    #                                                  features[features['historical'] == 1]['price'], 
+    #                                                  images=True)
 
     if model_choice == "Random Forest":  ## This is now XGBOOST
         # model = RandomForestRegressor(n_estimators=200, random_state=seed)
+        # model = XGBRegressor(objective='reg:squarederror', random_state=seed)
+        # model.fit(X_train, y_train)
+        # y_pred = model.predict(X_test)
+        features_x = features[features['historical'] == 1].drop(columns=['price', 'image-src', 'historical'])
+        features_y = features[features['historical'] == 1]['price']
+        X_test = features[features['historical'] == 0].drop(columns=['price', 'image-src', 'historical'])
+        # st.dataframe(listed_df)
+        # print(listed_df.shape)
         model = XGBRegressor(objective='reg:squarederror', random_state=seed)
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
+        model.fit(features_x, features_y)
         feature_importance = model.feature_importances_
     elif model_choice == "Ridge Regression":
         model = Ridge(random_state=seed, solver='lbfgs', positive=True) 
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-        absolute_coefficients = np.abs(model.coef_)
-        feature_importance = (absolute_coefficients / np.sum(absolute_coefficients)) * 100
+        # model.fit(X_train, y_train)
+        # y_pred = model.predict(X_test)
+        # absolute_coefficients = np.abs(model.coef_)
+        # feature_importance = (absolute_coefficients / np.sum(absolute_coefficients)) * 100
 
     # Model Evaluation
-    mse = mean_squared_error(y_test, y_pred)
-    rmse = np.sqrt(mse)
-    r2 = r2_score(y_test, y_pred)
+    # mse = mean_squared_error(y_test, y_pred)
+    # rmse = np.sqrt(mse)
+    # r2 = r2_score(y_test, y_pred)
 
-    # Median Error Calculation
-    percentage_errors = np.abs((y_test - y_pred) / y_test) * 100
-    median_error = np.median(percentage_errors)
+    # # Median Error Calculation
+    # percentage_errors = np.abs((y_test - y_pred) / y_test) * 100
+    # median_error = np.median(percentage_errors)
 
-    results = [[mse, rmse, r2, median_error]]
-    st.session_state["evaluation"] = results
-    st.session_state["rmse"] = rmse
-    st.session_state["median_error"] = median_error
+    # results = [[mse, rmse, r2, median_error]]
+    # st.session_state["evaluation"] = results
+    st.session_state["rmse"] = 200000
+    # st.session_state["median_error"] = median_error
     # md.display_df(results)
 
     # Feature Importance
@@ -194,46 +201,26 @@ def main(model_choice):
 
     # md.display_graph(top_feature_names, top_percentages)
 
-    # This is the final model with all the historical data
-    if listed_filter == True:  ## This is now XGBOOST
-        # model = RandomForestRegressor(n_estimators=200, random_state=seed)
-        features_x = features[features['historical'] == 1].drop(columns=['price', 'image-src', 'historical'])
-        features_y = features[features['historical'] == 1]['price']
-        listed_df = features[features['historical'] == 0].drop(columns=['price', 'image-src', 'historical'])
-        # st.dataframe(listed_df)
-        # print(listed_df.shape)
-        model = XGBRegressor(objective='reg:squarederror', random_state=seed)
-        model.fit(features_x, features_y)
-        joined_df = listed_df.join(ml_houses[['listing_id', 'listing']], how='inner')
-        joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood', 'roof', 'frontage_type',
-                                            'latitude','longitude', 'bedrooms', 'description', 'driveway_parking',
-                                            'amenities_objectids_1km', 'nearest_school', 'architecture_style',
-                                            'bathrooms', 'property_type']], on='listing_id', how='inner')
-    else:
-        # Single Data Point Prediction
-        joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
-        joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood', 'roof', 'frontage_type',
-                                            'latitude','longitude', 'bedrooms', 'description', 'driveway_parking',
-                                            'amenities_objectids_1km', 'nearest_school', 'architecture_style',
-                                            'bathrooms', 'property_type']], on='listing_id', how='inner')
+    
+    # Single Data Point Prediction
+    joined_df = X_test.join(ml_houses[['listing_id', 'listing']], how='inner')
+    joined_df = joined_df.merge(houses[['listing_id', 'image-src', 'neighbourhood', 'roof', 'frontage_type',
+                                        'latitude','longitude', 'bedrooms', 'description', 'driveway_parking',
+                                        'amenities_objectids_1km', 'nearest_school', 'architecture_style',
+                                        'bathrooms', 'property_type']], on='listing_id', how='inner')
 
     # Store the trained model and other variables in session state
     st.session_state["trained_model"] = model
     st.session_state["model_choice"] = model_choice
-    st.session_state["y_test"] = y_test.to_dict()
+    # st.session_state["y_test"] = y_test.to_dict()
 
     # Store the DataFrame values, columns, and index in session state
     st.session_state["joined_df_values"] = joined_df.values
     st.session_state["joined_df_columns"] = joined_df.columns.tolist()
     st.session_state["joined_df_index"] = joined_df.index.tolist()
 
-    if listed_filter == True:
-        # Store X_test values, columns, and index in session state
-        st.session_state["X_test_values"] = listed_df.values  # Store only values
-        st.session_state["X_test_columns"] = listed_df.columns.tolist()  # Store columns
-        st.session_state["X_test_index"] = listed_df.index.tolist()  # Store index
-    else:
-        # Store X_test values, columns, and index in session state
-        st.session_state["X_test_values"] = X_test.values  # Store only values
-        st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
-        st.session_state["X_test_index"] = X_test.index.tolist()  # Store index
+    
+    # Store X_test values, columns, and index in session state
+    st.session_state["X_test_values"] = X_test.values  # Store only values
+    st.session_state["X_test_columns"] = X_test.columns.tolist()  # Store columns
+    st.session_state["X_test_index"] = X_test.index.tolist()  # Store index
