@@ -46,7 +46,7 @@ if "trained_model" in st.session_state:
                              columns=st.session_state["joined_df_columns"], 
                              index=st.session_state["joined_df_index"])
     
-    y_test = pd.Series(st.session_state["y_test"], name="Price")
+    # y_test = pd.Series(st.session_state["y_test"], name="Price")
 
 def main():
     # Create a local path for images folder
