@@ -5,7 +5,7 @@ from streamlit_navigation_bar import st_navbar
 # Set page configuration
 st.set_page_config(
     page_title="Q&A",
-    page_icon="picture/HE_icon_B.png",
+    page_icon="picture/HouseXPlainer_B.png",
     layout="centered"
 )
 
@@ -14,7 +14,7 @@ md.initialize_shared_state()
 page = st_navbar(
     st.session_state["pgs"], 
     styles=st.session_state["styles"], 
-    logo_path="./picture/HE_icon_W.svg",
+    logo_path="./picture/HouseXPlainer_W.svg",
     options={"show_sidebar": False, 
              "hide_nav":True}, 
     selected=page_name)
